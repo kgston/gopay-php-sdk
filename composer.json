@@ -1,0 +1,21 @@
+{
+    "name": "gopay/gopay-sdk",
+    "description": "",
+    "type": "library",
+    "keywords": [],
+    "homepage": "http://www.example.org/",
+    "license": "",
+    "require": {
+        "php": ">=5.3.3",
+        "phpunit/PHPUnit": "3.7.*",
+        "instaclick/php-code-sniffer": "dev-master",
+        "rmccue/requests": "^1.7"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-0": {
+            "Gopay": "src/Gopay"
+        }
+    }
+}

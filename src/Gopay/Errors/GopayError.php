@@ -2,6 +2,8 @@
 
 namespace Gopay\Errors;
 
+use Exception;
+
 class GopayError extends Exception {}
 
 class GopayRequestError extends GopayError {
@@ -32,3 +34,5 @@ class GopayUnauthorizedError extends GopayError {}
 class GopayServerError extends GopayError {}
 
 class GopayNotFoundError extends GopayError {}
+
+class GopayNoMoreItemsError extends GopayError {}

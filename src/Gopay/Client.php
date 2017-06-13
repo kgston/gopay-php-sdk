@@ -27,17 +27,14 @@ class Client
         return new RequestContext($this->endpoint, "/", $this->appToken);
     }
 
-    private function parseGet($parser, RequestContext $requestContext, array $query = array()) {
-        return $parser::fromJson($this->requester->get($requestContext, $query), $requestContext);
-    }
-
     public function withRequester(Requester $requester) {
         $this->requester = $requester;
         return $this;
     }
 
     public function getMe() {
-        return $this->parseGet(
+        return execute_get(
+            $this->requester,
             Merchant::class,
             $this->getDefaultContext()->withPath("me")
         );

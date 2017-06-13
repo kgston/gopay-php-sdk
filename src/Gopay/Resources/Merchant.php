@@ -15,7 +15,14 @@ class Merchant extends Resource implements Jsonable {
     public $configuration;
     public $createdOn;
 
-    public function __construct($id, $verificationDataId, $name, $email, $verified, $configuration, $createdOn, $context = NULL)
+    public function __construct($id,
+                                $verificationDataId,
+                                $name,
+                                $email,
+                                $verified,
+                                $configuration,
+                                $createdOn,
+                                $context = NULL)
     {
         parent::__construct($id, $context);
         $this->verificationDataId = $verificationDataId;
@@ -28,6 +35,7 @@ class Merchant extends Resource implements Jsonable {
 
     public static function fromJson(array $json, RequestContext $requestContext) {
         return new Merchant(
+            $json["id"],
             $json["verification_data_id"],
             $json["name"],
             $json["email"],

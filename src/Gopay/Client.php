@@ -6,6 +6,8 @@ namespace Gopay;
 use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
+use Gopay\Resources\Jsonable;
+use Gopay\Resources\Merchant;
 
 class Client
 {
@@ -25,13 +27,20 @@ class Client
         return new RequestContext($this->endpoint, "/", $this->appToken);
     }
 
+    private function parseGet($parser, RequestContext $requestContext, array $query = array()) {
+        return $parser::fromJson($this->requester->get($requestContext, $query), $requestContext);
+    }
+
     public function withRequester(Requester $requester) {
         $this->requester = $requester;
         return $this;
     }
 
     public function getMe() {
-
+        return $this->parseGet(
+            Merchant::class,
+            $this->getDefaultContext()->withPath("me")
+        );
     }
 
     public function listStores() {

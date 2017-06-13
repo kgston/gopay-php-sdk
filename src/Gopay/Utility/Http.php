@@ -15,7 +15,7 @@ const NOT_FOUND = 404;
 
 const INTERNAL_SERVER_ERROR = 500;
 
-function getQueryString($params) {
+function get_query_string(array $params) {
     if (is_array($params) && sizeof($params) > 0) {
         return "?" . http_build_query($params);
     } else {
@@ -23,12 +23,14 @@ function getQueryString($params) {
     }
 }
 
-function checkResponse($response) {
+function check_response($response) {
     switch($response->statusCode) {
         case BAD_REQUEST:
              throw Errors\GopayRequestError::from_json(json_decode($response->body));
 
         case UNAUTHORIZED:
+            throw new Errors\GopayUnauthorizedError();
+
         case FORBIDDEN:
             throw new Errors\GopayUnauthorizedError();
 
@@ -36,10 +38,14 @@ function checkResponse($response) {
             throw new Errors\GopayNotFound();
 
         default:
-            return true;
+            if ($response->body) {
+                return json_decode($response->body);
+            } else {
+                return;
+            }
     }
 }
 
-function addJsonHeader($headers) {
-    
+function add_json_header(array $headers) {
+    return array_merge(array("Accept" => "application/json"), $headers);
 }

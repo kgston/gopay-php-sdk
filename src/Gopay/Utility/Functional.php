@@ -9,3 +9,7 @@ function get_or_else($array, $key, $orElse) {
         return $orElse;
     }
 }
+
+function copy(array $array) {
+    return array_merge(array(), $array);
+}

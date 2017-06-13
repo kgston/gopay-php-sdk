@@ -13,6 +13,15 @@ use Composer\DependencyResolver\Request;
 use Gopay\Errors\GopayNoMoreItemsError;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
+use function Gopay\Utility\get_or_else;
+
+function get_other_direction($direction) {
+    if ($direction === "asc") {
+        return "desc";
+    } else {
+        return "asc";
+    }
+}
 
 class Paginated {
 
@@ -38,11 +47,22 @@ class Paginated {
         $this->requester = $requester;
     }
 
-    private function applyNewResponse($response, $query) {
-        
+    private function parse($json) {
+        return $this->formatFn($json, $this->context);
     }
 
-    public function getNextCursor() {
+    private function fromResponse($response, $query) {
+        return new Paginated(
+            array_map(parse, $response["items"]),
+            $response["has_more"],
+            $query,
+            $this->formatFn,
+            $this->context,
+            $this->requester
+        );
+    }
+
+    public function getNext() {
         if (!is_array($this->items) || !sizeof($this->items) === 0) {
           throw new GopayNoMoreItemsError();
         }
@@ -53,7 +73,27 @@ class Paginated {
         $nextCursor = $last->id;
         $newQuery = array_merge(array("next_cursor" => $nextCursor), $this->query);
         $response = $this->requester->get($this->context, $newQuery);
-        return
+        return $this->fromResponse($response, $newQuery);
+    }
+
+    public function reverse() {
+        $currentDirection = get_or_else($this->query, "cursor_direction", "desc");
+        $newQuery = array_merge(
+            array("cursor_direction" => get_other_direction($currentDirection)),
+            $this->query
+        );
+        return new Paginated(
+            array_reverse($this->items),
+            $this->hasMore,
+            $newQuery,
+            $this->formatFn,
+            $this->context,
+            $this->requester
+        );
+    }
+
+    public function getPrevious() {
+        return $this->reverse()->getNext();
     }
 
 }

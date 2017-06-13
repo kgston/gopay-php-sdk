@@ -4,6 +4,8 @@ namespace Gopay;
 
 
 use Gopay\Requests\HttpRequester;
+use Gopay\Requests\RequestContext;
+use Gopay\Requests\Requester;
 
 class Client
 {
@@ -17,5 +19,54 @@ class Client
         $this->endpoint = $endpoint;
         $this->appToken = $appToken;
         $this->requester = new HttpRequester();
+    }
+
+    private function getDefaultContext() {
+        return new RequestContext($this->endpoint, "/", $this->appToken);
+    }
+
+    public function withRequester(Requester $requester) {
+        $this->requester = $requester;
+        return $this;
+    }
+
+    public function getMe() {
+
+    }
+
+    public function listStores() {
+
+    }
+
+    public function getStore($id) {
+
+    }
+
+    public function listBankAccounts() {
+
+    }
+
+    public function getBankAccount($id) {
+
+    }
+
+    public function createToken() {
+
+    }
+
+    public function createCharge() {
+
+    }
+
+    public function listTransactions() {
+
+    }
+
+    public function listTransfers() {
+
+    }
+
+    public function getTransfer($id) {
+
     }
 }

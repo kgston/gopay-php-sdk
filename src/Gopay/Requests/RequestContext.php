@@ -1,6 +1,6 @@
 <?php
 
-namespace Gopay\GopayClient\Requests;
+namespace Gopay\Requests;
 
 class RequestContext
 {
@@ -42,7 +42,12 @@ class RequestContext
                 "Authorization" => "ApplicationToken $key$secretText"
             );
         }
+    }
 
+    public function getFullURL() {
+        return ($this->endpoint.rtrim("/") .
+                "/" .
+                $this->path.ltrim("/"));
     }
 
 }

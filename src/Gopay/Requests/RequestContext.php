@@ -48,9 +48,9 @@ class RequestContext
     }
 
     public function getFullURL() {
-        return ($this->endpoint.rtrim("/") .
+        return (trim($this->endpoint, "/") .
                 "/" .
-                $this->path.ltrim("/"));
+                trim($this->path, "/"));
     }
 
 }

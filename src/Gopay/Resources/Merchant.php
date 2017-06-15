@@ -4,7 +4,7 @@ namespace Gopay\Resources;
 
 
 use Gopay\Requests\RequestContext;
-use function Gopay\Utility\get_or_else;
+use Gopay\Utility\FunctionalUtils as fp;
 
 class Merchant extends Resource implements Jsonable {
 
@@ -40,7 +40,7 @@ class Merchant extends Resource implements Jsonable {
             $json["name"],
             $json["email"],
             $json["verified"],
-            Configuration::fromJson(get_or_else($json, "configuration", array())),
+            Configuration::fromJson(fp::get_or_else($json, "configuration", array())),
             $json["created_on"],
             $context = $requestContext
         );

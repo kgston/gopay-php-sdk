@@ -6,8 +6,8 @@ use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
 use Gopay\Resources\Merchant;
-use Gopay\Resources\Paginated;
 use Gopay\Resources\Store;
+use Gopay\Utility\RequesterUtils;
 
 class Client
 {
@@ -37,7 +37,7 @@ class Client
     }
 
     public function getMe() {
-        return execute_get(
+        return RequesterUtils::execute_get(
             $this->requester,
             Merchant::class,
             $this->getDefaultContext()->withPath("me")
@@ -45,7 +45,7 @@ class Client
     }
 
     public function listStores() {
-        return execute_get_paginated(
+        return RequesterUtils::execute_get_paginated(
             $this->requester,
             Store::class,
             $this->getDefaultContext()->withPath("stores")

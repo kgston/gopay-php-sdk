@@ -11,7 +11,7 @@ namespace Gopay\Resources;
 use Gopay\Errors\GopayNoMoreItemsError;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
-use function Gopay\Utility\get_or_else;
+use Gopay\Utility\FunctionalUtils as fp;
 
 function get_other_direction($direction) {
     if ($direction === "asc") {
@@ -75,11 +75,11 @@ class Paginated {
         $nextCursor = $last->id;
         $newQuery = array_merge(array("next_cursor" => $nextCursor), $this->query);
         $response = $this->requester->get($this->context, $newQuery);
-        return $this->fromResponse($response, $newQuery);
+        return $this->fromResponse($response, $newQuery, $this->parse, $this->context, $this->requester);
     }
 
     public function reverse() {
-        $currentDirection = get_or_else($this->query, "cursor_direction", "desc");
+        $currentDirection = fp::get_or_else($this->query, "cursor_direction", "desc");
         $newQuery = array_merge(
             array("cursor_direction" => get_other_direction($currentDirection)),
             $this->query

@@ -2,8 +2,7 @@
 
 namespace Gopay\Resources;
 
-use function Gopay\Utility\get_or_else;
-use function Gopay\Utility\get_or_null;
+use Gopay\Utility\FunctionalUtils as fp;
 
 class CardConfiguration {
 
@@ -28,13 +27,13 @@ class CardConfiguration {
 
     public static function fromJson($json) {
         return new CardConfiguration(
-            get_or_null($json, "enabled"),
-            get_or_null($json, "debit_enabled"),
-            get_or_null($json, "prepaid_enabled"),
-            get_or_null($json, "forbidden_card_brands"),
-            get_or_null($json, "allowed_countries_by_ip"),
-            get_or_null($json, "foreign_cards_allowed"),
-            get_or_null($json, "fail_on_new_email")
+            fp::get_or_null($json, "enabled"),
+            fp::get_or_null($json, "debit_enabled"),
+            fp::get_or_null($json, "prepaid_enabled"),
+            fp::get_or_null($json, "forbidden_card_brands"),
+            fp::get_or_null($json, "allowed_countries_by_ip"),
+            fp::get_or_null($json, "foreign_cards_allowed"),
+            fp::get_or_null($json, "fail_on_new_email")
         );
     }
 
@@ -52,8 +51,8 @@ class QRConfiguration {
 
     public static function fromJson($json) {
         return new QRConfiguration(
-            get_or_null($json, "enabled"),
-            get_or_null($json, "forbidden_qr_scan_gateway")
+            fp::get_or_null($json, "enabled"),
+            fp::get_or_null($json, "forbidden_qr_scan_gateway")
         );
     }
 
@@ -71,8 +70,8 @@ class RecurringConfiguration {
 
     public static function fromJson($json) {
         return new RecurringConfiguration(
-            get_or_null($json, "recurring_type"),
-            get_or_null($json, "charge_wait_period")
+            fp::get_or_null($json, "recurring_type"),
+            fp::get_or_null($json, "charge_wait_period")
         );
     }
 
@@ -89,7 +88,7 @@ class SecurityConfiguration {
 
     public static function fromJson($json) {
         return new SecurityConfiguration(
-            get_or_null($json, "inspect_suspicious_login_after")
+            fp::get_or_null($json, "inspect_suspicious_login_after")
         );
     }
 
@@ -133,16 +132,16 @@ class Configuration
 
     public static function fromJson(array $json) {
         return new Configuration(
-            get_or_null($json, "percent_fee"),
-            get_or_null($json, "flat_fee_amount"),
-            get_or_null($json, "flat_fee_currency"),
-            get_or_null($json, "wait_period"),
-            get_or_null($json, "transfer_period"),
-            get_or_null($json, "logo_url"),
-            CardConfiguration::fromJson(get_or_else($json, "card_configuration", array())),
-            QRConfiguration::fromJson(get_or_else($json, "qr_configuration", array())),
-            RecurringConfiguration::fromJson(get_or_else($json, "recurring_configuration", array())),
-            SecurityConfiguration::fromJson(get_or_else($json, "security_configuration", array()))
+            fp::get_or_null($json, "percent_fee"),
+            fp::get_or_null($json, "flat_fee_amount"),
+            fp::get_or_null($json, "flat_fee_currency"),
+            fp::get_or_null($json, "wait_period"),
+            fp::get_or_null($json, "transfer_period"),
+            fp::get_or_null($json, "logo_url"),
+            CardConfiguration::fromJson(fp::get_or_else($json, "card_configuration", array())),
+            QRConfiguration::fromJson(fp::get_or_else($json, "qr_configuration", array())),
+            RecurringConfiguration::fromJson(fp::get_or_else($json, "recurring_configuration", array())),
+            SecurityConfiguration::fromJson(fp::get_or_else($json, "security_configuration", array()))
         );
     }
 

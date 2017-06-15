@@ -7,19 +7,21 @@ class RequestContext
     private $path;
     private $endpoint;
     private $appToken;
+    private $appSecret;
 
-    public function __construct($endpoint, $path, $appToken) {
+    public function __construct($endpoint, $path, $appToken, $appSecret) {
         $this->path = $path;
         $this->endpoint = $endpoint;
         $this->appToken = $appToken;
+        $this->appSecret = $appSecret;
     }
 
-    public function withAppToken($appToken) {
-        return new RequestContext($this->endpoint, $this->path, $appToken);
+    public function withAppToken($appToken, $appSecret) {
+        return new RequestContext($this->endpoint, $this->path, $appToken, $appSecret);
     }
 
     public function withPath($path) {
-        return new RequestContext($this->endpoint, $this->path, $this->appToken);
+        return new RequestContext($this->endpoint, $this->path, $this->appToken, $this->appSecret);
     }
 
     public function appendPath($path) {
@@ -36,8 +38,8 @@ class RequestContext
         if ($this->appToken == NULL) {
             return array();
         } else {
-            $key = $this->appToken->key;
-            $secretText = $this->appToken->secret ? "|" . $this->appToken->secret : "";
+            $key = $this->appToken;
+            $secretText = $this->appSecret ? "|" . $this->appSecret : "";
             return array(
                 "Authorization" => "ApplicationToken $key$secretText"
             );

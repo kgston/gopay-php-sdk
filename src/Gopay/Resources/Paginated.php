@@ -8,8 +8,6 @@
 
 namespace Gopay\Resources;
 
-
-use Composer\DependencyResolver\Request;
 use Gopay\Errors\GopayNoMoreItemsError;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
@@ -53,7 +51,7 @@ class Paginated {
 
     private function fromResponse($response, $query) {
         return new Paginated(
-            array_map(parse, $response["items"]),
+            array_map($this->parse, $response["items"]),
             $response["has_more"],
             $query,
             $this->formatFn,
@@ -93,7 +91,7 @@ class Paginated {
     }
 
     public function getPrevious() {
-        return $this->reverse()->getNext();
+        return $this->reverse()->getNext()->reverse();
     }
 
 }

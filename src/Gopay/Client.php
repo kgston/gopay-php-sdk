@@ -2,11 +2,9 @@
 
 namespace Gopay;
 
-
 use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
-use Gopay\Resources\Jsonable;
 use Gopay\Resources\Merchant;
 
 class Client
@@ -15,16 +13,19 @@ class Client
 
     private $appToken;
 
+    private $appSecret;
+
     private $requester;
 
-    function __construct($endpoint, $appToken){
+    function __construct($appToken, $appSecret, $endpoint = "https://api.gopay.jp"){
         $this->endpoint = $endpoint;
         $this->appToken = $appToken;
+        $this->appSecret = $appSecret;
         $this->requester = new HttpRequester();
     }
 
     private function getDefaultContext() {
-        return new RequestContext($this->endpoint, "/", $this->appToken);
+        return new RequestContext($this->endpoint, "/", $this->appToken, $this->appSecret);
     }
 
     public function withRequester(Requester $requester) {

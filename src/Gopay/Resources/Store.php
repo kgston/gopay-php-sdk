@@ -16,7 +16,7 @@ class Store extends Resource implements Jsonable
                                 $name,
                                 $createdOn,
                                 Configuration $configuration,
-                                $context = NULL)
+                                RequestContext $context = NULL)
     {
         parent::__construct($id, $context);
         $this->name = $name;

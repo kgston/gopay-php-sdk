@@ -29,7 +29,7 @@ class Store extends Resource implements Jsonable
         return new Store(
             $json["id"],
             $json["name"],
-            $json["createdOn"],
+            $json["created_on"],
             Configuration::fromJson(fp::get_or_else($json, "configuration", array())),
             $requestContext
         );

@@ -21,7 +21,8 @@ class RequestContext
     }
 
     public function withPath($path) {
-        return new RequestContext($this->endpoint, $this->path, $this->appToken, $this->appSecret);
+        $newPath = is_array($path) ? $path.join("/") : $path;
+        return new RequestContext($this->endpoint, $newPath, $this->appToken, $this->appSecret);
     }
 
     public function appendPath($path) {

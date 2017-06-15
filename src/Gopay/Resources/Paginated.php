@@ -49,14 +49,18 @@ class Paginated {
         return $this->formatFn($json, $this->context);
     }
 
-    private function fromResponse($response, $query) {
+    public static function fromResponse($response,
+                                        $query,
+                                        $formatFn,
+                                        $context,
+                                        $requester) {
         return new Paginated(
-            array_map($this->parse, $response["items"]),
+            array_map($formatFn, $response["items"]),
             $response["has_more"],
             $query,
-            $this->formatFn,
-            $this->context,
-            $this->requester
+            $formatFn,
+            $context,
+            $requester
         );
     }
 

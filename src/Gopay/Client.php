@@ -30,7 +30,7 @@ class Client
 
     private function getDefaultContext()
     {
-        return new RequestContext($this->endpoint, "/", $this->appToken, $this->appSecret);
+        return new RequestContext($this->requester, $this->endpoint, "/", $this->appToken, $this->appSecret);
     }
 
     public function withRequester(Requester $requester) {
@@ -40,7 +40,6 @@ class Client
 
     public function getMe() {
         return RequesterUtils::execute_get(
-            $this->requester,
             Merchant::class,
             $this->getDefaultContext()->withPath("me")
         );
@@ -48,7 +47,6 @@ class Client
 
     public function listStores() {
         return RequesterUtils::execute_get_paginated(
-            $this->requester,
             Store::class,
             $this->getDefaultContext()->withPath("stores")
         );

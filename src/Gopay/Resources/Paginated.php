@@ -12,6 +12,7 @@ use Gopay\Errors\GopayNoMoreItemsError;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
 use Gopay\Utility\FunctionalUtils as fp;
+use Gopay\Utility\RequesterUtils;
 
 function get_other_direction($direction) {
     if ($direction === "asc") {
@@ -25,24 +26,21 @@ class Paginated {
 
     public $items;
     public $hasMore;
-    private $formatFn;
+    private $jsonableClass;
     private $context;
     private $query;
-    private $requester;
 
     public function __construct($items,
                                 $hasMore,
                                 $query,
-                                $formatFn,
-                                RequestContext $context,
-                                Requester $requester)
+                                $jsonableClass,
+                                RequestContext $context)
     {
         $this->items = $items;
         $this->hasMore = $hasMore;
-        $this->formatFn = $formatFn;
+        $this->jsonableClass = $jsonableClass;
         $this->context = $context;
         $this->query = $query;
-        $this->requester = $requester;
     }
 
     private function parse($json) {
@@ -51,16 +49,16 @@ class Paginated {
 
     public static function fromResponse($response,
                                         $query,
-                                        $formatFn,
-                                        $context,
-                                        $requester) {
+                                        $jsonableClass,
+                                        $context) {
+        $parser = $jsonableClass::getContextParser($context);
+        echo(var_dump($parser));
         return new Paginated(
-            array_map($formatFn, $response["items"]),
+            array_map($parser, $response["items"]),
             $response["has_more"],
             $query,
-            $formatFn,
-            $context,
-            $requester
+            $jsonableClass,
+            $context
         );
     }
 
@@ -74,8 +72,7 @@ class Paginated {
         }
         $nextCursor = $last->id;
         $newQuery = array_merge(array("next_cursor" => $nextCursor), $this->query);
-        $response = $this->requester->get($this->context, $newQuery);
-        return $this->fromResponse($response, $newQuery, $this->parse, $this->context, $this->requester);
+        return RequesterUtils::execute_get_paginated($this->jsonableClass, $this->context, $newQuery);
     }
 
     public function reverse() {
@@ -88,9 +85,8 @@ class Paginated {
             array_reverse($this->items),
             $this->hasMore,
             $newQuery,
-            $this->formatFn,
-            $this->context,
-            $this->requester
+            $this->jsonableClass,
+            $this->context
         );
     }
 

@@ -3,6 +3,8 @@
 namespace Gopay\Resources;
 
 
+use Gopay\Utility\RequesterUtils;
+
 abstract class Resource {
 
     public $id;
@@ -17,8 +19,17 @@ abstract class Resource {
         if (strpos($this->context->getFullURL(), $this->id)) {
             return $this->context;
         } else {
-            return $this->context.appendPath($this->id);
+            return $this->context->appendPath($this->id);
         }
+    }
+
+    public function fetch() {
+        $context = $this->getIdContext();
+        return RequesterUtils::execute_get(get_class($this), $context, array());
+    }
+
+    public function update(array $updates) {
+
     }
 
 }

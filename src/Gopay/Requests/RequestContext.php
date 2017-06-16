@@ -8,21 +8,30 @@ class RequestContext
     private $endpoint;
     private $appToken;
     private $appSecret;
+    private $requester;
 
-    public function __construct($endpoint, $path, $appToken, $appSecret) {
+
+
+    public function __construct($requester, $endpoint, $path, $appToken, $appSecret) {
+        $this->requester = $requester;
         $this->path = $path;
         $this->endpoint = $endpoint;
         $this->appToken = $appToken;
         $this->appSecret = $appSecret;
     }
 
+    public function getRequester()
+    {
+        return $this->requester;
+    }
+
     public function withAppToken($appToken, $appSecret) {
-        return new RequestContext($this->endpoint, $this->path, $appToken, $appSecret);
+        return new RequestContext($this->requester, $this->endpoint, $this->path, $appToken, $appSecret);
     }
 
     public function withPath($path) {
         $newPath = is_array($path) ? $path.join("/") : $path;
-        return new RequestContext($this->endpoint, $newPath, $this->appToken, $this->appSecret);
+        return new RequestContext($this->requester, $this->endpoint, $newPath, $this->appToken, $this->appSecret);
     }
 
     public function appendPath($path) {

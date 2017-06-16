@@ -15,4 +15,8 @@ trait Jsonable {
         return self::$schema;
     }
 
+    public static function getContextParser($context) {
+        return self::getSchema()->getParser(array($context));
+    }
+
 }

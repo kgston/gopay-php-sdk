@@ -8,7 +8,7 @@ use Gopay\Utility\FunctionalUtils as fp;
 use Gopay\Utility\JsonSchema;
 
 
-class Merchant extends Resource implements Jsonable {
+class Merchant extends Resource {
 
     public $verificationDataId;
     public $name;

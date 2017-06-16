@@ -1,18 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: adamsar
- * Date: 6/13/17
- * Time: 6:24 PM
- */
 
 namespace Gopay\Resources;
 
+trait Jsonable {
 
-use Gopay\Requests\RequestContext;
+    protected static $schema;
 
-interface Jsonable {
+    protected abstract static function initSchema();
 
-    public static function fromJson(array $json, RequestContext $requestContext);
+    public static function getSchema() {
+        if (!isset(self::$schema)) {
+            self::$schema = self::initSchema();
+        }
+        return self::$schema;
+    }
 
 }

@@ -1,5 +1,7 @@
 <?php
 
+namespace Gopay\Utility;
+
 abstract class StringUtils {
 
     // https://stackoverflow.com/questions/1993721/how-to-convert-camelcase-to-camel-case

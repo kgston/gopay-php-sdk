@@ -6,8 +6,9 @@ namespace Gopay\Resources;
 use Gopay\Requests\RequestContext;
 use Gopay\Utility\FunctionalUtils as fp;
 
-class Store extends Resource implements Jsonable
+class Store extends Resource
 {
+    use Jsonable;
     public $name;
     public $createdOn;
     public $configuration;
@@ -24,14 +25,9 @@ class Store extends Resource implements Jsonable
         $this->configuration = $configuration;
     }
 
-    public static function fromJson(array $json, RequestContext $requestContext)
+    protected static function initSchema()
     {
-        return new Store(
-            $json["id"],
-            $json["name"],
-            $json["created_on"],
-            Configuration::fromJson(fp::get_or_else($json, "configuration", array())),
-            $requestContext
-        );
+        return JsonSchema::fromClass(Store::class)
+            ->upsert("configuration", $formatter = Configuration::getSchema()->getParser());
     }
 }

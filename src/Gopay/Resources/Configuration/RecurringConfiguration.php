@@ -13,7 +13,6 @@ use Gopay\Utility\Json\JsonSchema;
 
 class RecurringConfiguration
 {
-
     use Jsonable;
 
     public $recurringType;

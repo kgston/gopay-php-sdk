@@ -46,9 +46,9 @@ class Configuration {
     protected static function initSchema()
     {
         return JsonSchema::fromClass(Configuration::class)
-                ->replace("card_configuration", $formatter = CardConfiguration::getSchema()->parse)
-                ->replace("qr_configuration", $formatter = QRConfiguration::getSchema()->parse)
-                ->replace("recurring_configuration", $formatter = RecurringConfiguration::getSchema()->parse)
-                ->replace("security_configuration", $formatter = SecurityConfiguration::getSchema()->parse);
+                ->upsert("card_configuration", true, $formatter = CardConfiguration::getSchema()->getParser())
+                ->upsert("qr_configuration", true, $formatter = QRConfiguration::getSchema()->getParser())
+                ->upsert("recurring_configuration", true, $formatter = RecurringConfiguration::getSchema()->getParser())
+                ->upsert("security_configuration", true, $formatter = SecurityConfiguration::getSchema()->getParser());
     }
 }

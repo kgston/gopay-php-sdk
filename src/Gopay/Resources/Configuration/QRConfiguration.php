@@ -24,14 +24,6 @@ class QRConfiguration
         $this->forbiddenQrScanGateway = $forbiddenQrScanGateway;
     }
 
-    public static function fromJson($json)
-    {
-        return new QRConfiguration(
-            fp::get_or_null($json, "enabled"),
-            fp::get_or_null($json, "forbidden_qr_scan_gateway")
-        );
-    }
-
     protected static function initSchema()
     {
         return JsonSchema::fromClass(QRConfiguration::class);

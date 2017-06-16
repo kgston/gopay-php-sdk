@@ -36,19 +36,6 @@ class CardConfiguration
         $this->failOnNewEmail = $failOnNewEmail;
     }
 
-    public static function fromJson($json)
-    {
-        return new CardConfiguration(
-            fp::get_or_null($json, "enabled"),
-            fp::get_or_null($json, "debit_enabled"),
-            fp::get_or_null($json, "prepaid_enabled"),
-            fp::get_or_null($json, "forbidden_card_brands"),
-            fp::get_or_null($json, "allowed_countries_by_ip"),
-            fp::get_or_null($json, "foreign_cards_allowed"),
-            fp::get_or_null($json, "fail_on_new_email")
-        );
-    }
-
     protected static function initSchema()
     {
         return JsonSchema::fromClass(CardConfiguration::class);

@@ -5,7 +5,7 @@ namespace Gopay\Resources;
 
 abstract class Resource {
 
-    protected $id;
+    public $id;
     protected $context;
 
     function __construct($id, $context) {

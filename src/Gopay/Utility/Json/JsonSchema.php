@@ -37,11 +37,13 @@ class JsonSchema {
         if ($index !== NULL) {
             $this->components = array_replace(
                 $this->components,
-                array($index => new SchemaComponent($this->prefix . "/" .$path, $required, $formatter))
+                array($index =>
+                    new SchemaComponent($this->prefix . "/" .$path, $required, $formatter)
+                )
             );
             return $this;
         } else {
-            return $this->with($path, $required, $formatter);
+            return $this->with($path, $required = $required, $formatter = $formatter);
         }
 
     }
@@ -54,7 +56,7 @@ class JsonSchema {
                 $value === NULL) {
                 throw new RequiredValueNotFoundException($component->path);
             }
-            array_push($values, $value);
+            return $value;
         }, $this->components);
     }
 
@@ -64,8 +66,14 @@ class JsonSchema {
         return $targetClass->newInstanceArgs($arguments);
     }
 
+    public function getParser(array $additionalArgs = array()) {
+        return function ($json) use ($additionalArgs) {
+            return $this->parse($json, $additionalArgs);
+        };
+    }
+
     public static function fromClass($targetClass, $snakeCase = true) {
-        $classVars = array_keys(get_class_vars($targetClass));
+        $classVars = FunctionalUtils::get_class_vars_assoc($targetClass);
         $newSchema = new JsonSchema($targetClass);
         return array_reduce(
             $classVars, function ($schema, $path) use ($snakeCase) {

@@ -4,11 +4,11 @@ namespace Gopay\Resources;
 
 
 use Gopay\Requests\RequestContext;
-use Gopay\Utility\FunctionalUtils as fp;
-use Gopay\Utility\JsonSchema;
-
+use Gopay\Resources\Configuration\Configuration;
+use Gopay\Utility\Json\JsonSchema;
 
 class Merchant extends Resource {
+    use Jsonable;
 
     public $verificationDataId;
     public $name;
@@ -26,7 +26,6 @@ class Merchant extends Resource {
                                 $createdOn,
                                 $context = NULL)
     {
-        CardConfiguration::getSchema();
         parent::__construct($id, $context);
         $this->verificationDataId = $verificationDataId;
         $this->name = $name;
@@ -43,11 +42,15 @@ class Merchant extends Resource {
             $json["name"],
             $json["email"],
             $json["verified"],
-            Configuration::fromJson(fp::get_or_else($json, "configuration", array())),
+            //Configuration::fromJson(fp::get_or_else($json, "configuration", array())),
             $json["created_on"],
             $context = $requestContext
         );
     }
 
-
+    protected static function initSchema()
+    {
+        return JsonSchema::fromClass(Merchant::class)
+                    ->upsert("configuration", true, Configuration::getSchema()->getParser());
+    }
 }

@@ -5,6 +5,8 @@ namespace Gopay\Resources;
 
 use Gopay\Requests\RequestContext;
 use Gopay\Utility\FunctionalUtils as fp;
+use Gopay\Utility\JsonSchema;
+
 
 class Merchant extends Resource implements Jsonable {
 
@@ -24,6 +26,7 @@ class Merchant extends Resource implements Jsonable {
                                 $createdOn,
                                 $context = NULL)
     {
+        CardConfiguration::getSchema();
         parent::__construct($id, $context);
         $this->verificationDataId = $verificationDataId;
         $this->name = $name;

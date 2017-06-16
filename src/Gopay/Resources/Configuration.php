@@ -3,8 +3,11 @@
 namespace Gopay\Resources;
 
 use Gopay\Utility\FunctionalUtils as fp;
+use Gopay\Utility\JsonSchema;
 
 class CardConfiguration {
+
+    private static $schema;
 
     public $enabled;
     public $debitEnabled;
@@ -25,6 +28,13 @@ class CardConfiguration {
         $this->failOnNewEmail = $failOnNewEmail;
     }
 
+    public static function getSchema() {
+        if (!isset(self::$schema)) {
+            self::schema = JsonSchema::fromClass(CardConfiguration::class);
+        }
+        return self::$schema;
+    }
+
     public static function fromJson($json) {
         return new CardConfiguration(
             fp::get_or_null($json, "enabled"),
@@ -39,14 +49,17 @@ class CardConfiguration {
 
 }
 
-class QRConfiguration {
-    public $enabled;
-    public $forbidden_qr_scan_gateway;
 
-    public function __construct($enabled, $forbidden_qr_scan_gateway)
+
+class QRConfiguration {
+    //$schema = JsonSchema::fromClass(QRConfiguration::class);
+    public $enabled;
+    public $forbiddenQrScanGateway;
+
+    public function __construct($enabled, $forbiddenQrScanGateway)
     {
         $this->enabled = $enabled;
-        $this->forbidden_qr_scan_gateway = $forbidden_qr_scan_gateway;
+        $this->forbiddenQrScanGateway = $forbiddenQrScanGateway;
     }
 
     public static function fromJson($json) {
@@ -58,14 +71,16 @@ class QRConfiguration {
 
 }
 
+//$recurringJsonSchema = JsonSchema::fromClass(RecurringConfiguration::class);
+
 class RecurringConfiguration {
 
-    public $recurring_type;
-    public $charge_wait_period;
+    public $recurringType;
+    public $chargeWaitPeriod;
 
-    public function __construct($recurring_type, $charge_wait_period) {
-        $this->recurring_type = $recurring_type;
-        $this->charge_wait_period = $charge_wait_period;
+    public function __construct($recurringType, $chargeWaitPeriod) {
+        $this->recurringType = $recurringType;
+        $this->chargeWaitPeriod = $chargeWaitPeriod;
     }
 
     public static function fromJson($json) {
@@ -76,6 +91,8 @@ class RecurringConfiguration {
     }
 
 }
+
+//$securityConfSchema = JsonSchema::fromClass(SecurityConfiguration::class);
 
 class SecurityConfiguration {
 
@@ -93,6 +110,7 @@ class SecurityConfiguration {
     }
 
 }
+
 
 class Configuration
 {

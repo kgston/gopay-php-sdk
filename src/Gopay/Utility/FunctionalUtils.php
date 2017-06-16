@@ -20,5 +20,19 @@ abstract class FunctionalUtils {
         return array_merge(array(), $array);
     }
 
+    public static function identity($a) {
+        return $a;
+    }
+
+    public static function array_find_index($xs, $f) {
+        $index = 0;
+        foreach ($xs as $x) {
+            if (call_user_func($f, $x) === true)
+                return $index;
+            $index++;
+        }
+        return null;
+    }
+
 }
 

@@ -5,6 +5,7 @@ namespace Gopay;
 use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
+use Gopay\Resources\CardConfiguration;
 use Gopay\Resources\Merchant;
 use Gopay\Resources\Store;
 use Gopay\Utility\RequesterUtils;
@@ -24,6 +25,7 @@ class Client
         $this->appToken = $appToken;
         $this->appSecret = $appSecret;
         $this->requester = new HttpRequester();
+
     }
 
     private function getDefaultContext()

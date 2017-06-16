@@ -51,12 +51,16 @@ class JsonSchema {
     private function getValues($json) {
         return array_map(function ($component) use ($json) {
             $path_parts = explode("/", $component->path);
-            $value = call_user_func($component->formatter, JsonSchema::getField($json, $path_parts));
-            if ($component->required &&
-                $value === NULL) {
-                throw new RequiredValueNotFoundException($component->path);
+            $value = JsonSchema::getField($json, $component->required, $path_parts);
+            if ($value === NULL) {
+                if ($component->required) {
+                    throw new RequiredValueNotFoundException($component->path);
+                } else {
+                    return NULL;
+                }
+
             }
-            return $value;
+            return call_user_func($component->formatter, $value);
         }, $this->components);
     }
 
@@ -82,20 +86,27 @@ class JsonSchema {
         }, $newSchema);
     }
 
-    public static function getField($json, array $paths) {
+    public static function getField($json, $required, array $paths) {
+        if ($json === NULL && !$required) {
+            return $json;
+        }
         if (sizeof($paths) === 0) {
             throw new NoSuchPathException(NULL);
         }
         $nextKey = $paths[0];
         if (!array_key_exists($nextKey, $json)) {
-            throw new NoSuchPathException($nextKey);
+            if ($required) {
+                throw new NoSuchPathException($nextKey);
+            } else {
+                return NULL;
+            }
         }
         $nextJson = $json[$nextKey];
         if (sizeof($paths) === 1) {
             return $nextJson;
         } else {
             try {
-                return JsonSchema::getField($nextJson, array_slice($paths, 1));
+                return JsonSchema::getField($nextJson, $required, array_slice($paths, 1));
             } catch (NoSuchPathException $except) {
                 throw new NoSuchPathException($nextKey . "/" . $except->path);
             }

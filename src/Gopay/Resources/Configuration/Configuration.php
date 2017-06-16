@@ -16,7 +16,7 @@ class Configuration {
     public $transferPeriod;
     public $logoUrl;
     public $cardConfiguration;
-    public $qrConfiguration;
+    public $qrScanConfiguration;
     public $recurringConfiguration;
     public $securityConfiguration;
 
@@ -27,7 +27,7 @@ class Configuration {
                                 $transferPeriod,
                                 $logoUrl,
                                 $cardConfiguration,
-                                $qrConfiguration,
+                                $qrScanConfiguration,
                                 $recurringConfiguration,
                                 $securityConfiguration)
     {
@@ -38,7 +38,7 @@ class Configuration {
         $this->transferPeriod = $transferPeriod;
         $this->logoUrl = $logoUrl;
         $this->cardConfiguration = $cardConfiguration;
-        $this->qrConfiguration = $qrConfiguration;
+        $this->qrScanConfiguration = $qrScanConfiguration;
         $this->recurringConfiguration = $recurringConfiguration;
         $this->securityConfiguration = $securityConfiguration;
     }
@@ -47,7 +47,7 @@ class Configuration {
     {
         return JsonSchema::fromClass(Configuration::class)
                 ->upsert("card_configuration", true, $formatter = CardConfiguration::getSchema()->getParser())
-                ->upsert("qr_configuration", true, $formatter = QRConfiguration::getSchema()->getParser())
+                ->upsert("qr_scan_configuration", true, $formatter = QRConfiguration::getSchema()->getParser())
                 ->upsert("recurring_configuration", true, $formatter = RecurringConfiguration::getSchema()->getParser())
                 ->upsert("security_configuration", true, $formatter = SecurityConfiguration::getSchema()->getParser());
     }

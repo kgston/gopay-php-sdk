@@ -20,7 +20,7 @@ abstract class RequesterUtils {
                                    RequestContext $context,
                                    array $query = array()) {
         $response = $requester->get($context, $query);
-        return Paginated::fromResponse($response, $query, $parser::getSchema()->getParser($context), $context, $requester);
+        return Paginated::fromResponse($response, $query, $parser::getSchema()->getParser(array($context)), $context, $requester);
     }
 
     public static function execute_post(Requester $requester,

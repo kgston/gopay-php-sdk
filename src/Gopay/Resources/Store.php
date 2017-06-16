@@ -4,7 +4,8 @@ namespace Gopay\Resources;
 
 
 use Gopay\Requests\RequestContext;
-use Gopay\Utility\FunctionalUtils as fp;
+use Gopay\Resources\Configuration\Configuration;
+use Gopay\Utility\Json\JsonSchema;
 
 class Store extends Resource
 {
@@ -16,7 +17,7 @@ class Store extends Resource
     public function __construct($id,
                                 $name,
                                 $createdOn,
-                                Configuration $configuration,
+                                $configuration,
                                 RequestContext $context = NULL)
     {
         parent::__construct($id, $context);
@@ -28,6 +29,6 @@ class Store extends Resource
     protected static function initSchema()
     {
         return JsonSchema::fromClass(Store::class)
-            ->upsert("configuration", $formatter = Configuration::getSchema()->getParser());
+            ->upsert("configuration", false, Configuration::getSchema()->getParser());
     }
 }

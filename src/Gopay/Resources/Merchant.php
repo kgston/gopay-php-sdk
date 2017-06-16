@@ -8,8 +8,8 @@ use Gopay\Resources\Configuration\Configuration;
 use Gopay\Utility\Json\JsonSchema;
 
 class Merchant extends Resource {
-    use Jsonable;
 
+    use Jsonable;
     public $verificationDataId;
     public $name;
     public $email;

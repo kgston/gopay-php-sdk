@@ -24,6 +24,7 @@ class HttpRequester implements Requester
 
     public function patch($url, array $payload = array(), array $headers = array())
     {
+        echo($url);
         return HttpUtils::check_response(Requests::patch($url, $headers, $payload));
     }
 

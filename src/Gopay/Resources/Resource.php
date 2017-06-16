@@ -29,7 +29,8 @@ abstract class Resource {
     }
 
     public function update(array $updates) {
-
+        $context = $this->getIdContext();
+        return RequesterUtils::execute_patch(get_class($this), $context, $updates);
     }
 
 }

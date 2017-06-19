@@ -3,8 +3,12 @@
 namespace Gopay\Resources;
 
 
+use Composer\DependencyResolver\Request;
 use Gopay\Requests\RequestContext;
 use Gopay\Resources\Configuration\Configuration;
+use Gopay\Resources\Mixins\GetCharges;
+use Gopay\Resources\Mixins\GetSubscriptions;
+use Gopay\Resources\Mixins\GetTransactions;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
@@ -12,9 +16,14 @@ use Gopay\Utility\RequesterUtils;
 class Store extends Resource
 {
     use Jsonable;
+    use GetSubscriptions;
+    use GetTransactions;
+    use GetCharges;
+
     public $name;
     public $createdOn;
     public $configuration;
+
 
     public function __construct($id,
                                 $name,
@@ -34,73 +43,28 @@ class Store extends Resource
             ->upsert("configuration", false, Configuration::getSchema()->getParser());
     }
 
-    public function listCharges($lastFour=NULL,
-                                $name=NULL,
-                                $expMonth=NULL,
-                                $expYear=NULL,
-                                $cardNumber=NULL,
-                                $from=NULL,
-                                $to=NULL,
-                                $email=NULL,
-                                $phone=NULL,
-                                $amountFrom=NULL,
-                                $amountTo=NULL,
-                                $currency=NULL,
-                                $mode=NULL,
-                                $cursor=NULL,
-                                $limit=NULL,
-                                $cursorDirection=NULL)
-    {
-        $context = $this->getIdContext()->appendPath("charges");
-        $query = array(
-            "last_four" => $lastFour,
-            "name" => $name,
-            "exp_month" => $expMonth,
-            "exp_year" => $expYear,
-            "card_number" => $cardNumber,
-            "from" => $from,
-            "to" => $to,
-            "email" => $email,
-            "phone" => $phone,
-            "amount_from" => $amountFrom,
-            "amount_to" => $amountTo,
-            "currency" => $currency,
-            "mode" => $mode,
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => $cursorDirection
-        );
-        return RequesterUtils::execute_get_paginated(Charge::class, $context, $query);
-    }
-
     public function getCharge($chargeId) {
         $context = $this->getIdContext()->appendPath(array("charges", $chargeId));
         return RequesterUtils::execute_get(Charge::class, $context);
     }
 
-    public function listTransactions($from = NULL,
-                                     $to = NULL,
-                                     $status = NULL,
-                                     $type = NULL,
-                                     $search = NULL,
-                                     $mode = NULL,
-                                     $cursor = NULL,
-                                     $limit = NULL,
-                                     $cursorDirection = NULL)
+    public function getSubscription($subscriptionId) {
+        $context = $this->getIdContext()->appendPath(array("subscriptions", $subscriptionId));
+        return RequesterUtils::execute_get(Subscription::class, $context);
+    }
+
+    protected function getSubscriptionContext()
     {
-        $query = FunctionalUtils::strip_nulls(array(
-            "from" => $from,
-            "to" => $to,
-            "status" => $status,
-            "type" => $type,
-            "search" => $search,
-            "mode" => $mode,
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursorDirection" => $cursorDirection
-        ));
-        $context = $this->getIdContext()->appendPath("transactions");
-        $response = $context->getRequester()->get($context->getFullURL(), $query, RequesterUtils::getHeaders($context));
-        return Transaction::getSchema()->parse($response);
+        return $this->getIdContext()->appendPath("subscriptions");
+    }
+
+    protected function getTransactionContext()
+    {
+        return $this->getIdContext()->appendPath("transactions");
+    }
+
+    protected function getChargeContext()
+    {
+        return $this->getIdContext()->appendPath("charges");
     }
 }

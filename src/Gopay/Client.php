@@ -8,7 +8,11 @@ use Gopay\Requests\Requester;
 use Gopay\Resources\CardConfiguration;
 use Gopay\Resources\Charge;
 use Gopay\Resources\Merchant;
+use Gopay\Resources\Mixins\GetCharges;
+use Gopay\Resources\Mixins\GetSubscriptions;
+use Gopay\Resources\Mixins\GetTransactions;
 use Gopay\Resources\Store;
+use Gopay\Resources\Subscription;
 use Gopay\Resources\Transaction;
 use Gopay\Resources\TransactionToken;
 use Gopay\Utility\FunctionalUtils;
@@ -17,6 +21,10 @@ use Gopay\Utility\RequesterUtils;
 
 class Client
 {
+    use GetSubscriptions;
+    use GetTransactions;
+    use GetCharges;
+
     private $endpoint;
 
     private $appToken;
@@ -156,72 +164,14 @@ class Client
         return RequesterUtils::execute_post(Charge::class, $context, $payload);
     }
 
-    public function listCharges($lastFour=NULL,
-                                $name=NULL,
-                                $expMonth=NULL,
-                                $expYear=NULL,
-                                $cardNumber=NULL,
-                                $from=NULL,
-                                $to=NULL,
-                                $email=NULL,
-                                $phone=NULL,
-                                $amountFrom=NULL,
-                                $amountTo=NULL,
-                                $currency=NULL,
-                                $mode=NULL,
-                                $cursor=NULL,
-                                $limit=NULL,
-                                $cursorDirection=NULL) {
-        $context = $this->getDefaultContext()->withPath("charges");
-        $query = array(
-            "last_four" => $lastFour,
-            "name" => $name,
-            "exp_month" => $expMonth,
-            "exp_year" => $expYear,
-            "card_number" => $cardNumber,
-            "from" => $from,
-            "to" => $to,
-            "email" => $email,
-            "phone" => $phone,
-            "amount_from" => $amountFrom,
-            "amount_to" => $amountTo,
-            "currency" => $currency,
-            "mode" => $mode,
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => $cursorDirection
-        );
-        return RequesterUtils::execute_get_paginated(Charge::class, $context, $query);
-    }
-
     public function getCharge($storeId, $chargeId) {
         $context = $this->getDefaultContext()->withPath(array("stores", $storeId, "charges", $chargeId));
         return RequesterUtils::execute_get(Charge::class, $context);
     }
 
-    public function listTransactions($from = NULL,
-                                     $to = NULL,
-                                     $status = NULL,
-                                     $type = NULL,
-                                     $search = NULL,
-                                     $mode = NULL,
-                                     $cursor = NULL,
-                                     $limit = NULL,
-                                     $cursorDirection = NULL) {
-        $query = FunctionalUtils::strip_nulls(array(
-            "from" => $from,
-            "to" => $to,
-            "status" => $status,
-            "type" => $type,
-            "search" => $search,
-            "mode" => $mode,
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursorDirection" => $cursorDirection
-        ));
-        $context = $this->getDefaultContext()->withPath("transactions");
-        $response = $context->getRequester()->get($context->getFullURL(), $query, RequesterUtils::getHeaders($context));
-        return Transaction::getSchema()->parse($response);
+    public function getSubscription($storeId, $subscriptionId) {
+        $context = $this->getDefaultContext()->withPath(array("stores", $storeId, "subscriptions", $subscriptionId));
+        return RequesterUtils::execute_get(Subscription::class, $context);
     }
 
     public function listTransfers() {
@@ -230,5 +180,20 @@ class Client
 
     public function getTransfer($id) {
 
+    }
+
+    protected function getSubscriptionContext()
+    {
+        return $this->getDefaultContext()->withPath("subscriptions");
+    }
+
+    protected function getTransactionContext()
+    {
+        return $this->getDefaultContext()->withPath("transactions");
+    }
+
+    protected function getChargeContext()
+    {
+        return $this->getDefaultContext()->withPath("charges");
     }
 }

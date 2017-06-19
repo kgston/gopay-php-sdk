@@ -48,5 +48,15 @@ abstract class FunctionalUtils {
         return $classVars;
     }
 
+    public static function strip_nulls(array $array) {
+        return array_reduce(array_keys($array) , function ($currentArray, $key) use ($array) {
+            if ($array[$key] !== NULL) {
+                return array_merge(array($key => $array[$key]), $currentArray);
+            } else {
+                return $currentArray;
+            }
+        }, array());
+    }
+
 }
 

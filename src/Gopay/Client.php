@@ -10,6 +10,7 @@ use Gopay\Resources\Charge;
 use Gopay\Resources\Merchant;
 use Gopay\Resources\Store;
 use Gopay\Resources\TransactionToken;
+use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
 
 class Client
@@ -49,10 +50,18 @@ class Client
         );
     }
 
-    public function listStores() {
+    public function listStores($cursor=NULL,
+                               $limit=NULL,
+                               $cursorDirection=NULL) {
+        $query = FunctionalUtils::strip_nulls(array(
+            "cursor" => $cursor,
+            "limit" => $limit,
+            "cursor_direction" => $cursorDirection
+        ));
         return RequesterUtils::execute_get_paginated(
             Store::class,
-            $this->getDefaultContext()->withPath("stores")
+            $this->getDefaultContext()->withPath("stores"),
+            $query
         );
     }
 
@@ -143,6 +152,44 @@ class Client
 
         $context = $this->getDefaultContext()->withPath("charges");
         return RequesterUtils::execute_post(Charge::class, $context, $payload);
+    }
+
+    public function listCharges($lastFour=NULL,
+                                $name=NULL,
+                                $expMonth=NULL,
+                                $expYear=NULL,
+                                $cardNumber=NULL,
+                                $from=NULL,
+                                $to=NULL,
+                                $email=NULL,
+                                $phone=NULL,
+                                $amountFrom=NULL,
+                                $amountTo=NULL,
+                                $currency=NULL,
+                                $mode=NULL,
+                                $cursor=NULL,
+                                $limit=NULL,
+                                $cursorDirection=NULL) {
+        $context = $this->getDefaultContext()->withPath("charges");
+        $query = array(
+            "last_four" => $lastFour,
+            "name" => $name,
+            "exp_month" => $expMonth,
+            "exp_year" => $expYear,
+            "card_number" => $cardNumber,
+            "from" => $from,
+            "to" => $to,
+            "email" => $email,
+            "phone" => $phone,
+            "amount_from" => $amountFrom,
+            "amount_to" => $amountTo,
+            "currency" => $currency,
+            "mode" => $mode,
+            "cursor" => $cursor,
+            "limit" => $limit,
+            "cursor_direction" => $cursorDirection
+        );
+        return RequesterUtils::execute_get_paginated(Charge::class, $context, $query);
     }
 
     public function listTransactions() {

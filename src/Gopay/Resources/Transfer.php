@@ -9,7 +9,9 @@
 namespace Gopay\Resources;
 
 
+use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\Json\JsonSchema;
+use Gopay\Utility\RequesterUtils;
 
 class Transfer extends Resource
 {
@@ -36,6 +38,19 @@ class Transfer extends Resource
         $this->startedBy = $startedBy;
         $this->from = $from;
         $this->to = $to;
+    }
+
+    public function listLedgers($cursor=NULL,
+                                $limit=NULL,
+                                $cursorDirection=NULL)
+    {
+        $query = FunctionalUtils::strip_nulls(array(
+            "cursor" => $cursor,
+            "limit" => $limit,
+            "cursor_direction" => $cursorDirection
+        ));
+        $context = $this->getIdContext()->appendPath("ledgers");
+        return RequesterUtils::execute_get_paginated(Ledger::class, $context, $query);
     }
 
     protected static function initSchema()

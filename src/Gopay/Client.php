@@ -6,6 +6,7 @@ use Composer\DependencyResolver\Request;
 use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
+use Gopay\Resources\BankAccount;
 use Gopay\Resources\CardConfiguration;
 use Gopay\Resources\Charge;
 use Gopay\Resources\Merchant;
@@ -82,12 +83,21 @@ class Client
         return RequesterUtils::execute_get(Store::class, $context);
     }
 
-    public function listBankAccounts() {
-
+    public function listBankAccounts($cursor=NULL,
+                                     $limit=NULL,
+                                     $cursorDirection=NULL) {
+        $query = FunctionalUtils::strip_nulls(array(
+            "cursor" => $cursor,
+            "limit" => $limit,
+            "cursor_direction" => $cursorDirection
+        ));
+        $context = $this->getDefaultContext()->withPath("bank_accounts");
+        return RequesterUtils::execute_get_paginated(BankAccount::class, $context, $query);
     }
 
     public function getBankAccount($id) {
-
+        $context = $this->getDefaultContext()->withPath(array("bank_accounts", $id));
+        return RequesterUtils::execute_get(BankAccount::class, $context);
     }
 
     public function createCardToken($email,

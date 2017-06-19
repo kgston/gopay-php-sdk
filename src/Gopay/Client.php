@@ -2,6 +2,7 @@
 
 namespace Gopay;
 
+use Composer\DependencyResolver\Request;
 use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
@@ -15,6 +16,7 @@ use Gopay\Resources\Store;
 use Gopay\Resources\Subscription;
 use Gopay\Resources\Transaction;
 use Gopay\Resources\TransactionToken;
+use Gopay\Resources\Transfer;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\HttpUtils;
 use Gopay\Utility\RequesterUtils;
@@ -174,12 +176,21 @@ class Client
         return RequesterUtils::execute_get(Subscription::class, $context);
     }
 
-    public function listTransfers() {
-
+    public function listTransfers($cursor=NULL,
+                                  $limit=NULL,
+                                  $cursorDirection=NULL) {
+        $query = FunctionalUtils::strip_nulls(array(
+            "cursor" => $cursor,
+            "limit" => $limit,
+            "cursor_direction" => $cursorDirection
+        ));
+        $context = $this->getDefaultContext()->withPath("transfers");
+        return RequesterUtils::execute_get_paginated(Transfer::class, $context, $query);
     }
 
     public function getTransfer($id) {
-
+        $context = $this->getDefaultContext()->withPath(array("transfers", $id));
+        return RequesterUtils::execute_get(Transfer::class, $context);
     }
 
     protected function getSubscriptionContext()

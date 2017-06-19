@@ -19,9 +19,6 @@ class HttpRequester implements Requester
 
     public function post($url, array $payload = array(), array $headers = array())
     {
-        echo(var_dump($payload));
-        echo(var_dump($headers));
-        echo(json_encode($payload));
         return HttpUtils::check_response(Requests::post($url, $headers = $headers, $data = json_encode($payload)));
     }
 

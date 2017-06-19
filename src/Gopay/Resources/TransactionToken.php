@@ -10,6 +10,7 @@ namespace Gopay\Resources;
 
 use Gopay\Resources\PaymentData\CardData;
 use Gopay\Utility\Json\JsonSchema;
+use Gopay\Utility\RequesterUtils;
 
 class TransactionToken extends Resource {
     use Jsonable;
@@ -65,6 +66,20 @@ class TransactionToken extends Resource {
                 ->upsert("data", true, $formatter = CardData::getSchema()->getParser());
         }
         return self::$cardDataSchema;
+    }
+
+    public function createCharge($amount, $currency, $metadata = NULL) {
+        $payload = array(
+            'transaction_token_id' => $this->id,
+            'amount' => $amount,
+            'currency' => $currency
+        );
+        if ($metadata != NULL)  {
+            $payload = array_map(array("metadata" => $metadata), $payload);
+        }
+
+        $context = $this->context->withPath("charges");
+        return RequesterUtils::execute_post(Charge::class, $context, $payload);
     }
 
 }

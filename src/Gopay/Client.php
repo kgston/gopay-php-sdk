@@ -6,6 +6,7 @@ use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
 use Gopay\Resources\CardConfiguration;
+use Gopay\Resources\Charge;
 use Gopay\Resources\Merchant;
 use Gopay\Resources\Store;
 use Gopay\Resources\TransactionToken;
@@ -127,8 +128,21 @@ class Client
         return TransactionToken::getCardSchema()->parse($response, array($context));
     }
 
-    public function createCharge() {
+    public function createCharge($transactionTokenId,
+                                 $amount,
+                                 $currency,
+                                 $metadata = NULL) {
+        $payload = array(
+            'transaction_token_id' => $transactionTokenId,
+            'amount' => $amount,
+            'currency' => $currency
+        );
+        if ($metadata != NULL)  {
+            $payload = array_map(array("metadata" => $metadata), $payload);
+        }
 
+        $context = $this->getDefaultContext()->withPath("charges");
+        return RequesterUtils::execute_post(Charge::class, $context, $payload);
     }
 
     public function listTransactions() {

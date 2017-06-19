@@ -9,8 +9,10 @@ use Gopay\Resources\CardConfiguration;
 use Gopay\Resources\Charge;
 use Gopay\Resources\Merchant;
 use Gopay\Resources\Store;
+use Gopay\Resources\Transaction;
 use Gopay\Resources\TransactionToken;
 use Gopay\Utility\FunctionalUtils;
+use Gopay\Utility\HttpUtils;
 use Gopay\Utility\RequesterUtils;
 
 class Client
@@ -197,8 +199,29 @@ class Client
         return RequesterUtils::execute_get(Charge::class, $context);
     }
 
-    public function listTransactions() {
-
+    public function listTransactions($from = NULL,
+                                     $to = NULL,
+                                     $status = NULL,
+                                     $type = NULL,
+                                     $search = NULL,
+                                     $mode = NULL,
+                                     $cursor = NULL,
+                                     $limit = NULL,
+                                     $cursorDirection = NULL) {
+        $query = FunctionalUtils::strip_nulls(array(
+            "from" => $from,
+            "to" => $to,
+            "status" => $status,
+            "type" => $type,
+            "search" => $search,
+            "mode" => $mode,
+            "cursor" => $cursor,
+            "limit" => $limit,
+            "cursorDirection" => $cursorDirection
+        ));
+        $context = $this->getDefaultContext()->withPath("transactions");
+        $response = $context->getRequester()->get($context->getFullURL(), $query, RequesterUtils::getHeaders($context));
+        return Transaction::getSchema()->parse($response);
     }
 
     public function listTransfers() {

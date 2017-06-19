@@ -86,7 +86,8 @@ class Charge extends Resource
 
     public function listRefunds($cursor=NULL,
                                 $limit=NULL,
-                                $cursorDirection=NULL) {
+                                $cursorDirection=NULL)
+    {
         $query = FunctionalUtils::strip_nulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
@@ -97,5 +98,6 @@ class Charge extends Resource
             $this->getIdContext()->appendPath("refunds"),
             $query
         );
+    }
 
 }

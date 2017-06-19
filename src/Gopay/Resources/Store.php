@@ -5,6 +5,7 @@ namespace Gopay\Resources;
 
 use Gopay\Requests\RequestContext;
 use Gopay\Resources\Configuration\Configuration;
+use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
 
@@ -75,5 +76,31 @@ class Store extends Resource
     public function getCharge($chargeId) {
         $context = $this->getIdContext()->appendPath(array("charges", $chargeId));
         return RequesterUtils::execute_get(Charge::class, $context);
+    }
+
+    public function listTransactions($from = NULL,
+                                     $to = NULL,
+                                     $status = NULL,
+                                     $type = NULL,
+                                     $search = NULL,
+                                     $mode = NULL,
+                                     $cursor = NULL,
+                                     $limit = NULL,
+                                     $cursorDirection = NULL)
+    {
+        $query = FunctionalUtils::strip_nulls(array(
+            "from" => $from,
+            "to" => $to,
+            "status" => $status,
+            "type" => $type,
+            "search" => $search,
+            "mode" => $mode,
+            "cursor" => $cursor,
+            "limit" => $limit,
+            "cursorDirection" => $cursorDirection
+        ));
+        $context = $this->getIdContext()->appendPath("transactions");
+        $response = $context->getRequester()->get($context->getFullURL(), $query, RequesterUtils::getHeaders($context));
+        return Transaction::getSchema()->parse($response);
     }
 }

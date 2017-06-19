@@ -30,7 +30,7 @@ abstract class HttpUtils {
     public static function check_response($response) {
         switch($response->status_code) {
             case BAD_REQUEST:
-                throw GopayRequestError::from_json(json_decode($response->body));
+                throw GopayRequestError::from_json(json_decode($response->body, true));
 
             case UNAUTHORIZED:
                 throw new GopayUnauthorizedError();
@@ -51,7 +51,10 @@ abstract class HttpUtils {
     }
 
     public static function add_json_header(array $headers) {
-        return array_merge(array("Accept" => "application/json"), $headers);
+        return array_merge(array(
+            "Accept" => "application/json",
+            "Content-Type" => "application/json"
+        ), $headers);
     }
 
 }

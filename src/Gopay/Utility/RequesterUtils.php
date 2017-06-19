@@ -8,7 +8,7 @@ use Gopay\Resources\Paginated;
 
 abstract class RequesterUtils {
 
-    private static function getHeaders(RequestContext $requestContext, array $headers = array()) {
+    public static function getHeaders(RequestContext $requestContext, array $headers = array()) {
         return array_merge(
             HttpUtils::add_json_header($requestContext->getAuthorizationHeaders()),
             $headers

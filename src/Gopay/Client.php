@@ -123,7 +123,8 @@ class Client
             "currency" => $currency,
             "data" => $data
         );
-        return RequesterUtils::execute_post(TransactionToken::class, $context, $payload);
+        $response = $context->getRequester()->post($context->getFullURL(), $payload, RequesterUtils::getHeaders($context));
+        return TransactionToken::getCardSchema()->parse($response, array($context));
     }
 
     public function createCharge() {

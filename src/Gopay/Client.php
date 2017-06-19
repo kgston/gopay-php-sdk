@@ -192,6 +192,11 @@ class Client
         return RequesterUtils::execute_get_paginated(Charge::class, $context, $query);
     }
 
+    public function getCharge($storeId, $chargeId) {
+        $context = $this->getDefaultContext()->withPath(array("stores", $storeId, "charges", $chargeId));
+        return RequesterUtils::execute_get(Charge::class, $context);
+    }
+
     public function listTransactions() {
 
     }

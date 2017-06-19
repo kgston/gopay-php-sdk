@@ -3,7 +3,9 @@
 namespace Gopay\Resources;
 
 
+use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\Json\JsonSchema;
+use Gopay\Utility\RequesterUtils;
 
 class Charge extends Resource
 {
@@ -65,4 +67,35 @@ class Charge extends Resource
     {
         return JsonSchema::fromClass(self::class);
     }
+
+    public function createRefund($amount,
+                                 $currency,
+                                 $reason = NULL,
+                                 $message = NULL,
+                                 $metadata = NULL) {
+        $payload = FunctionalUtils::strip_nulls(array(
+            "amount" => $amount,
+            "currency" => $currency,
+            "reason" => $reason,
+            "message" => $message,
+            "metadata" => $metadata
+            ));
+        $context = $this->getIdContext()->appendPath("refunds");
+        return RequesterUtils::execute_post(Refund::class, $context, $payload);
+    }
+
+    public function listRefunds($cursor=NULL,
+                                $limit=NULL,
+                                $cursorDirection=NULL) {
+        $query = FunctionalUtils::strip_nulls(array(
+            "cursor" => $cursor,
+            "limit" => $limit,
+            "cursor_direction" => $cursorDirection
+        ));
+        return RequesterUtils::execute_get_paginated(
+            Refund::class,
+            $this->getIdContext()->appendPath("refunds"),
+            $query
+        );
+
 }

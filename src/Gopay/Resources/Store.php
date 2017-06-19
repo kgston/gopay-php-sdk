@@ -71,7 +71,7 @@ class Store extends Resource
         );
         return RequesterUtils::execute_get_paginated(Charge::class, $context, $query);
     }
-    
+
     public function getCharge($chargeId) {
         $context = $this->getIdContext()->appendPath(array("charges", $chargeId));
         return RequesterUtils::execute_get(Charge::class, $context);

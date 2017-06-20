@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: adamsar
- * Date: 6/16/17
- * Time: 5:50 PM
- */
 
 namespace Gopay\Resources;
 

@@ -22,7 +22,7 @@ use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\HttpUtils;
 use Gopay\Utility\RequesterUtils;
 
-class Client
+class GopayClient
 {
     use GetSubscriptions;
     use GetTransactions;

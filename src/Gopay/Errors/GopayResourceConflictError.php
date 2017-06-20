@@ -2,18 +2,19 @@
 /**
  * Created by PhpStorm.
  * User: adamsar
- * Date: 6/16/17
- * Time: 1:57 PM
+ * Date: 6/20/17
+ * Time: 9:50 AM
  */
 
 namespace Gopay\Errors;
 
+
 use Throwable;
 
-class GopayNotFoundError extends GopayError
+class GopayResourceConflictError extends GopayError
 {
     public function __construct($url, $code = 0, Throwable $previous = null)
     {
-        parent::__construct("Route " . $url . "not found", $code, $previous);
+        parent::__construct("Resource conflict on " . $url, $code, $previous);
     }
 }

@@ -16,6 +16,8 @@ const NOT_FOUND = 404;
 
 const INTERNAL_SERVER_ERROR = 500;
 
+const CONFLICT = 409;
+
 abstract class HttpUtils {
 
 
@@ -27,19 +29,22 @@ abstract class HttpUtils {
         }
     }
 
-    public static function check_response($response) {
+    public static function check_response($url, $response) {
         switch($response->status_code) {
             case BAD_REQUEST:
                 throw GopayRequestError::from_json(json_decode($response->body, true));
 
             case UNAUTHORIZED:
-                throw new GopayUnauthorizedError();
+                throw new GopayUnauthorizedError($url);
 
             case FORBIDDEN:
-                throw new GopayUnauthorizedError();
+                throw new GopayUnauthorizedError($url);
 
             case NOT_FOUND:
-                throw new GopayNotFoundError();
+                throw new GopayNotFoundError($url);
+
+            case CONFLICT:
+                throw new GopayResourceConflictError($url);
 
             default:
                 if ($response->body) {

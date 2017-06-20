@@ -14,22 +14,21 @@ class HttpRequester implements Requester
         if (is_array($query) && sizeof($query) > 0) {
             $url .= "?" . HttpUtils::get_query_string($query);
         }
-        return HttpUtils::check_response(Requests::get($url, $headers));
+        return HttpUtils::check_response($url, Requests::get($url, $headers));
     }
 
     public function post($url, array $payload = array(), array $headers = array())
     {
-        return HttpUtils::check_response(Requests::post($url, $headers = $headers, $data = json_encode($payload)));
+        return HttpUtils::check_response($url, Requests::post($url, $headers = $headers, $data = json_encode($payload)));
     }
 
     public function patch($url, array $payload = array(), array $headers = array())
     {
-        echo($url);
-        return HttpUtils::check_response(Requests::patch($url, $headers, json_encode($payload)));
+        return HttpUtils::check_response($url, Requests::patch($url, $headers, json_encode($payload)));
     }
 
     public function delete($url, array $headers = array())
     {
-        return HttpUtils::check_response(Requests::delete($url, $headers));
+        return HttpUtils::check_response($url, Requests::delete($url, $headers));
     }
 }

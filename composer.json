@@ -8,12 +8,12 @@
     "license": "",
     "require": {
         "php": ">=5.3.3",
-        "phpunit/PHPUnit": "3.7.*",
-        "instaclick/php-code-sniffer": "dev-master",
-        "rmccue/requests": "^1.7",
-        "psy/psysh": "^0.8.6"
+        "rmccue/requests": "^1.7"
     },
     "require-dev": {
+        "phpunit/PHPUnit": "3.7.*",
+        "instaclick/php-code-sniffer": "dev-master",
+        "psy/psysh": "^0.8.6"	
     },
     "autoload": {
         "psr-0": {

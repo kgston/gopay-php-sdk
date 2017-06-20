@@ -60,7 +60,7 @@ class Store extends Resource
 
     protected function getTransactionContext()
     {
-        return $this->getIdContext()->appendPath("transactions");
+        return $this->getIdContext()->appendPath("transaction_history");
     }
 
     protected function getChargeContext()

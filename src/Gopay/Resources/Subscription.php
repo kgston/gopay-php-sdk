@@ -43,6 +43,11 @@ class Subscription extends Resource
         $this->createdOn = $createdOn;
     }
 
+    protected function getIdContext()
+    {
+        return $this->context->withPath(array("stores", $this->storeId, "subscriptions", $this->id));
+    }
+
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class);

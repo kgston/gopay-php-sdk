@@ -12,7 +12,7 @@ class HttpRequester implements Requester
     public function get($url, array $query = array(), array $headers = array())
     {
         if (is_array($query) && sizeof($query) > 0) {
-            $url .= "?" . HttpUtils::get_query_string($query);
+            $url .= HttpUtils::get_query_string($query);
         }
         return HttpUtils::check_response($url, Requests::get($url, $headers));
     }

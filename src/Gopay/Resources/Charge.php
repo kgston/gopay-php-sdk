@@ -68,6 +68,11 @@ class Charge extends Resource
         return JsonSchema::fromClass(self::class);
     }
 
+    protected function getIdContext()
+    {
+        return $this->context->withPath(array("stores", $this->storeId, "charges", $this->id));
+    }
+
     public function createRefund($amount,
                                  $currency,
                                  $reason = NULL,

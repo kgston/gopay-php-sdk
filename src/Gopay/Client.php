@@ -210,7 +210,7 @@ class Client
 
     protected function getTransactionContext()
     {
-        return $this->getDefaultContext()->withPath("transactions");
+        return $this->getDefaultContext()->withPath("transaction_history");
     }
 
     protected function getChargeContext()

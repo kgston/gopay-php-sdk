@@ -30,13 +30,13 @@ class RequestContext
     }
 
     public function withPath($path) {
-        $newPath = is_array($path) ? $path.join("/") : $path;
+        $newPath = is_array($path) ? join("/", $path) : $path;
         return new RequestContext($this->requester, $this->endpoint, $newPath, $this->appToken, $this->appSecret);
     }
 
     public function appendPath($path) {
         if (is_array($path)) {
-            return $this->withPath($this->path . "/" . $path.join("/"));
+            return $this->withPath($this->path . "/" . join("/", $path));
         } else if (is_string($path)) {
             return $this->withPath($this->path . "/" . $path);
         } else {

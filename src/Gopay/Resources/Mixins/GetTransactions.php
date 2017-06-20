@@ -9,6 +9,7 @@
 namespace Gopay\Resources\Mixins;
 
 
+use Gopay\Resources\Paginated;
 use Gopay\Resources\Transaction;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
@@ -41,7 +42,7 @@ trait GetTransactions
         ));
         $context = $this->getTransactionContext();
         $response = $context->getRequester()->get($context->getFullURL(), $query, RequesterUtils::getHeaders($context));
-        return Transaction::getSchema()->parse($response);
+        return Paginated::fromResponse($response, $query, Transaction::class, $context);
     }
 
 }

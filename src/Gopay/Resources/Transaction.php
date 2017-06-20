@@ -24,8 +24,9 @@ class Transaction
     public $type;
     public $status;
     public $createdOn;
+    private $context;
 
-    public function __construct($id, $store_id, $charge_id, $amount, $currency, $amountFormatted, $type, $status, $createdOn)
+    public function __construct($id, $store_id, $charge_id, $amount, $currency, $amountFormatted, $type, $status, $createdOn, $context)
     {
         $this->id = $id;
         $this->store_id = $store_id;
@@ -36,6 +37,7 @@ class Transaction
         $this->type = $type;
         $this->status = $status;
         $this->createdOn = $createdOn;
+        $this->context = $context;
     }
 
 

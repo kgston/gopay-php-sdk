@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: adamsar
- * Date: 6/13/17
- * Time: 6:50 PM
- */
 
 namespace Gopay\Resources;
 
@@ -52,7 +46,6 @@ class Paginated {
                                         $jsonableClass,
                                         $context) {
         $parser = $jsonableClass::getContextParser($context);
-        echo(var_dump($parser));
         return new Paginated(
             array_map($parser, $response["items"]),
             $response["has_more"],

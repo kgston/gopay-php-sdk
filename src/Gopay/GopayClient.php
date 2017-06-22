@@ -3,6 +3,9 @@
 namespace Gopay;
 
 use Composer\DependencyResolver\Request;
+use Exception;
+use Gopay\Errors\GopayInvalidWebhookData;
+use Gopay\Errors\GopayUnknownWebhookEvent;
 use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
@@ -13,11 +16,13 @@ use Gopay\Resources\Merchant;
 use Gopay\Resources\Mixins\GetCharges;
 use Gopay\Resources\Mixins\GetSubscriptions;
 use Gopay\Resources\Mixins\GetTransactions;
+use Gopay\Resources\Refund;
 use Gopay\Resources\Store;
 use Gopay\Resources\Subscription;
 use Gopay\Resources\Transaction;
 use Gopay\Resources\TransactionToken;
 use Gopay\Resources\Transfer;
+use Gopay\Resources\WebhookPayload;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\HttpUtils;
 use Gopay\Utility\RequesterUtils;
@@ -201,6 +206,39 @@ class GopayClient
     public function getTransfer($id) {
         $context = $this->getDefaultContext()->withPath(array("transfers", $id));
         return RequesterUtils::execute_get(Transfer::class, $context);
+    }
+
+    public function parseWebhookData($data) {
+        try {
+            $event = $data["event"];
+            $parser = NULL;
+            switch(strtolower($event)) {
+
+                case "charge_finished":
+                    $parser = Charge::getContextParser($this->getDefaultContext()->withPath("charges"));
+                    break;
+
+                case "subscription_payment":
+                case "subscription_failure":
+                case "subscription_cancelled":
+                    $parser = Subscription::getContextParser($this->getDefaultContext()->withPath("subscriptions"));
+                    break;
+
+                case "refund_finished":
+                    $parser = Refund::getContextParser($this->getDefaultContext());
+                    break;
+
+                case "transfer_finalized":
+                    $parser = Transfer::getContextParser($this->getDefaultContext()->withPath("transfers"));
+                    break;
+
+                default:
+                    throw new GopayUnknownWebhookEvent($event);
+            }
+            return new WebhookPayload($event, $parser($data["data"]));
+        } catch (Exception $exception) {
+            throw new GopayInvalidWebhookData($data);
+        }
     }
 
     protected function getSubscriptionContext()

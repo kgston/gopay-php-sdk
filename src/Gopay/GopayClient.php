@@ -106,8 +106,6 @@ class GopayClient
     }
 
     public function createCardToken($email,
-                                    $amount,
-                                    $currency,
                                     $cardholder,
                                     $cardNumber,
                                     $expMonth,
@@ -156,8 +154,6 @@ class GopayClient
             "type" => $type,
             "usage_limit" => $usageLimit,
             "email" => $email,
-            "amount" => $amount,
-            "currency" => $currency,
             "data" => $data
         );
         $response = $context->getRequester()->post($context->getFullURL(), $payload, RequesterUtils::getHeaders($context));

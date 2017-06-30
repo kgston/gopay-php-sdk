@@ -68,6 +68,7 @@ class TransactionToken extends Resource {
             'amount' => $amount,
             'currency' => $currency
         );
+
         if ($metadata != NULL)  {
             $payload = array_map(array("metadata" => $metadata), $payload);
         }

@@ -10,6 +10,7 @@ use Gopay\Utility\RequesterUtils;
 class Charge extends Resource
 {
     use Jsonable;
+    use Pollable;
 
     public $storeId;
     public $transactionTokenId;

@@ -9,6 +9,7 @@ class Refund extends Resource
 {
 
     use Jsonable;
+    use Pollable;
 
     public $chargeId;
     public $status;

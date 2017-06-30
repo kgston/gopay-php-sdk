@@ -9,10 +9,7 @@ $client->createCardToken("test@test.com", "test account", "4242424242424242", "0
 $token = $client->createCardToken("test@test.com", "test account", "4242424242424242", "02", "2022", "123", "one_time", NULL, "test", NULL, "test", "test", "jp", "101-1111", "81", "12910298309128");
 $charge = $client->createCharge($token->id, 1000, "usd");
 
-do {
-    sleep(1);
-    $charge = $charge->fetch();
-} while (strtolower($charge->status) === "pending");
+$charge = $charge->awaitResult();
 
 $refund = $charge->createRefund(1000, "usd", "fraud", "test", array("something" => NULL));
 $refund->fetch();

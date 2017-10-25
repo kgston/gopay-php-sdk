@@ -25,6 +25,8 @@ trait GetTransactions
                                      $type = NULL,
                                      $search = NULL,
                                      $mode = NULL,
+                                     $gatewayCredentialsId = NULL,
+                                     $gatewayTransactionId = NULL,
                                      $cursor = NULL,
                                      $limit = NULL,
                                      $cursorDirection = NULL)
@@ -36,6 +38,8 @@ trait GetTransactions
             "type" => $type,
             "search" => $search,
             "mode" => $mode,
+            "gateway_credentials_id" => $gatewayCredentialsId,
+            "gateway_transaction_id" => $gatewayTransactionId,
             "cursor" => $cursor,
             "limit" => $limit,
             "cursorDirection" => $cursorDirection

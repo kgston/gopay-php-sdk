@@ -15,6 +15,7 @@ class Charge extends Resource
     public $storeId;
     public $transactionTokenId;
     public $transactionTokenType;
+    public $ledgerId;
     public $subscriptionId;
     public $requestedAmount;
     public $requestedCurrency;
@@ -22,6 +23,7 @@ class Charge extends Resource
     public $chargedAmount;
     public $chargedCurrency;
     public $chargedAmountFormatted;
+    public $captureAt;
     public $status;
     public $error;
     public $metadata;
@@ -32,6 +34,7 @@ class Charge extends Resource
                                 $storeId,
                                 $transactionTokenId,
                                 $transactionTokenType,
+                                $ledgerId,
                                 $subscriptionId,
                                 $requestedAmount,
                                 $requestedCurrency,
@@ -39,6 +42,7 @@ class Charge extends Resource
                                 $chargedAmount,
                                 $chargedCurrency,
                                 $chargedAmountFormatted,
+                                $captureAt,
                                 $status,
                                 $error,
                                 $metadata,
@@ -50,6 +54,7 @@ class Charge extends Resource
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
         $this->transactionTokenType = $transactionTokenType;
+        $this->ledgerId = $ledgerId;
         $this->subscriptionId = $subscriptionId;
         $this->requestedAmount = $requestedAmount;
         $this->requestedCurrency = $requestedCurrency;
@@ -57,6 +62,7 @@ class Charge extends Resource
         $this->chargedAmount = $chargedAmount;
         $this->chargedCurrency = $chargedCurrency;
         $this->chargedAmountFormatted = $chargedAmountFormatted;
+        $this->captureAt = $captureAt;
         $this->status = $status;
         $this->error = $error;
         $this->metadata = $metadata;

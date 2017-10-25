@@ -11,7 +11,6 @@ class Ledger
 
     public $id;
     public $storeId;
-    public $transferId;
     public $amount;
     public $currency;
     public $amountFormatted;
@@ -20,14 +19,14 @@ class Ledger
     public $flatFeeCurrency;
     public $flatFeeFormatted;
     public $exchangeRate;
+    public $origin;
     public $note;
     public $createdOn;
 
-    public function __construct($id, $storeId, $transferId, $amount, $currency, $amountFormatted, $percentFee, $flatFeeAmount, $flatFeeCurrency, $flatFeeFormatted, $exchangeRate, $note, $createdOn)
+    public function __construct($id, $storeId, $amount, $currency, $amountFormatted, $percentFee, $flatFeeAmount, $flatFeeCurrency, $flatFeeFormatted, $exchangeRate, $origin, $note, $createdOn)
     {
         $this->id = $id;
         $this->storeId = $storeId;
-        $this->transferId = $transferId;
         $this->amount = $amount;
         $this->currency = $currency;
         $this->amountFormatted = $amountFormatted;
@@ -36,6 +35,7 @@ class Ledger
         $this->flatFeeCurrency = $flatFeeCurrency;
         $this->flatFeeFormatted = $flatFeeFormatted;
         $this->exchangeRate = $exchangeRate;
+        $this->origin = $origin;
         $this->note = $note;
         $this->createdOn = $createdOn;
     }

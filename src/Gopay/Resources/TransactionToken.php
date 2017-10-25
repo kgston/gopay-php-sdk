@@ -14,7 +14,6 @@ class TransactionToken extends Resource {
     public $storeId;
     public $email;
     public $paymentType;
-    public $active;
     public $mode;
     public $type;
     public $usageLimit;
@@ -26,7 +25,6 @@ class TransactionToken extends Resource {
                          $storeId,
                          $email,
                          $paymentType,
-                         $active,
                          $mode,
                          $type,
                          $usageLimit,
@@ -39,7 +37,6 @@ class TransactionToken extends Resource {
         $this->email = $email;
         $this->storeId = $storeId;
         $this->paymentType = $paymentType;
-        $this->active = $active;
         $this->mode = $mode;
         $this->type = $type;
         $this->usageLimit = $usageLimit;

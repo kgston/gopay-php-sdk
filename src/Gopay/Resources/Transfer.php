@@ -21,12 +21,15 @@ class Transfer extends Resource
     public $currency;
     public $amountFormatted;
     public $status;
+    public $errorCode;
+    public $errorText;
     public $metadata;
     public $startedBy;
     public $from;
     public $to;
+    public $createdOn;
 
-    public function __construct($id, $bankAccountId, $amount, $currency, $amountFormatted, $status, $metadata, $startedBy, $from, $to, $context)
+    public function __construct($id, $bankAccountId, $amount, $currency, $amountFormatted, $status, $errorCode, $errorText, $metadata, $startedBy, $from, $to, $createdOn, $context)
     {
         parent::__construct($id, $context);
         $this->bankAccountId = $bankAccountId;
@@ -34,10 +37,13 @@ class Transfer extends Resource
         $this->currency = $currency;
         $this->amountFormatted = $amountFormatted;
         $this->status = $status;
+        $this->errorCode = $errorCode;
+        $this->errorText = $errorText;
         $this->metadata = $metadata;
         $this->startedBy = $startedBy;
         $this->from = $from;
         $this->to = $to;
+        $this->createdOn = $createdOn;
     }
 
     public function listLedgers($cursor=NULL,

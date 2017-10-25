@@ -16,8 +16,9 @@ class Transaction
     use Jsonable;
 
     public $id;
-    public $store_id;
-    public $charge_id;
+    public $storeId;
+    public $resourceId;
+    public $chargeId;
     public $amount;
     public $currency;
     public $amountFormatted;
@@ -26,11 +27,12 @@ class Transaction
     public $createdOn;
     private $context;
 
-    public function __construct($id, $store_id, $charge_id, $amount, $currency, $amountFormatted, $type, $status, $createdOn, $context)
+    public function __construct($id, $storeId, $resourceId, $chargeId, $amount, $currency, $amountFormatted, $type, $status, $createdOn, $context)
     {
         $this->id = $id;
-        $this->store_id = $store_id;
-        $this->charge_id = $charge_id;
+        $this->storeId = $storeId;
+        $this->resourceId = $resourceId;
+        $this->chargeId = $chargeId;
         $this->amount = $amount;
         $this->currency = $currency;
         $this->amountFormatted = $amountFormatted;

@@ -1,13 +1,16 @@
 <?php
 namespace GopayTest\Integration;
 
-class TransactionTokenTest extends \PHPUnit_Framework_TestCase
+use Gopay\Errors\GopayRequestError;
+use PHPUnit\Framework\TestCase;
+
+class TransactionTokenTest extends TestCase
 {
     use IntegrationSuite;
 
     public function testCreateToken()
     {
-        $transactionToken = $this->client->createCardToken(
+        $transactionToken = $this->getClient()->createCardToken(
             "test@test.com",
             "PHP test",
             "4242424242424242",
@@ -29,8 +32,9 @@ class TransactionTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("one_time", $transactionToken->type);
     }
 
-    public function xtestInvalidCardNumber() {
-        $transactionToken = $this->client->createCardToken(
+    public function testInvalidCardNumber() {
+        $this->expectException(GopayRequestError::class);
+        $this->getClient()->createCardToken(
             "test@test.com",
             "PHP test",
             "4242424242424243",
@@ -48,4 +52,5 @@ class TransactionTokenTest extends \PHPUnit_Framework_TestCase
             "81",
             "12910298309128");
     }
+
 }

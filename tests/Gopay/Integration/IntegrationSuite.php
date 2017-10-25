@@ -5,13 +5,21 @@ use Gopay\GopayClient;
 
 trait IntegrationSuite
 {
-    public $client;
+    public $client = NULL;
 
-    public function __construct()
+    private function init()
     {
         $token = getenv('GOPAY_PHP_TEST_TOKEN');
         $secret = getenv('GOPAY_PHP_TEST_SECRET');
-        $this->client = new GopayClient($token, $secret);
+        $endpoint = getenv('GOPAY_PHP_TEST_ENDPOINT');
+        $this->client = new GopayClient($token, $secret, $endpoint);
+    }
+
+    public function getClient() {
+        if ($this->client === NULL) {
+            $this->init();
+        }
+        return $this->client;
     }
 
 

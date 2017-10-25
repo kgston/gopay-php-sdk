@@ -3,7 +3,7 @@
 <phpunit bootstrap="Bootstrap.php" colors="true">
     <testsuites>
         <testsuite name="gopay/gopay-sdk">
-            <directory>./Gopay/GopayClienntTest</directory>
+            <directory>./Gopay/Integration</directory>
         </testsuite>
     </testsuites>
 </phpunit>

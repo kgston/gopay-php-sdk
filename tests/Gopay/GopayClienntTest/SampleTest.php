@@ -1,5 +1,7 @@
 <?php
-class SampleTest extends PHPUnit_Framework_TestCase
+namespace GopayTest\Client;
+
+class SampleTest extends \PHPUnit_Framework_TestCase
 {
     public function testPushAndPop()
     {

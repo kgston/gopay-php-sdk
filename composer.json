@@ -19,5 +19,10 @@
         "psr-0": {
             "Gopay": "src/"
         }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/Gopay"
+        ]
     }
 }

@@ -43,7 +43,7 @@ class GopayClient
 
     function __construct($appToken,
                          $appSecret = NULL,
-                         $endpoint = "https://api.gopay.jp"){
+                         $endpoint = "http://localhost:9000"){
         $this->endpoint = $endpoint;
         $this->appToken = $appToken;
         $this->appSecret = $appSecret;

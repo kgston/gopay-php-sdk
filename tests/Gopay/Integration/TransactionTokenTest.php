@@ -36,5 +36,5 @@ class TransactionTokenTest extends TestCase
             "81",
             "12910298309128");
     }
-    
+
 }

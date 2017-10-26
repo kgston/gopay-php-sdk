@@ -83,8 +83,9 @@ EOD;
         }
 EOD;
         $json = json_decode($str, true);
-        $bankAccounts = Paginated::fromResponse($json,array(), BankAccount::class, $this->getClient()->getDefaultContext());
+        $bankAccounts = Paginated::fromResponse($json, array(), BankAccount::class, $this->getClient()->getDefaultContext());
         $this->assertEquals(false, $bankAccounts->hasMore);
+        $this->assertEquals(2, count($bankAccounts->items));
         $this->assertEquals("Holder 2", $bankAccounts->items[1]->holderName);
     }
 }

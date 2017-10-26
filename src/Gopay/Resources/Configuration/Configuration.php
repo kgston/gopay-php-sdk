@@ -53,10 +53,10 @@ class Configuration {
     protected static function initSchema()
     {
         return JsonSchema::fromClass(Configuration::class)
-                ->upsert("transfer_schedule", true, $formatter = TransferSchedule::getSchema()->getParser())
+                ->upsert("transfer_schedule", false, $formatter = TransferSchedule::getSchema()->getParser())
                 ->upsert("card_configuration", true, $formatter = CardConfiguration::getSchema()->getParser())
                 ->upsert("qr_scan_configuration", true, $formatter = QRConfiguration::getSchema()->getParser())
-                ->upsert("recurring_configuration", true, $formatter = RecurringConfiguration::getSchema()->getParser())
+                ->upsert("recurring_token_configuration", true, $formatter = RecurringConfiguration::getSchema()->getParser())
                 ->upsert("security_configuration", true, $formatter = SecurityConfiguration::getSchema()->getParser())
                 ->upsert("card_brand_percent_fees", true, $formatter = CardBrandPercentFees::getSchema()->getParser());
     }

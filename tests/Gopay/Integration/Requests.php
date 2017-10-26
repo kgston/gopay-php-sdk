@@ -1,0 +1,50 @@
+<?php
+namespace GopayTest\Integration;
+
+trait Requests {
+
+    public function createValidToken() {
+        $transactionToken = $this->getClient()->createCardToken(
+            "test@test.com",
+            "PHP test",
+            "4242424242424242",
+            "02",
+            "2022",
+            "123",
+            "one_time",
+            NULL,
+            "test",
+            NULL,
+            "test",
+            "test",
+            "jp",
+            "101-1111",
+            "81",
+            "12910298309128");
+        return $transactionToken;
+    }
+
+    public function createValidCharge() {
+        $transactionToken = $this->createValidToken();
+        $charge = $this->getClient()->createCharge($transactionToken->id, 1000, "jpy");
+        // $charge = $charge->awaitResult();
+        return $charge;
+    }
+
+    public function createValidBankAccount() {
+        $bankAccount = $this->getClient()->createBankAccount(
+            "test holder",
+            "test bank",
+            "jp",
+            "test address",
+            "jpy",
+            "123456",
+            "123456",
+            "123456",
+            "123456",
+            "123456",
+            "checking"
+        );
+        return $bankAccount;
+    }
+}

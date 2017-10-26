@@ -51,7 +51,7 @@ class GopayClient
 
     }
 
-    private function getDefaultContext()
+    public function getDefaultContext()
     {
         return new RequestContext($this->requester, $this->endpoint, "/", $this->appToken, $this->appSecret);
     }

@@ -7,27 +7,11 @@ use PHPUnit\Framework\TestCase;
 class TransactionTokenTest extends TestCase
 {
     use IntegrationSuite;
+    use Requests;
 
     public function testCreateToken()
     {
-        $transactionToken = $this->getClient()->createCardToken(
-            "test@test.com",
-            "PHP test",
-            "4242424242424242",
-            "02",
-            "2022",
-            "123",
-            "one_time",
-            NULL,
-            "test",
-            NULL,
-            "test",
-            "test",
-            "jp",
-            "101-1111",
-            "81",
-            "12910298309128");
-
+        $transactionToken = $this->createValidToken();
         $this->assertEquals("test@test.com", $transactionToken->email);
         $this->assertEquals("one_time", $transactionToken->type);
     }
@@ -52,5 +36,5 @@ class TransactionTokenTest extends TestCase
             "81",
             "12910298309128");
     }
-
+    
 }

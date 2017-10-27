@@ -19,7 +19,7 @@ class Configuration {
     public $cardConfiguration;
     public $qrScanConfiguration;
     public $convenienceConfiguration;
-    public $recurringConfiguration;
+    public $recurringTokenConfiguration;
     public $securityConfiguration;
     public $cardBrandPercentFees;
 
@@ -32,7 +32,7 @@ class Configuration {
                                 $cardConfiguration,
                                 $qrScanConfiguration,
                                 $convenienceConfiguration,
-                                $recurringConfiguration,
+                                $recurringTokenConfiguration,
                                 $securityConfiguration,
                                 $cardBrandPercentFees)
     {
@@ -45,7 +45,7 @@ class Configuration {
         $this->cardConfiguration = $cardConfiguration;
         $this->qrScanConfiguration = $qrScanConfiguration;
         $this->convenienceConfiguration = $convenienceConfiguration;
-        $this->recurringConfiguration = $recurringConfiguration;
+        $this->recurringTokenConfiguration = $recurringTokenConfiguration;
         $this->securityConfiguration = $securityConfiguration;
         $this->cardBrandPercentFees = $cardBrandPercentFees;
     }
@@ -56,6 +56,7 @@ class Configuration {
                 ->upsert("transfer_schedule", false, $formatter = TransferSchedule::getSchema()->getParser())
                 ->upsert("card_configuration", true, $formatter = CardConfiguration::getSchema()->getParser())
                 ->upsert("qr_scan_configuration", true, $formatter = QRConfiguration::getSchema()->getParser())
+                ->upsert("convenience_configuration", true, $formatter = ConvenienceConfiguration::getSchema()->getParser())
                 ->upsert("recurring_token_configuration", true, $formatter = RecurringConfiguration::getSchema()->getParser())
                 ->upsert("security_configuration", true, $formatter = SecurityConfiguration::getSchema()->getParser())
                 ->upsert("card_brand_percent_fees", true, $formatter = CardBrandPercentFees::getSchema()->getParser());

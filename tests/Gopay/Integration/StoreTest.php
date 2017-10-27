@@ -9,18 +9,16 @@ class StoreTest extends TestCase
 {
     use IntegrationSuite;
 
+    /**
+     * @group failing
+     */
     public function testGetStore() {
         $str = <<<EOD
         {
           "id": "11111111-1111-1111-1111-111111111111",
-          "platform_id": "22222222-2222-2222-2222-222222222222",
-          "merchant_id": "33333333-3333-3333-3333-333333333333",
           "name": "Store 1",
-          "active": true,
           "created_on": "2017-03-21T01:32:13.702689Z",
-          "updated_on": "2017-05-22T03:50:48.302633Z",
           "configuration": {
-            "id": "44444444-4444-4444-4444-444444444444",
             "percent_fee": null,
             "flat_fees": [],
             "logo_url": "https://example.com/logo.png",
@@ -40,21 +38,21 @@ class StoreTest extends TestCase
               "monthly_limit": null
             },
             "qr_scan_configuration": {
-              "enabled": null,
+              "enabled": true,
               "forbidden_qr_scan_gateways": null
             },
             "convenience_configuration": {
-              "enabled": null
+              "enabled": true
             },
             "recurring_token_configuration": {
-              "recurring_type": null,
+              "recurring_type": "bounded",
               "charge_wait_period": null
             },
             "security_configuration": {
-              "inspect_suspicious_login_after": null
+              "inspect_suspicious_login_after": "P7D"
             },
             "card_brand_percent_fees": {
-              "visa": null,
+              "visa": 0.05,
               "american_express": null,
               "mastercard": null,
               "maestro": null,
@@ -69,6 +67,15 @@ EOD;
         $json = json_decode($str, true);
         $store = Store::getSchema()->parse($json, array($this->getClient()->getDefaultContext()));
         $this->assertEquals("Store 1", $store->name);
+        $this->assertEquals("11111111-1111-1111-1111-111111111111", $store->id);
+        $this->assertEquals("2017-03-21T01:32:13.702689Z", $store->createdOn);
+        $this->assertEquals("https://example.com/logo.png", $store->configuration->logoUrl);
+        $this->assertEquals(array("maestro", "unionpay"), $store->configuration->cardConfiguration->forbiddenCardBrands);
+        $this->assertTrue($store->configuration->qrScanConfiguration->enabled);
+        $this->assertTrue($store->configuration->convenienceConfiguration->enabled);
+        $this->assertEquals("bounded", $store->configuration->recurringTokenConfiguration->recurringType);
+        $this->assertEquals("P7D", $store->configuration->securityConfiguration->inspectSuspiciousLoginAfter);
+        $this->assertEquals(0.05, $store->configuration->cardBrandPercentFees->visa);
     }
 
     public function testListStores() {

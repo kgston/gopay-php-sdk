@@ -24,10 +24,12 @@ class Transaction
     public $amountFormatted;
     public $type;
     public $status;
+    public $metadata;
+    public $mode;
     public $createdOn;
     private $context;
 
-    public function __construct($id, $storeId, $resourceId, $chargeId, $amount, $currency, $amountFormatted, $type, $status, $createdOn, $context)
+    public function __construct($id, $storeId, $resourceId, $chargeId, $amount, $currency, $amountFormatted, $type, $status, $metadata, $mode, $createdOn, $context)
     {
         $this->id = $id;
         $this->storeId = $storeId;
@@ -38,6 +40,8 @@ class Transaction
         $this->amountFormatted = $amountFormatted;
         $this->type = $type;
         $this->status = $status;
+        $this->metadata = $metadata;
+        $this->mode = $mode;
         $this->createdOn = $createdOn;
         $this->context = $context;
     }

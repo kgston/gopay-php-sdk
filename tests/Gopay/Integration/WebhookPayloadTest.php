@@ -37,5 +37,6 @@ EOD;
 
         $payload = $this->getClient()->parseWebhookData(json_decode($str, true));
         $this->assertEquals(100, $payload->data->requestedAmount);
+        $this->assertEquals(["orderId" => 123456, "someString" => "abcdefg"], $payload->data->metadata);
     }
 }

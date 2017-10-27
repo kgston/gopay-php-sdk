@@ -27,24 +27,13 @@ trait Requests {
     public function createValidCharge() {
         $transactionToken = $this->createValidToken();
         $charge = $this->getClient()->createCharge($transactionToken->id, 1000, "jpy");
-        // $charge = $charge->awaitResult();
+        $charge = $charge->awaitResult();
         return $charge;
     }
 
-    public function createValidBankAccount() {
-        $bankAccount = $this->getClient()->createBankAccount(
-            "test holder",
-            "test bank",
-            "jp",
-            "test address",
-            "jpy",
-            "123456",
-            "123456",
-            "123456",
-            "123456",
-            "123456",
-            "checking"
-        );
-        return $bankAccount;
+    public function createValidRefund() {
+        $charge = $this->createValidCharge();
+        $refund = $charge->createRefund(1000, "jpy", "fraud", "test", array("something" => "value"));
+        return $refund;
     }
 }

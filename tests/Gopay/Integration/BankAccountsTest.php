@@ -19,7 +19,7 @@ class BankAccountsTest extends TestCase
           "country": "JP",
           "bank_address": null,
           "currency": "JPY",
-          "account_number": "1234567890",
+          "account_number": "XXXXXXX890",
           "last_four": "7890",
           "status": "new",
           "account_type": "checking",
@@ -30,13 +30,15 @@ EOD;
 
         $json = json_decode($str, $assoc = true);
         $bankAccount = BankAccount::getSchema()->parse($json, array($this->getClient()->getDefaultContext()));
+        $this->assertEquals("11111111-1111-1111-1111-111111111111", $bankAccount->id);
         $this->assertEquals("Test holder", $bankAccount->holderName);
         $this->assertEquals("Test bank", $bankAccount->bankName);
         $this->assertEquals("Test branch", $bankAccount->branchName);
         $this->assertEquals("JP", $bankAccount->country);
         $this->assertEquals("JPY", $bankAccount->currency);
-        $this->assertEquals("1234567890", $bankAccount->accountNumber);
+        $this->assertEquals("XXXXXXX890", $bankAccount->accountNumber);
         $this->assertEquals("7890", $bankAccount->lastFour);
+        $this->assertEquals("new", $bankAccount->status);
         $this->assertEquals("checking", $bankAccount->accountType);
     }
 

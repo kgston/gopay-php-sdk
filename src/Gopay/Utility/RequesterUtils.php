@@ -29,7 +29,11 @@ abstract class RequesterUtils {
                                         RequestContext $requestContext,
                                         array $payload = array()) {
         $response = $requestContext->getRequester()->post($requestContext->getFullURL(), $payload, self::getHeaders($requestContext));
-        return $parser::getSchema()->parse($response, array($requestContext));
+        if (is_null($parser)) {
+            return $response;
+        } else {
+            return $parser::getSchema()->parse($response, array($requestContext));
+        }
     }
 
     public static function execute_patch($parser,

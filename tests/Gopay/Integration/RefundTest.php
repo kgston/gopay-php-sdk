@@ -21,7 +21,7 @@ class RefundTest extends TestCase
 
     public function testInvalidRefund() {
         $this->expectException(GopayRequestError::class);
-        $charge = $this->createValidCharge();
+        $charge = $this->createValidCharge(true);
         $charge->createRefund(2000, "jpy", "fraud", "test", array("something" => "value"));
     }
 

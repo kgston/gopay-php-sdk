@@ -112,4 +112,14 @@ class Charge extends Resource
         );
     }
 
+    public function capture($amount,
+                            $currency) {
+        $payload = array(
+            'amount' => $amount,
+            'currency' => $currency
+        );
+        $context = $this->getIdContext()->appendPath("capture");
+        return RequesterUtils::execute_post(NULL, $context, $payload);
+    }
+
 }

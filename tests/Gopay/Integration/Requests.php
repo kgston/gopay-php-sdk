@@ -24,15 +24,15 @@ trait Requests {
         return $transactionToken;
     }
 
-    public function createValidCharge() {
+    public function createValidCharge(bool $capture = true) {
         $transactionToken = $this->createValidToken();
-        $charge = $this->getClient()->createCharge($transactionToken->id, 1000, "jpy");
+        $charge = $this->getClient()->createCharge($transactionToken->id, 1000, "jpy", $capture);
         $charge = $charge->awaitResult();
         return $charge;
     }
 
     public function createValidRefund() {
-        $charge = $this->createValidCharge();
+        $charge = $this->createValidCharge(true);
         $refund = $charge->createRefund(1000, "jpy", "fraud", "test", array("something" => "value"));
         return $refund;
     }

@@ -11,15 +11,33 @@ class ChargeTest extends TestCase
 
     public function testCreateCharge()
     {
-        $charge = $this->createValidCharge();
+        $charge = $this->createValidCharge(true);
         $this->assertEquals(1000, $charge->requestedAmount);
         $this->assertEquals("JPY", $charge->requestedCurrency);
+    }
+
+    public function testCreateChargeOnToken() {
+        $charge = $this->createValidToken()->createCharge(1000, "JPY");
+        $this->assertEquals(1000, $charge->requestedAmount);
+        $this->assertEquals("JPY", $charge->requestedCurrency);
+    }
+
+    public function testAuthCaptureCharge() {
+        $charge = $this->createValidCharge(False);
+        $captured = $charge->capture(1000, "JPY");
+        $this->assertTrue($captured);
     }
 
     public function testInvalidCharge() {
         $this->expectException(GopayRequestError::class);
         $transactionToken = $this->createValidToken();
         $this->getClient()->createCharge($transactionToken->id, -1000, "jpy");
+    }
+
+    public function testInvalidAuthCapture() {
+        $this->expectException(GopayRequestError::class);
+        $charge = $this->createValidCharge(False);
+        $charge->capture(2000, "JPY");
     }
 
 }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: adamsar
- * Date: 6/19/17
- * Time: 6:40 PM
- */
 
 namespace Gopay\Resources\Mixins;
 

@@ -1,7 +1,6 @@
 <?php
 namespace GopayTest\Integration;
 
-use Gopay\Resources\Transfer;
 use PHPUnit\Framework\TestCase;
 
 class WebhookPayloadTest extends TestCase

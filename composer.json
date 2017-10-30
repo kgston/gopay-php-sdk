@@ -4,7 +4,6 @@
     "type": "library",
     "keywords": [],
     "homepage": "http://www.example.org/",
-    "version": "1.0.0-RC1",
     "license": "",
     "require": {
         "php": ">=5.3.3",

@@ -64,7 +64,7 @@ class Paginated {
             throw new GopayNoMoreItemsError();
         }
         $nextCursor = $last->id;
-        $newQuery = array_merge(array("next_cursor" => $nextCursor), $this->query);
+        $newQuery = array_merge(array("cursor" => $nextCursor), $this->query);
         return RequesterUtils::execute_get_paginated($this->jsonableClass, $this->context, $newQuery);
     }
 

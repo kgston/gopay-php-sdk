@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: adamsar
- * Date: 6/19/17
- * Time: 5:00 PM
- */
 
 namespace Gopay\Resources;
 
@@ -22,12 +16,11 @@ class Subscription extends Resource
     public $amountFormatted;
     public $period;
     public $status;
-    public $active;
     public $metadata;
     public $mode;
     public $createdOn;
 
-    public function __construct($id, $storeId, $transactionTokenId, $amount, $currency, $amountFormatted, $period, $status, $active, $metadata, $mode, $createdOn, $context)
+    public function __construct($id, $storeId, $transactionTokenId, $amount, $currency, $amountFormatted, $period, $status, $metadata, $mode, $createdOn, $context)
     {
         parent::__construct($id, $context);
         $this->storeId = $storeId;
@@ -37,7 +30,6 @@ class Subscription extends Resource
         $this->amountFormatted = $amountFormatted;
         $this->period = $period;
         $this->status = $status;
-        $this->active = $active;
         $this->metadata = $metadata;
         $this->mode = $mode;
         $this->createdOn = $createdOn;

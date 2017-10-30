@@ -14,7 +14,6 @@ class TransactionToken extends Resource {
     public $storeId;
     public $email;
     public $paymentType;
-    public $active;
     public $mode;
     public $type;
     public $usageLimit;
@@ -26,7 +25,6 @@ class TransactionToken extends Resource {
                          $storeId,
                          $email,
                          $paymentType,
-                         $active,
                          $mode,
                          $type,
                          $usageLimit,
@@ -39,7 +37,6 @@ class TransactionToken extends Resource {
         $this->email = $email;
         $this->storeId = $storeId;
         $this->paymentType = $paymentType;
-        $this->active = $active;
         $this->mode = $mode;
         $this->type = $type;
         $this->usageLimit = $usageLimit;
@@ -62,7 +59,7 @@ class TransactionToken extends Resource {
         return self::$cardDataSchema;
     }
 
-    public function createCharge($amount, $currency, $metadata = NULL) {
+    public function createCharge($amount, $currency, $capture = true, $metadata = NULL) {
         $payload = array(
             'transaction_token_id' => $this->id,
             'amount' => $amount,
@@ -71,6 +68,9 @@ class TransactionToken extends Resource {
 
         if ($metadata != NULL)  {
             $payload = array_map(array("metadata" => $metadata), $payload);
+        }
+        if (!$capture) {
+            $payload = array_merge($payload, array("capture" => "false"));
         }
 
         $context = $this->context->withPath("charges");

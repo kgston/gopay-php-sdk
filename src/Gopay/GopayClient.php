@@ -51,7 +51,7 @@ class GopayClient
 
     }
 
-    private function getDefaultContext()
+    public function getDefaultContext()
     {
         return new RequestContext($this->requester, $this->endpoint, "/", $this->appToken, $this->appSecret);
     }
@@ -163,6 +163,7 @@ class GopayClient
     public function createCharge($transactionTokenId,
                                  $amount,
                                  $currency,
+                                 $capture = true,
                                  $metadata = NULL) {
         $payload = array(
             'transaction_token_id' => $transactionTokenId,
@@ -171,6 +172,9 @@ class GopayClient
         );
         if ($metadata != NULL)  {
             $payload = array_map(array("metadata" => $metadata), $payload);
+        }
+        if (!$capture) {
+            $payload = array_merge($payload, array("capture" => "false"));
         }
 
         $context = $this->getDefaultContext()->withPath("charges");

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: adamsar
- * Date: 6/16/17
- * Time: 1:59 PM
- */
 
 namespace Gopay\Resources\Configuration;
 
@@ -24,8 +18,9 @@ class CardConfiguration
     public $allowedCountriesByIp;
     public $foreignCardsAllowed;
     public $failOnNewEmail;
+    public $monthlyLimit;
 
-    public function __construct($enabled, $debitEnabled, $prepaidEnabled, $forbiddenCardBrands, $allowedCountriesByIp, $foreignCardsAllowed, $failOnNewEmail)
+    public function __construct($enabled, $debitEnabled, $prepaidEnabled, $forbiddenCardBrands, $allowedCountriesByIp, $foreignCardsAllowed, $failOnNewEmail, $monthlyLimit)
     {
         $this->enabled = $enabled;
         $this->debitEnabled = $debitEnabled;
@@ -34,6 +29,7 @@ class CardConfiguration
         $this->allowedCountriesByIp = $allowedCountriesByIp;
         $this->foreignCardsAllowed = $foreignCardsAllowed;
         $this->failOnNewEmail = $failOnNewEmail;
+        $this->monthlyLimit = $monthlyLimit;
     }
 
     protected static function initSchema()

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: adamsar
- * Date: 6/19/17
- * Time: 6:43 PM
- */
 
 namespace Gopay\Resources\Mixins;
 
@@ -29,7 +23,11 @@ trait GetCharges
                                 $amountFrom=NULL,
                                 $amountTo=NULL,
                                 $currency=NULL,
+                                $metadata=NULL,
                                 $mode=NULL,
+                                $transactionTokenId=NULL,
+                                $gatewayCredentialsId=NULL,
+                                $gatewayTransactionId=NULL,
                                 $cursor=NULL,
                                 $limit=NULL,
                                 $cursorDirection=NULL) {
@@ -47,7 +45,9 @@ trait GetCharges
             "amount_from" => $amountFrom,
             "amount_to" => $amountTo,
             "currency" => $currency,
+            "metadata" => $metadata,
             "mode" => $mode,
+            "transaction_token_id" => $transactionTokenId,
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection

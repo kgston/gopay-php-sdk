@@ -20,8 +20,10 @@ class Refund extends Resource
     public $message;
     public $error;
     public $metadata;
+    public $mode;
+    public $createdOn;
 
-    public function __construct($id, $chargeId, $status, $amount, $currency, $amountFormatted, $reason, $message, $error, $metadata, $context)
+    public function __construct($id, $chargeId, $status, $amount, $currency, $amountFormatted, $reason, $message, $error, $metadata, $mode, $createdOn, $context)
     {
         parent::__construct($id, $context);
         $this->chargeId = $chargeId;
@@ -33,6 +35,8 @@ class Refund extends Resource
         $this->message = $message;
         $this->error = $error;
         $this->metadata = $metadata;
+        $this->mode = $mode;
+        $this->createdOn = $createdOn;
     }
 
 

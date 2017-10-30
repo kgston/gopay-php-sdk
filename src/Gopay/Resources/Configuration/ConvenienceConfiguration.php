@@ -6,20 +6,18 @@ use Gopay\Resources\Jsonable;
 use Gopay\Utility\FunctionalUtils as fp;
 use Gopay\Utility\Json\JsonSchema;
 
-class QRConfiguration
+class ConvenienceConfiguration
 {
     use Jsonable;
     public $enabled;
-    public $forbiddenQrScanGateway;
 
-    public function __construct($enabled, $forbiddenQrScanGateway)
+    public function __construct($enabled)
     {
         $this->enabled = $enabled;
-        $this->forbiddenQrScanGateway = $forbiddenQrScanGateway;
     }
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(QRConfiguration::class);
+        return JsonSchema::fromClass(ConvenienceConfiguration::class);
     }
 }

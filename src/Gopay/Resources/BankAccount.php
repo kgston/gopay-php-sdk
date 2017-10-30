@@ -9,7 +9,7 @@ class BankAccount extends Resource {
 
     public $primary;
     public $holderName;
-    public $bank_name;
+    public $bankName;
     public $branchName;
     public $country;
     public $bankAddress;
@@ -21,15 +21,15 @@ class BankAccount extends Resource {
     public $routingCode;
     public $lastFour;
     public $status;
-    public $active;
+    public $accountType;
     public $createdOn;
 
-    public function __construct($id, $primary, $holderName, $bank_name, $branchName, $country, $bankAddress, $currency, $accountNumber, $routingNumber, $swiftCode, $ifscCode, $routingCode, $lastFour, $status, $active, $createdOn, $context)
+    public function __construct($id, $primary, $holderName, $bankName, $branchName, $country, $bankAddress, $currency, $accountNumber, $routingNumber, $swiftCode, $ifscCode, $routingCode, $lastFour, $status, $accountType, $createdOn, $context)
     {
         parent::__construct($id, $context);
         $this->primary = $primary;
         $this->holderName = $holderName;
-        $this->bank_name = $bank_name;
+        $this->bankName = $bankName;
         $this->branchName = $branchName;
         $this->country = $country;
         $this->bankAddress = $bankAddress;
@@ -41,7 +41,7 @@ class BankAccount extends Resource {
         $this->routingCode = $routingCode;
         $this->lastFour = $lastFour;
         $this->status = $status;
-        $this->active = $active;
+        $this->accountType = $accountType;
         $this->createdOn = $createdOn;
     }
 

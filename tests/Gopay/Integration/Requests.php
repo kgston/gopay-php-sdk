@@ -27,7 +27,7 @@ trait Requests {
     public function createValidCharge(bool $capture = true) {
         $transactionToken = $this->createValidToken();
         $charge = $this->getClient()->createCharge($transactionToken->id, 1000, "jpy", $capture);
-        $charge = $charge->awaitResult();
+        $charge = $charge->awaitResult();        
         return $charge;
     }
 

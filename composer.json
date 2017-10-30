@@ -7,7 +7,8 @@
     "license": "",
     "require": {
         "php": ">=5.3.3",
-        "rmccue/requests": "^1.7"
+        "rmccue/requests": "^1.7",
+        "textalk/websocket": "^1.2"
     },
     "require-dev": {
         "phpunit/PHPUnit": "6.4.*",

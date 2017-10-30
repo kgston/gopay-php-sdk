@@ -2,18 +2,16 @@
 
 namespace Gopay\Resources;
 
+use WebSocket\Client;
 
 trait Pollable {
 
-    protected static $pendingStatus = "pending";
-
     public function awaitResult() {
-        $newInstance = $this;
-        while(strtolower($newInstance->status) === self::$pendingStatus) {
-            sleep(1);
-            $newInstance = $this->fetch();
-        }
-        return $newInstance;
+      $idContext = $this->getIdContext();
+      $url = $idContext->appendPath("events")->getWebsocketURL();
+      $parser = self::getContextParser($idContext);
+      $client = new Client($url);
+      return $parser(json_decode($client->receive(), true));
     }
 
 }

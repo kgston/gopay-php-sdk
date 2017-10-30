@@ -48,8 +48,6 @@ trait GetCharges
             "metadata" => $metadata,
             "mode" => $mode,
             "transaction_token_id" => $transactionTokenId,
-            "gateway_credentials_id" => $gatewayCredentialsId,
-            "gateway_transaction_id" => $gatewayTransactionId,
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection

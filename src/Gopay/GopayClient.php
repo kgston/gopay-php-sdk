@@ -171,7 +171,7 @@ class GopayClient
             'currency' => $currency
         );
         if ($metadata != NULL)  {
-            $payload = array_map(array("metadata" => $metadata), $payload);
+            $payload = array_merge(array("metadata" => $metadata), $payload);
         }
         if (!$capture) {
             $payload = array_merge($payload, array("capture" => "false"));

@@ -29,7 +29,7 @@ class BankAccountsTest extends TestCase
 EOD;
 
         $json = json_decode($str, $assoc = true);
-        $bankAccount = BankAccount::getSchema()->parse($json, array($this->getClient()->getDefaultContext()));
+        $bankAccount = BankAccount::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $bankAccount->id);
         $this->assertEquals("Test holder", $bankAccount->holderName);
         $this->assertEquals("Test bank", $bankAccount->bankName);
@@ -87,7 +87,7 @@ EOD;
         }
 EOD;
         $json = json_decode($str, true);
-        $bankAccounts = Paginated::fromResponse($json, array(), BankAccount::class, $this->getClient()->getDefaultContext());
+        $bankAccounts = Paginated::fromResponse($json, array(), BankAccount::class, $this->getClient()->getStoreBasedContext());
         $this->assertEquals(false, $bankAccounts->hasMore);
         $this->assertEquals(2, count($bankAccounts->items));
         $this->assertEquals("Holder 2", $bankAccounts->items[1]->holderName);

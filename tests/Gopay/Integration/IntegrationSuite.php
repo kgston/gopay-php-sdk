@@ -2,6 +2,7 @@
 namespace GopayTest\Integration;
 
 use Gopay\GopayClient;
+use Gopay\Resources\AppJWT;
 
 trait IntegrationSuite
 {
@@ -12,7 +13,7 @@ trait IntegrationSuite
         $token = getenv('GOPAY_PHP_TEST_TOKEN');
         $secret = getenv('GOPAY_PHP_TEST_SECRET');
         $endpoint = getenv('GOPAY_PHP_TEST_ENDPOINT');
-        $this->client = new GopayClient($token, $secret, $endpoint);
+        $this->client = new GopayClient($endpoint, AppJWT::createToken($token, $secret));
     }
 
     public function getClient() {
@@ -21,6 +22,4 @@ trait IntegrationSuite
         }
         return $this->client;
     }
-
-
 }

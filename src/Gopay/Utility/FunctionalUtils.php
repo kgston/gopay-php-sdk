@@ -34,14 +34,15 @@ abstract class FunctionalUtils {
         return null;
     }
 
-    public static function get_class_vars_assoc($called) {
-        //echo "called: $called \n";
+    public static function get_class_vars_assoc($called, $includeParentVars) {
+        // echo "called: $called \n";
         $classVars = array_keys(get_class_vars($called));
 
         $parent = get_parent_class($called);
-        while ( $parent !== FALSE ) {
+        while ($parent !== FALSE) {
             $parentVars = array_keys(get_class_vars($parent));
-            $classVars = array_merge($parentVars, array_diff($classVars, $parentVars));
+            $classVars = array_diff($classVars, $parentVars);
+            $classVars = $includeParentVars ? array_merge($parentVars, $classVars) : $classVars;
             $parent = get_parent_class($parent);
         }
 

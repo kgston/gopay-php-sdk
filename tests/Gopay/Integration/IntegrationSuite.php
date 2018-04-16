@@ -13,7 +13,7 @@ trait IntegrationSuite
         $token = getenv('GOPAY_PHP_TEST_TOKEN');
         $secret = getenv('GOPAY_PHP_TEST_SECRET');
         $endpoint = getenv('GOPAY_PHP_TEST_ENDPOINT');
-        $this->client = new GopayClient($endpoint, AppJWT::createToken($token, $secret));
+        $this->client = new GopayClient(AppJWT::createToken($token, $secret), null, $endpoint);
     }
 
     public function getClient() {

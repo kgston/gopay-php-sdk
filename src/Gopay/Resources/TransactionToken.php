@@ -9,8 +9,6 @@ use Gopay\Utility\RequesterUtils;
 class TransactionToken extends Resource {
     use Jsonable;
 
-    private static $cardDataSchema;
-
     public $storeId;
     public $email;
     public $paymentType;
@@ -45,18 +43,9 @@ class TransactionToken extends Resource {
         $this->data = $data;
     }
 
-    protected static function initSchema()
-    {
-        return JsonSchema::fromClass(TransactionToken::class);
-    }
-
-
-    public static function getCardSchema() {
-        if (!isset(self::$cardDataSchema)) {
-            self::$cardDataSchema = JsonSchema::fromClass(self::class)
-                ->upsert("data", true, $formatter = CardData::getSchema()->getParser());
-        }
-        return self::$cardDataSchema;
+    protected static function initSchema() {
+        return JsonSchema::fromClass(self::class)
+            ->upsert("data", true, $formatter = CardData::getSchema()->getParser());
     }
 
     public function createCharge($amount, $currency, $capture = true, $metadata = NULL) {

@@ -45,7 +45,6 @@ class GopayClient {
         $this->storeAppJWT = $storeAppJWT;
         $this->merchantAppJWT = $merchantAppJWT;
         $this->requester = new HttpRequester();
-
     }
 
     public function getStoreBasedContext() {
@@ -84,7 +83,7 @@ class GopayClient {
     }
 
     public function getStore($id) {
-        $context = $this->getStoreBasedContext()->withPath("stores/" . $id);
+        $context = $this->getStoreBasedContext()->withPath(array("stores", $id));
         return RequesterUtils::execute_get(Store::class, $context);
     }
 
@@ -156,8 +155,12 @@ class GopayClient {
             "email" => $email,
             "data" => $data
         );
-        $response = $context->getRequester()->post($context->getFullURL(), $payload, RequesterUtils::getHeaders($context));
-        return TransactionToken::getCardSchema()->parse($response, array($context));
+        return RequesterUtils::execute_post(TransactionToken::class, $context, $payload);
+    }
+
+    public function getTransactionToken($storeId, $transactionTokenId) {
+        $context = $this->getStoreBasedContext()->withPath(array("stores", $storeId, "tokens", $transactionTokenId));
+        return RequesterUtils::execute_get(TransactionToken::class, $context);
     }
 
     public function createCharge($transactionTokenId,

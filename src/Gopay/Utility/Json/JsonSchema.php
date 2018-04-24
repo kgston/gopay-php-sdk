@@ -76,8 +76,8 @@ class JsonSchema {
         };
     }
 
-    public static function fromClass($targetClass, $snakeCase = true) {
-        $classVars = FunctionalUtils::get_class_vars_assoc($targetClass);
+    public static function fromClass($targetClass, $snakeCase = true, $includeParentVars = true) {
+        $classVars = FunctionalUtils::get_class_vars_assoc($targetClass, $includeParentVars);
         $newSchema = new JsonSchema($targetClass);
         return array_reduce(
             $classVars, function ($schema, $path) use ($snakeCase) {

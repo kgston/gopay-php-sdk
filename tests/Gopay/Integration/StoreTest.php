@@ -65,7 +65,7 @@ class StoreTest extends TestCase
         }
 EOD;
         $json = json_decode($str, true);
-        $store = Store::getSchema()->parse($json, array($this->getClient()->getDefaultContext()));
+        $store = Store::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
         $this->assertEquals("Store 1", $store->name);
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $store->id);
         $this->assertEquals("2017-03-21T01:32:13.702689Z", $store->createdOn);
@@ -101,7 +101,7 @@ EOD;
         }
 EOD;
         $json = json_decode($str, true);
-        $stores = Paginated::fromResponse($json, array(), Store::class, $this->getClient()->getDefaultContext());
+        $stores = Paginated::fromResponse($json, array(), Store::class, $this->getClient()->getStoreBasedContext());
         $this->assertEquals(false, $stores->hasMore);
         $this->assertEquals(2, count($stores->items));
         $this->assertEquals("Store 2", $stores->items[1]->name);

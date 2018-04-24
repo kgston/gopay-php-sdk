@@ -27,7 +27,7 @@ class SubscriptionTest extends TestCase
 EOD;
 
         $json = json_decode($str, true);
-        $subscription = Subscription::getSchema()->parse($json, array($this->getClient()->getDefaultContext()));
+        $subscription = Subscription::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
         $this->assertEquals(1000, $subscription->amount);
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $subscription->id);
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $subscription->storeId);

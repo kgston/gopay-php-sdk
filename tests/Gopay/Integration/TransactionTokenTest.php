@@ -9,11 +9,16 @@ class TransactionTokenTest extends TestCase
     use IntegrationSuite;
     use Requests;
 
-    public function testCreateToken()
-    {
+    public function testCreateToken() {
         $transactionToken = $this->createValidToken();
         $this->assertEquals("test@test.com", $transactionToken->email);
         $this->assertEquals("one_time", $transactionToken->type);
+    }
+
+    public function testGetExistingToken() {
+        $transactionToken = $this->createValidToken();
+        $retrievedTransactionToken = $this->getClient()->getTransactionToken($this->storeAppJWT->storeId, $transactionToken->id);
+        $this->assertEquals($transactionToken->id, $retrievedTransactionToken->id);
     }
 
     public function testInvalidCardNumber() {

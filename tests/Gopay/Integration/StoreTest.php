@@ -24,6 +24,11 @@ class StoreTest extends TestCase
             "logo_url": "https://example.com/logo.png",
             "country": null,
             "language": null,
+            "time_zone": null,
+            "user_transactions_configuration":{
+               "enabled": true,
+               "notify_customer": true
+            },
             "card_configuration": {
               "enabled": true,
               "debit_enabled": null,
@@ -35,7 +40,8 @@ class StoreTest extends TestCase
               "allowed_countries_by_ip": null,
               "foreign_cards_allowed": null,
               "fail_on_new_email": null,
-              "monthly_limit": null
+              "card_limit": null,
+              "allow_empty_cvv":null
             },
             "qr_scan_configuration": {
               "enabled": true,
@@ -49,7 +55,18 @@ class StoreTest extends TestCase
               "charge_wait_period": null
             },
             "security_configuration": {
-              "inspect_suspicious_login_after": "P7D"
+              "inspect_suspicious_login_after": "P7D",
+              "refund_percent_limit": 80,
+              "limit_charge_by_card_configuration": {
+                    "quantity_of_charges":500,
+                    "duration_window":"P30D"
+                }
+            },
+            "installments_configuration": {
+              "enabled": true,
+              "min_charge_amount": 1000,
+              "max_payout_period": "P50D",
+              "failed_cycles_to_cancel": 3
             },
             "card_brand_percent_fees": {
               "visa": 0.05,
@@ -66,15 +83,25 @@ class StoreTest extends TestCase
 EOD;
         $json = json_decode($str, true);
         $store = Store::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
-        $this->assertEquals("Store 1", $store->name);
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $store->id);
+        $this->assertEquals("Store 1", $store->name);
         $this->assertEquals("2017-03-21T01:32:13.702689Z", $store->createdOn);
         $this->assertEquals("https://example.com/logo.png", $store->configuration->logoUrl);
+        $this->assertTrue($store->configuration->userTransactionsConfiguration->enabled);
+        $this->assertTrue($store->configuration->userTransactionsConfiguration->notifyCustomer);
+        $this->assertTrue($store->configuration->cardConfiguration->enabled);
         $this->assertEquals(array("maestro", "unionpay"), $store->configuration->cardConfiguration->forbiddenCardBrands);
         $this->assertTrue($store->configuration->qrScanConfiguration->enabled);
         $this->assertTrue($store->configuration->convenienceConfiguration->enabled);
         $this->assertEquals("bounded", $store->configuration->recurringTokenConfiguration->recurringType);
         $this->assertEquals("P7D", $store->configuration->securityConfiguration->inspectSuspiciousLoginAfter);
+        $this->assertEquals(80, $store->configuration->securityConfiguration->refundPercentLimit);
+        $this->assertEquals(500, $store->configuration->securityConfiguration->limitChargeByCardConfiguration->quantityOfCharges);
+        $this->assertEquals("P30D", $store->configuration->securityConfiguration->limitChargeByCardConfiguration->durationWindow);
+        $this->assertTrue($store->configuration->installmentsConfiguration->enabled);
+        $this->assertEquals(1000, $store->configuration->installmentsConfiguration->minChargeAmount);
+        $this->assertEquals("P50D", $store->configuration->installmentsConfiguration->maxPayoutPeriod);
+        $this->assertEquals(3, $store->configuration->installmentsConfiguration->failedCyclesToCancel);
         $this->assertEquals(0.05, $store->configuration->cardBrandPercentFees->visa);
     }
 

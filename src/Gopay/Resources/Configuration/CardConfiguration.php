@@ -18,9 +18,10 @@ class CardConfiguration
     public $allowedCountriesByIp;
     public $foreignCardsAllowed;
     public $failOnNewEmail;
-    public $monthlyLimit;
+    public $cardLimit;
+    public $allowEmptyCvv;
 
-    public function __construct($enabled, $debitEnabled, $prepaidEnabled, $forbiddenCardBrands, $allowedCountriesByIp, $foreignCardsAllowed, $failOnNewEmail, $monthlyLimit)
+    public function __construct($enabled, $debitEnabled, $prepaidEnabled, $forbiddenCardBrands, $allowedCountriesByIp, $foreignCardsAllowed, $failOnNewEmail, $cardLimit, $allowEmptyCvv)
     {
         $this->enabled = $enabled;
         $this->debitEnabled = $debitEnabled;
@@ -29,7 +30,8 @@ class CardConfiguration
         $this->allowedCountriesByIp = $allowedCountriesByIp;
         $this->foreignCardsAllowed = $foreignCardsAllowed;
         $this->failOnNewEmail = $failOnNewEmail;
-        $this->monthlyLimit = $monthlyLimit;
+        $this->cardLimit = $cardLimit;
+        $this->allowEmptyCvv = $allowEmptyCvv;
     }
 
     protected static function initSchema()

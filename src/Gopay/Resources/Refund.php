@@ -11,6 +11,7 @@ class Refund extends Resource
     use Jsonable;
     use Pollable;
 
+    public $storeId;
     public $chargeId;
     public $status;
     public $amount;
@@ -23,9 +24,10 @@ class Refund extends Resource
     public $mode;
     public $createdOn;
 
-    public function __construct($id, $chargeId, $status, $amount, $currency, $amountFormatted, $reason, $message, $error, $metadata, $mode, $createdOn, $context)
+    public function __construct($id, $storeId, $chargeId, $status, $amount, $currency, $amountFormatted, $reason, $message, $error, $metadata, $mode, $createdOn, $context)
     {
         parent::__construct($id, $context);
+        $this->storeId = $storeId;
         $this->chargeId = $chargeId;
         $this->status = $status;
         $this->amount = $amount;

@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 class BankAccountsTest extends TestCase
 {
     use IntegrationSuite;
-
-    public function testGetBankAccount() {
+    
+       public function testGetBankAccount() {
         $str = <<<EOD
         {
           "id": "11111111-1111-1111-1111-111111111111",
@@ -27,7 +27,6 @@ class BankAccountsTest extends TestCase
           "primary": true
         }
 EOD;
-
         $json = json_decode($str, $assoc = true);
         $bankAccount = BankAccount::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $bankAccount->id);

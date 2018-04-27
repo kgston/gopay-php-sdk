@@ -39,5 +39,21 @@ class ChargeTest extends TestCase
         $charge = $this->createValidCharge(False);
         $charge->capture(2000, "JPY");
     }
+    
+    public function testCancelAuthCharge() {
+        $charge = $this->createValidCharge(False);
+        $this->assertEquals('authorized', $charge->status);
+        $cancel = $charge->cancel(array(
+            'something'=>'anything'
+        ))->awaitResult();
+        $this->assertEquals($cancel->metadata['something'], 'anything');
+    }
+    
+    public function testInvalidCancel() {
+        $this->expectException(GopayRequestError::class);
+        $charge = $this->createValidCharge();
+        $this->assertEquals('successful', $charge->status);
+        $charge->cancel();
+    }
 
 }

@@ -8,7 +8,6 @@ use Gopay\Utility\Json\JsonSchema;
 class Subscription extends Resource
 {
     use Jsonable;
-
     public $storeId;
     public $transactionTokenId;
     public $amount;

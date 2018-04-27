@@ -15,7 +15,6 @@ class Charge extends Resource
     public $storeId;
     public $transactionTokenId;
     public $transactionTokenType;
-    public $ledgerId;
     public $subscriptionId;
     public $requestedAmount;
     public $requestedCurrency;
@@ -34,7 +33,6 @@ class Charge extends Resource
                                 $storeId,
                                 $transactionTokenId,
                                 $transactionTokenType,
-                                $ledgerId,
                                 $subscriptionId,
                                 $requestedAmount,
                                 $requestedCurrency,
@@ -54,7 +52,6 @@ class Charge extends Resource
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
         $this->transactionTokenType = $transactionTokenType;
-        $this->ledgerId = $ledgerId;
         $this->subscriptionId = $subscriptionId;
         $this->requestedAmount = $requestedAmount;
         $this->requestedCurrency = $requestedCurrency;
@@ -120,6 +117,31 @@ class Charge extends Resource
         );
         $context = $this->getIdContext()->appendPath("capture");
         return RequesterUtils::execute_post(NULL, $context, $payload);
+    }
+
+    public function cancel($metadata = NULL){
+        $payload = FunctionalUtils::strip_nulls(array(
+            "metadata" => $metadata
+        ));
+        $context = $this->getIdContext()->appendPath("cancels");
+        return RequesterUtils::execute_post(Cancel::class, $context, $payload);
+    }
+
+    public function listCancels($cursor=NULL,
+                                $limit=NULL,
+                                $cursorDirection=NULL)
+    {
+        $query = FunctionalUtils::strip_nulls(array(
+            "cursor" => $cursor,
+            "limit" => $limit,
+            "cursor_direction" => $cursorDirection
+        ));
+        return RequesterUtils::execute_get_paginated(
+            Cancel::class,
+            $this->getIdContext()->appendPath("cancels"),
+            $query
+        );
+
     }
 
 }

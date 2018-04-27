@@ -22,7 +22,7 @@ class TransferTest extends TestCase
           "metadata": {
              "key": "value"
           },
-          "started_by": null,
+          "note": "a note",
           "from": "2017-10-07",
           "to": "2017-10-14",
           "created_on": "2017-10-14T08:00:00.664568Z"
@@ -40,7 +40,7 @@ EOD;
         $this->assertNull($transfer->errorCode);
         $this->assertNull($transfer->errorText);
         $this->assertEquals(["key" => "value"], $transfer->metadata);
-        $this->assertNull($transfer->startedBy);
+        $this->assertEquals($transfer->note, "a note");
         $this->assertEquals("2017-10-07", $transfer->from);
         $this->assertEquals("2017-10-14", $transfer->to);
         $this->assertEquals("2017-10-14T08:00:00.664568Z", $transfer->createdOn);

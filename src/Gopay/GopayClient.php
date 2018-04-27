@@ -167,6 +167,7 @@ class GopayClient {
                                  $amount,
                                  $currency,
                                  $capture = true,
+                                 $captureAt = NULL,
                                  $metadata = NULL) {
         $payload = array(
             'transaction_token_id' => $transactionTokenId,
@@ -178,6 +179,9 @@ class GopayClient {
         }
         if (!$capture) {
             $payload = array_merge($payload, array("capture" => "false"));
+        }
+        if($captureAt != NULL){
+            $payload = array_merge($payload, array("capture_at" => $captureAt));
         }
 
         $context = $this->getStoreBasedContext()->withPath("charges");

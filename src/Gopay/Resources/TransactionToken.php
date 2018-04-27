@@ -11,6 +11,7 @@ class TransactionToken extends Resource {
 
     public $storeId;
     public $email;
+    public $active;
     public $paymentType;
     public $mode;
     public $type;
@@ -22,6 +23,7 @@ class TransactionToken extends Resource {
     function __construct($id,
                          $storeId,
                          $email,
+                         $active,
                          $paymentType,
                          $mode,
                          $type,
@@ -33,6 +35,7 @@ class TransactionToken extends Resource {
     {
         parent::__construct($id, $context);
         $this->email = $email;
+        $this->active = $active;
         $this->storeId = $storeId;
         $this->paymentType = $paymentType;
         $this->mode = $mode;

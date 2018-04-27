@@ -18,12 +18,12 @@ class Transfer extends Resource
     public $errorCode;
     public $errorText;
     public $metadata;
-    public $startedBy;
+    public $note;
     public $from;
     public $to;
     public $createdOn;
 
-    public function __construct($id, $bankAccountId, $amount, $currency, $amountFormatted, $status, $errorCode, $errorText, $metadata, $startedBy, $from, $to, $createdOn, $context)
+    public function __construct($id, $bankAccountId, $amount, $currency, $amountFormatted, $status, $errorCode, $errorText, $metadata, $note, $from, $to, $createdOn, $context)
     {
         parent::__construct($id, $context);
         $this->bankAccountId = $bankAccountId;
@@ -34,7 +34,7 @@ class Transfer extends Resource
         $this->errorCode = $errorCode;
         $this->errorText = $errorText;
         $this->metadata = $metadata;
-        $this->startedBy = $startedBy;
+        $this->note = $note;
         $this->from = $from;
         $this->to = $to;
         $this->createdOn = $createdOn;

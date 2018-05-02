@@ -67,6 +67,12 @@ class Transfer extends Resource
         return RequesterUtils::executeGetPaginated(Ledger::class, $context, $query);
     }
 
+    public function listStatusChanges()
+    {
+        $context = $this->getIdContext()->appendPath("status_changes");
+        return RequesterUtils::executeGetPaginated(TransferStatusChange::class, $context, $query);
+    }
+
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class);

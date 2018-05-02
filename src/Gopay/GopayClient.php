@@ -13,6 +13,7 @@ use Gopay\Resources\Authentication\AppJWT;
 use Gopay\Resources\BankAccount;
 use Gopay\Resources\CardConfiguration;
 use Gopay\Resources\Charge;
+use Gopay\Resources\CheckoutInfo;
 use Gopay\Resources\Merchant;
 use Gopay\Resources\Mixins\GetCharges;
 use Gopay\Resources\Mixins\GetSubscriptions;
@@ -71,6 +72,14 @@ class GopayClient
         return RequesterUtils::executeGet(
             Merchant::class,
             $this->getStoreBasedContext()->withPath("me")
+        );
+    }
+
+    public function getCheckoutInfo()
+    {
+        return RequesterUtils::executeGet(
+            CheckoutInfo::class,
+            $this->getStoreBasedContext()->withPath("checkout_info")
         );
     }
 

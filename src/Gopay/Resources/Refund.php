@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources;
 
-
 use Gopay\Utility\Json\JsonSchema;
 
 class Refund extends Resource
@@ -24,8 +23,22 @@ class Refund extends Resource
     public $mode;
     public $createdOn;
 
-    public function __construct($id, $storeId, $chargeId, $status, $amount, $currency, $amountFormatted, $reason, $message, $error, $metadata, $mode, $createdOn, $context)
-    {
+    public function __construct(
+        $id,
+        $storeId,
+        $chargeId,
+        $status,
+        $amount,
+        $currency,
+        $amountFormatted,
+        $reason,
+        $message,
+        $error,
+        $metadata,
+        $mode,
+        $createdOn,
+        $context
+    ) {
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->chargeId = $chargeId;
@@ -44,6 +57,6 @@ class Refund extends Resource
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(self::class );
+        return JsonSchema::fromClass(self::class);
     }
 }

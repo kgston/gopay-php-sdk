@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources;
 
-
 class WebhookPayload
 {
 
@@ -14,6 +13,4 @@ class WebhookPayload
         $this->event = $event;
         $this->data = $data;
     }
-
-
 }

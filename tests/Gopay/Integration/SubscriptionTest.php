@@ -8,7 +8,8 @@ class SubscriptionTest extends TestCase
 {
     use IntegrationSuite;
 
-    public function testSubscriptionParse() {
+    public function testSubscriptionParse()
+    {
         $str = <<<EOD
    {
       "id": "11111111-1111-1111-1111-111111111111",

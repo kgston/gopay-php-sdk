@@ -9,7 +9,7 @@ use Gopay\Errors\GopayUnknownWebhookEvent;
 use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
-use Gopay\Resources\AppJWT;
+use Gopay\Resources\Authentication\AppJWT;
 use Gopay\Resources\BankAccount;
 use Gopay\Resources\CardConfiguration;
 use Gopay\Resources\Charge;
@@ -28,7 +28,8 @@ use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\HttpUtils;
 use Gopay\Utility\RequesterUtils;
 
-class GopayClient {
+class GopayClient
+{
     use GetSubscriptions;
     use GetTransactions;
     use GetCharges;
@@ -38,88 +39,102 @@ class GopayClient {
     private $merchantAppJWT;
     private $requester;
 
-    function __construct(AppJWT $storeAppJWT = NULL,
-                         AppJWT $merchantAppJWT = NULL,
-                         $endpoint = "https://api.gopay.jp"){
+    public function __construct(
+        AppJWT $storeAppJWT = null,
+        AppJWT $merchantAppJWT = null,
+        $endpoint = "https://api.gopay.jp"
+    ) {
         $this->endpoint = $endpoint;
         $this->storeAppJWT = $storeAppJWT;
         $this->merchantAppJWT = $merchantAppJWT;
         $this->requester = new HttpRequester();
     }
 
-    public function getStoreBasedContext() {
+    public function getStoreBasedContext()
+    {
         return new RequestContext($this->requester, $this->endpoint, "/", $this->storeAppJWT);
     }
 
-    public function getMerchantBasedContext() {
+    public function getMerchantBasedContext()
+    {
         return new RequestContext($this->requester, $this->endpoint, "/", $this->merchantAppJWT);
     }
 
-    public function withRequester(Requester $requester) {
+    public function withRequester(Requester $requester)
+    {
         $this->requester = $requester;
         return $this;
     }
 
-    public function getMe() {
-        return RequesterUtils::execute_get(
+    public function getMe()
+    {
+        return RequesterUtils::executeGet(
             Merchant::class,
             $this->getStoreBasedContext()->withPath("me")
         );
     }
 
-    public function listStores($cursor = NULL,
-                               $limit = NULL,
-                               $cursorDirection = NULL) {
-        $query = FunctionalUtils::strip_nulls(array(
+    public function listStores(
+        $cursor = null,
+        $limit = null,
+        $cursorDirection = null
+    ) {
+        $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection
         ));
-        return RequesterUtils::execute_get_paginated(
+        return RequesterUtils::executeGetPaginated(
             Store::class,
             $this->getStoreBasedContext()->withPath("stores"),
             $query
         );
     }
 
-    public function getStore($id) {
+    public function getStore($id)
+    {
         $context = $this->getStoreBasedContext()->withPath(array("stores", $id));
-        return RequesterUtils::execute_get(Store::class, $context);
+        return RequesterUtils::executeGet(Store::class, $context);
     }
 
-    public function listBankAccounts($cursor=NULL,
-                                     $limit=NULL,
-                                     $cursorDirection=NULL) {
-        $query = FunctionalUtils::strip_nulls(array(
+    public function listBankAccounts(
+        $cursor = null,
+        $limit = null,
+        $cursorDirection = null
+    ) {
+        $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection
         ));
         $context = $this->getStoreBasedContext()->withPath("bank_accounts");
-        return RequesterUtils::execute_get_paginated(BankAccount::class, $context, $query);
+        return RequesterUtils::executeGetPaginated(BankAccount::class, $context, $query);
     }
 
-    public function getBankAccount($id) {
+    public function getBankAccount($id)
+    {
         $context = $this->getStoreBasedContext()->withPath(array("bank_accounts", $id));
-        return RequesterUtils::execute_get(BankAccount::class, $context);
+        return RequesterUtils::executeGet(BankAccount::class, $context);
     }
 
-    public function createCardToken($email,
-                                    $cardholder,
-                                    $cardNumber,
-                                    $expMonth,
-                                    $expYear,
-                                    $cvv,
-                                    $type = "one_time",
-                                    $usageLimit = NULL,
-                                    $line1 = NULL,
-                                    $line2 = NULL,
-                                    $state = NULL,
-                                    $city = NULL,
-                                    $country = NULL,
-                                    $zip = NULL,
-                                    $phoneNumberCountryCode = NULL,
-                                    $phoneNumberLocalNumber = NULL) {
+    public function createCardToken(
+        $email,
+        $cardholder,
+        $cardNumber,
+        $expMonth,
+        $expYear,
+        $cvv,
+        $type = "one_time",
+        $usageLimit = null,
+        $line1 = null,
+        $line2 = null,
+        $state = null,
+        $city = null,
+        $country = null,
+        $zip = null,
+        $phoneNumberCountryCode = null,
+        $phoneNumberLocalNumber = null
+    ) {
         $context = $this->getStoreBasedContext()->withPath("tokens");
         $data = array(
             "cardholder" => $cardholder,
@@ -155,72 +170,80 @@ class GopayClient {
             "email" => $email,
             "data" => $data
         );
-        return RequesterUtils::execute_post(TransactionToken::class, $context, $payload);
+        return RequesterUtils::executePost(TransactionToken::class, $context, $payload);
     }
 
-    public function getTransactionToken($storeId, $transactionTokenId) {
+    public function getTransactionToken($storeId, $transactionTokenId)
+    {
         $context = $this->getStoreBasedContext()->withPath(array("stores", $storeId, "tokens", $transactionTokenId));
-        return RequesterUtils::execute_get(TransactionToken::class, $context);
+        return RequesterUtils::executeGet(TransactionToken::class, $context);
     }
 
-    public function createCharge($transactionTokenId,
-                                 $amount,
-                                 $currency,
-                                 $capture = true,
-                                 $captureAt = NULL,
-                                 $metadata = NULL) {
+    public function createCharge(
+        $transactionTokenId,
+        $amount,
+        $currency,
+        $capture = true,
+        $captureAt = null,
+        $metadata = null
+    ) {
         $payload = array(
             'transaction_token_id' => $transactionTokenId,
             'amount' => $amount,
             'currency' => $currency
         );
-        if ($metadata != NULL)  {
+        if ($metadata != null) {
             $payload = array_merge(array("metadata" => $metadata), $payload);
         }
         if (!$capture) {
             $payload = array_merge($payload, array("capture" => "false"));
         }
-        if($captureAt != NULL){
+        if ($captureAt != null) {
             $payload = array_merge($payload, array("capture_at" => $captureAt));
         }
 
         $context = $this->getStoreBasedContext()->withPath("charges");
-        return RequesterUtils::execute_post(Charge::class, $context, $payload);
+        return RequesterUtils::executePost(Charge::class, $context, $payload);
     }
 
-    public function getCharge($storeId, $chargeId) {
+    public function getCharge($storeId, $chargeId)
+    {
         $context = $this->getStoreBasedContext()->withPath(array("stores", $storeId, "charges", $chargeId));
-        return RequesterUtils::execute_get(Charge::class, $context);
+        return RequesterUtils::executeGet(Charge::class, $context);
     }
 
-    public function getSubscription($storeId, $subscriptionId) {
+    public function getSubscription($storeId, $subscriptionId)
+    {
         $context = $this->getStoreBasedContext()->withPath(array("stores", $storeId, "subscriptions", $subscriptionId));
-        return RequesterUtils::execute_get(Subscription::class, $context);
+        return RequesterUtils::executeGet(Subscription::class, $context);
     }
 
-    public function listTransfers($cursor=NULL,
-                                  $limit=NULL,
-                                  $cursorDirection=NULL) {
-        $query = FunctionalUtils::strip_nulls(array(
+    public function listTransfers(
+        $cursor = null,
+        $limit = null,
+        $cursorDirection = null
+    ) {
+        $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection
         ));
         $context = $this->getStoreBasedContext()->withPath("transfers");
-        return RequesterUtils::execute_get_paginated(Transfer::class, $context, $query);
+        return RequesterUtils::executeGetPaginated(Transfer::class, $context, $query);
     }
 
-    public function getTransfer($id) {
+    public function getTransfer($id)
+    {
         $context = $this->getStoreBasedContext()->withPath(array("transfers", $id));
-        return RequesterUtils::execute_get(Transfer::class, $context);
+        return RequesterUtils::executeGet(Transfer::class, $context);
     }
 
-    public function parseWebhookData($data) {
+    public function parseWebhookData($data)
+    {
         try {
             $event = $data["event"];
-            $parser = NULL;
-            switch(strtolower($event)) {
-
+            $parser = null;
+            switch (strtolower($event)) {
                 case "charge_finished":
                     $parser = Charge::getContextParser($this->getStoreBasedContext()->withPath("charges"));
                     break;

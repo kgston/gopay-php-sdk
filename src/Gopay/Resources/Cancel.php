@@ -36,8 +36,8 @@ class Cancel extends Resource
     
     protected function getIdContext()
     {
-        return $this->context->withPath(array("stores", $this->storeId, "charges", $this->chargeId, "cancels", $this->id));
+        return $this->context->withPath(
+            array("stores", $this->storeId, "charges", $this->chargeId, "cancels", $this->id)
+        );
     }
-
-
 }

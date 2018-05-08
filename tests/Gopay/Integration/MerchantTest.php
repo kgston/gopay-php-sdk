@@ -8,7 +8,8 @@ class MerchantTest extends TestCase
 {
     use IntegrationSuite;
 
-    public function testGetMe() {
+    public function testGetMe()
+    {
         $me = $this->getClient()->getMe();
         $createdOn = DateTime::createFromFormat(DateTime::ISO8601, $me->createdOn);
         $this->assertLessThan(new DateTime(), $createdOn);

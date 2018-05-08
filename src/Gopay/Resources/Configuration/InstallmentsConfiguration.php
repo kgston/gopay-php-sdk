@@ -26,6 +26,4 @@ class InstallmentsConfiguration
     {
         return JsonSchema::fromClass(InstallmentsConfiguration::class);
     }
-
-
 }

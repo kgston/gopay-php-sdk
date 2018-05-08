@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources;
 
-
 use Composer\DependencyResolver\Request;
 use Gopay\Requests\RequestContext;
 use Gopay\Resources\Configuration\Configuration;
@@ -25,12 +24,13 @@ class Store extends Resource
     public $configuration;
 
 
-    public function __construct($id,
-                                $name,
-                                $createdOn,
-                                $configuration,
-                                RequestContext $context = NULL)
-    {
+    public function __construct(
+        $id,
+        $name,
+        $createdOn,
+        $configuration,
+        RequestContext $context = null
+    ) {
         parent::__construct($id, $context);
         $this->name = $name;
         $this->createdOn = $createdOn;
@@ -43,14 +43,16 @@ class Store extends Resource
             ->upsert("configuration", false, Configuration::getSchema()->getParser());
     }
 
-    public function getCharge($chargeId) {
+    public function getCharge($chargeId)
+    {
         $context = $this->getIdContext()->appendPath(array("charges", $chargeId));
-        return RequesterUtils::execute_get(Charge::class, $context);
+        return RequesterUtils::executeGet(Charge::class, $context);
     }
 
-    public function getSubscription($subscriptionId) {
+    public function getSubscription($subscriptionId)
+    {
         $context = $this->getIdContext()->appendPath(array("subscriptions", $subscriptionId));
-        return RequesterUtils::execute_get(Subscription::class, $context);
+        return RequesterUtils::executeGet(Subscription::class, $context);
     }
 
     protected function getSubscriptionContext()

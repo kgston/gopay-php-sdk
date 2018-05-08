@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources\Mixins;
 
-
 use Gopay\Resources\Paginated;
 use Gopay\Resources\Transaction;
 use Gopay\Utility\FunctionalUtils;
@@ -13,19 +12,20 @@ trait GetTransactions
 
     protected abstract function getTransactionContext();
 
-    public function listTransactions($from = NULL,
-                                     $to = NULL,
-                                     $status = NULL,
-                                     $type = NULL,
-                                     $search = NULL,
-                                     $mode = NULL,
-                                     $gatewayCredentialsId = NULL,
-                                     $gatewayTransactionId = NULL,
-                                     $cursor = NULL,
-                                     $limit = NULL,
-                                     $cursorDirection = NULL)
-    {
-        $query = FunctionalUtils::strip_nulls(array(
+    public function listTransactions(
+        $from = null,
+        $to = null,
+        $status = null,
+        $type = null,
+        $search = null,
+        $mode = null,
+        $gatewayCredentialsId = null,
+        $gatewayTransactionId = null,
+        $cursor = null,
+        $limit = null,
+        $cursorDirection = null
+    ) {
+        $query = FunctionalUtils::stripNulls(array(
             "from" => $from,
             "to" => $to,
             "status" => $status,
@@ -40,5 +40,4 @@ trait GetTransactions
         $response = $context->getRequester()->get($context->getFullURL(), $query, RequesterUtils::getHeaders($context));
         return Paginated::fromResponse($response, $query, Transaction::class, $context);
     }
-
 }

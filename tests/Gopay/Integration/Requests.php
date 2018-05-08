@@ -1,9 +1,10 @@
 <?php
 namespace GopayTest\Integration;
 
-trait Requests {
-
-    public function createValidToken() {
+trait Requests
+{
+    public function createValidToken()
+    {
         $transactionToken = $this->getClient()->createCardToken(
             "test@test.com",
             "PHP test",
@@ -12,26 +13,29 @@ trait Requests {
             "2022",
             "123",
             "one_time",
-            NULL,
+            null,
             "test",
-            NULL,
+            null,
             "test",
             "test",
             "jp",
             "101-1111",
             "81",
-            "12910298309128");
+            "12910298309128"
+        );
         return $transactionToken;
     }
 
-    public function createValidCharge(bool $capture = true) {
+    public function createValidCharge(bool $capture = true)
+    {
         $transactionToken = $this->createValidToken();
         $charge = $this->getClient()->createCharge($transactionToken->id, 1000, "jpy", $capture);
-        $charge = $charge->awaitResult();        
+        $charge = $charge->awaitResult();
         return $charge;
     }
 
-    public function createValidRefund() {
+    public function createValidRefund()
+    {
         $charge = $this->createValidCharge(true);
         $refund = $charge->createRefund(1000, "jpy", "fraud", "test", array("something" => "value"));
         return $refund;

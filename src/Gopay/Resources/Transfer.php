@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources;
 
-
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
@@ -23,8 +22,22 @@ class Transfer extends Resource
     public $to;
     public $createdOn;
 
-    public function __construct($id, $bankAccountId, $amount, $currency, $amountFormatted, $status, $errorCode, $errorText, $metadata, $note, $from, $to, $createdOn, $context)
-    {
+    public function __construct(
+        $id,
+        $bankAccountId,
+        $amount,
+        $currency,
+        $amountFormatted,
+        $status,
+        $errorCode,
+        $errorText,
+        $metadata,
+        $note,
+        $from,
+        $to,
+        $createdOn,
+        $context
+    ) {
         parent::__construct($id, $context);
         $this->bankAccountId = $bankAccountId;
         $this->amount = $amount;
@@ -40,17 +53,18 @@ class Transfer extends Resource
         $this->createdOn = $createdOn;
     }
 
-    public function listLedgers($cursor=NULL,
-                                $limit=NULL,
-                                $cursorDirection=NULL)
-    {
-        $query = FunctionalUtils::strip_nulls(array(
+    public function listLedgers(
+        $cursor = null,
+        $limit = null,
+        $cursorDirection = null
+    ) {
+        $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection
         ));
         $context = $this->getIdContext()->appendPath("ledgers");
-        return RequesterUtils::execute_get_paginated(Ledger::class, $context, $query);
+        return RequesterUtils::executeGetPaginated(Ledger::class, $context, $query);
     }
 
     protected static function initSchema()

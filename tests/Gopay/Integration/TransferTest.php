@@ -8,7 +8,8 @@ class TransferTest extends TestCase
 {
     use IntegrationSuite;
 
-    public function testTransferParse() {
+    public function testTransferParse()
+    {
         $str = <<<EOD
         {
           "id": "11111111-1111-1111-1111-11111111111",

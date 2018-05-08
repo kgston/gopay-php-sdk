@@ -12,7 +12,8 @@ class StoreTest extends TestCase
     /**
      * @group failing
      */
-    public function testGetStore() {
+    public function testGetStore()
+    {
         $str = <<<EOD
         {
           "id": "11111111-1111-1111-1111-111111111111",
@@ -90,14 +91,23 @@ EOD;
         $this->assertTrue($store->configuration->userTransactionsConfiguration->enabled);
         $this->assertTrue($store->configuration->userTransactionsConfiguration->notifyCustomer);
         $this->assertTrue($store->configuration->cardConfiguration->enabled);
-        $this->assertEquals(array("maestro", "unionpay"), $store->configuration->cardConfiguration->forbiddenCardBrands);
+        $this->assertEquals(
+            array("maestro", "unionpay"),
+            $store->configuration->cardConfiguration->forbiddenCardBrands
+        );
         $this->assertTrue($store->configuration->qrScanConfiguration->enabled);
         $this->assertTrue($store->configuration->convenienceConfiguration->enabled);
         $this->assertEquals("bounded", $store->configuration->recurringTokenConfiguration->recurringType);
         $this->assertEquals("P7D", $store->configuration->securityConfiguration->inspectSuspiciousLoginAfter);
         $this->assertEquals(80, $store->configuration->securityConfiguration->refundPercentLimit);
-        $this->assertEquals(500, $store->configuration->securityConfiguration->limitChargeByCardConfiguration->quantityOfCharges);
-        $this->assertEquals("P30D", $store->configuration->securityConfiguration->limitChargeByCardConfiguration->durationWindow);
+        $this->assertEquals(
+            500,
+            $store->configuration->securityConfiguration->limitChargeByCardConfiguration->quantityOfCharges
+        );
+        $this->assertEquals(
+            "P30D",
+            $store->configuration->securityConfiguration->limitChargeByCardConfiguration->durationWindow
+        );
         $this->assertTrue($store->configuration->installmentsConfiguration->enabled);
         $this->assertEquals(1000, $store->configuration->installmentsConfiguration->minChargeAmount);
         $this->assertEquals("P50D", $store->configuration->installmentsConfiguration->maxPayoutPeriod);
@@ -105,7 +115,8 @@ EOD;
         $this->assertEquals(0.05, $store->configuration->cardBrandPercentFees->visa);
     }
 
-    public function testListStores() {
+    public function testListStores()
+    {
         $str = <<<EOD
         {
           "items": [

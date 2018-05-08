@@ -10,7 +10,8 @@ class TransactionTest extends TestCase
 {
     use IntegrationSuite;
 
-    public function testTransactionParse() {
+    public function testTransactionParse()
+    {
         $str = <<<EOD
         {
           "items": [
@@ -35,7 +36,12 @@ class TransactionTest extends TestCase
 EOD;
 
         $json = json_decode($str, true);
-        $transactions = Paginated::fromResponse($json, array(), Transaction::class, $this->getClient()->getStoreBasedContext());
+        $transactions = Paginated::fromResponse(
+            $json,
+            array(),
+            Transaction::class,
+            $this->getClient()->getStoreBasedContext()
+        );
         $this->assertEquals(false, $transactions->hasMore);
         $this->assertEquals(1, count($transactions->items));
         $item = $transactions->items[0];

@@ -2,7 +2,6 @@
 
 namespace Gopay\Requests;
 
-
 interface Requester
 {
 
@@ -13,5 +12,4 @@ interface Requester
     public function patch($url, array $payload = array(), array $headers = array());
 
     public function delete($url, array $headers = array());
-
 }

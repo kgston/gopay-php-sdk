@@ -2,11 +2,11 @@
 namespace GopayTest\Integration;
 
 use Gopay\GopayClient;
-use Gopay\Resources\AppJWT;
+use Gopay\Resources\Authentication\AppJWT;
 
 trait IntegrationSuite
 {
-    public $client = NULL;
+    public $client = null;
     public $storeAppJWT;
 
     private function init()
@@ -18,8 +18,9 @@ trait IntegrationSuite
         $this->client = new GopayClient($this->storeAppJWT, null, $endpoint);
     }
 
-    public function getClient() {
-        if ($this->client === NULL) {
+    public function getClient()
+    {
+        if ($this->client === null) {
             $this->init();
         }
         return $this->client;

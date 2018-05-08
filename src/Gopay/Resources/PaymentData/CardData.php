@@ -3,7 +3,6 @@
 
 namespace Gopay\Resources\PaymentData;
 
-
 use Gopay\Utility\Json\JsonSchema;
 
 class CardData
@@ -20,14 +19,13 @@ class CardData
         $this->billing = $billing;
     }
 
-    public static function getSchema() {
+    public static function getSchema()
+    {
         if (!isset(self::$schema)) {
             self::$schema = (new JsonSchema(CardData::class))
                 ->with("card", true, Card::getSchema()->getParser())
                 ->with("billing", false, Address::getSchema()->getParser());
-
         }
         return self::$schema;
     }
-
 }

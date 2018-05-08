@@ -23,7 +23,7 @@ module.exports = function (grunt) {
         },
         phpcs: {
             library: {
-                dir: ['src']
+                dir: ['src', 'tests']
             },
             options: {
                 bin: 'vendor/bin/phpcs',

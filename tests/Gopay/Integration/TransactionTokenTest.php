@@ -9,19 +9,25 @@ class TransactionTokenTest extends TestCase
     use IntegrationSuite;
     use Requests;
 
-    public function testCreateToken() {
+    public function testCreateToken()
+    {
         $transactionToken = $this->createValidToken();
         $this->assertEquals("test@test.com", $transactionToken->email);
         $this->assertEquals("one_time", $transactionToken->type);
     }
 
-    public function testGetExistingToken() {
+    public function testGetExistingToken()
+    {
         $transactionToken = $this->createValidToken();
-        $retrievedTransactionToken = $this->getClient()->getTransactionToken($this->storeAppJWT->storeId, $transactionToken->id);
+        $retrievedTransactionToken = $this->getClient()->getTransactionToken(
+            $this->storeAppJWT->storeId,
+            $transactionToken->id
+        );
         $this->assertEquals($transactionToken->id, $retrievedTransactionToken->id);
     }
 
-    public function testInvalidCardNumber() {
+    public function testInvalidCardNumber()
+    {
         $this->expectException(GopayRequestError::class);
         $this->getClient()->createCardToken(
             "test@test.com",
@@ -31,15 +37,15 @@ class TransactionTokenTest extends TestCase
             "2022",
             "123",
             "one_time",
-            NULL,
+            null,
             "test",
-            NULL,
+            null,
             "test",
             "test",
             "jp",
             "101-1111",
             "81",
-            "12910298309128");
+            "12910298309128"
+        );
     }
-
 }

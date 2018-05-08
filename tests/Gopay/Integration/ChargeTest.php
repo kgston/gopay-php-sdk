@@ -16,32 +16,37 @@ class ChargeTest extends TestCase
         $this->assertEquals("JPY", $charge->requestedCurrency);
     }
 
-    public function testCreateChargeOnToken() {
+    public function testCreateChargeOnToken()
+    {
         $charge = $this->createValidToken()->createCharge(1000, "JPY");
         $this->assertEquals(1000, $charge->requestedAmount);
         $this->assertEquals("JPY", $charge->requestedCurrency);
     }
 
-    public function testAuthCaptureCharge() {
-        $charge = $this->createValidCharge(False);
+    public function testAuthCaptureCharge()
+    {
+        $charge = $this->createValidCharge(false);
         $captured = $charge->capture(1000, "JPY");
         $this->assertTrue($captured);
     }
 
-    public function testInvalidCharge() {
+    public function testInvalidCharge()
+    {
         $this->expectException(GopayRequestError::class);
         $transactionToken = $this->createValidToken();
         $this->getClient()->createCharge($transactionToken->id, -1000, "jpy");
     }
 
-    public function testInvalidAuthCapture() {
+    public function testInvalidAuthCapture()
+    {
         $this->expectException(GopayRequestError::class);
-        $charge = $this->createValidCharge(False);
+        $charge = $this->createValidCharge(false);
         $charge->capture(2000, "JPY");
     }
     
-    public function testCancelAuthCharge() {
-        $charge = $this->createValidCharge(False);
+    public function testCancelAuthCharge()
+    {
+        $charge = $this->createValidCharge(false);
         $this->assertEquals('authorized', $charge->status);
         $cancel = $charge->cancel(array(
             'something'=>'anything'
@@ -49,11 +54,11 @@ class ChargeTest extends TestCase
         $this->assertEquals($cancel->metadata['something'], 'anything');
     }
     
-    public function testInvalidCancel() {
+    public function testInvalidCancel()
+    {
         $this->expectException(GopayRequestError::class);
         $charge = $this->createValidCharge();
         $this->assertEquals('successful', $charge->status);
         $charge->cancel();
     }
-
 }

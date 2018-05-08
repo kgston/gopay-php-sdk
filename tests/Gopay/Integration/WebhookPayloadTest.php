@@ -7,7 +7,8 @@ class WebhookPayloadTest extends TestCase
 {
     use IntegrationSuite;
 
-    public function testWebhookPayloadParse() {
+    public function testWebhookPayloadParse()
+    {
         $str = <<<EOD
       {
        "event":"charge_finished",

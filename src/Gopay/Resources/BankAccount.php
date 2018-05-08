@@ -4,7 +4,8 @@ namespace Gopay\Resources;
 
 use Gopay\Utility\Json\JsonSchema;
 
-class BankAccount extends Resource {
+class BankAccount extends Resource
+{
     use Jsonable;
 
     public $primary;
@@ -24,8 +25,26 @@ class BankAccount extends Resource {
     public $accountType;
     public $createdOn;
 
-    public function __construct($id, $primary, $holderName, $bankName, $branchName, $country, $bankAddress, $currency, $accountNumber, $routingNumber, $swiftCode, $ifscCode, $routingCode, $lastFour, $status, $accountType, $createdOn, $context)
-    {
+    public function __construct(
+        $id,
+        $primary,
+        $holderName,
+        $bankName,
+        $branchName,
+        $country,
+        $bankAddress,
+        $currency,
+        $accountNumber,
+        $routingNumber,
+        $swiftCode,
+        $ifscCode,
+        $routingCode,
+        $lastFour,
+        $status,
+        $accountType,
+        $createdOn,
+        $context
+    ) {
         parent::__construct($id, $context);
         $this->primary = $primary;
         $this->holderName = $holderName;

@@ -26,11 +26,11 @@ class Address
         $this->phoneNumber = $phoneNumber;
     }
 
-    public static function getSchema() {
+    public static function getSchema()
+    {
         if (!isset(self::$schema)) {
             self::$schema = JsonSchema::fromClass(self::class);
         }
         return self::$schema;
     }
-
 }

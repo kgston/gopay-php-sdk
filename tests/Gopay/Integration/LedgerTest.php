@@ -9,7 +9,8 @@ class LedgerTest extends TestCase
 {
     use IntegrationSuite;
 
-    public function testLedgerParse() {
+    public function testLedgerParse()
+    {
         $str = <<<EOD
         {
           "id": "11111111-1111-1111-1111-111111111111",

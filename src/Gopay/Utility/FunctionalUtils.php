@@ -2,9 +2,11 @@
 
 namespace Gopay\Utility;
 
-abstract class FunctionalUtils {
+abstract class FunctionalUtils
+{
 
-    public static function get_or_else(array $array, $key, $orElse) {
+    public static function getOrElse(array $array, $key, $orElse)
+    {
         if (array_key_exists($key, $array)) {
             return $array[$key];
         } else {
@@ -12,34 +14,40 @@ abstract class FunctionalUtils {
         }
     }
 
-    public static function get_or_null($array, $key) {
-        return FunctionalUtils::get_or_else($array, $key, NULL);
+    public static function getOrNull($array, $key)
+    {
+        return FunctionalUtils::getOrElse($array, $key, null);
     }
 
-    public static function copy(array $array) {
+    public static function copy(array $array)
+    {
         return array_merge(array(), $array);
     }
 
-    public static function identity($a) {
+    public static function identity($a)
+    {
         return $a;
     }
 
-    public static function array_find_index($xs, $f) {
+    public static function arrayFindIndex($xs, $f)
+    {
         $index = 0;
         foreach ($xs as $x) {
-            if (call_user_func($f, $x) === true)
+            if (call_user_func($f, $x) === true) {
                 return $index;
+            }
             $index++;
         }
         return null;
     }
 
-    public static function get_class_vars_assoc($called, $includeParentVars) {
+    public static function getClassVarsAssoc($called, $includeParentVars)
+    {
         // echo "called: $called \n";
         $classVars = array_keys(get_class_vars($called));
 
         $parent = get_parent_class($called);
-        while ($parent !== FALSE) {
+        while ($parent !== false) {
             $parentVars = array_keys(get_class_vars($parent));
             $classVars = array_diff($classVars, $parentVars);
             $classVars = $includeParentVars ? array_merge($parentVars, $classVars) : $classVars;
@@ -49,15 +57,14 @@ abstract class FunctionalUtils {
         return $classVars;
     }
 
-    public static function strip_nulls(array $array) {
-        return array_reduce(array_keys($array) , function ($currentArray, $key) use ($array) {
-            if ($array[$key] !== NULL) {
+    public static function stripNulls(array $array)
+    {
+        return array_reduce(array_keys($array), function ($currentArray, $key) use ($array) {
+            if ($array[$key] !== null) {
                 return array_merge(array($key => $array[$key]), $currentArray);
             } else {
                 return $currentArray;
             }
         }, array());
     }
-
 }
-

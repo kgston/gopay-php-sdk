@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources;
 
-
 use Gopay\Utility\Json\JsonSchema;
 
 class Ledger
@@ -23,8 +22,21 @@ class Ledger
     public $note;
     public $createdOn;
 
-    public function __construct($id, $storeId, $amount, $currency, $amountFormatted, $percentFee, $flatFeeAmount, $flatFeeCurrency, $flatFeeFormatted, $exchangeRate, $origin, $note, $createdOn)
-    {
+    public function __construct(
+        $id,
+        $storeId,
+        $amount,
+        $currency,
+        $amountFormatted,
+        $percentFee,
+        $flatFeeAmount,
+        $flatFeeCurrency,
+        $flatFeeFormatted,
+        $exchangeRate,
+        $origin,
+        $note,
+        $createdOn
+    ) {
         $this->id = $id;
         $this->storeId = $storeId;
         $this->amount = $amount;
@@ -41,12 +53,11 @@ class Ledger
     }
 
 
-    public static function getSchema() {
+    public static function getSchema()
+    {
         if (!isset(self::$schema)) {
             self::$schema = JsonSchema::fromClass(self::class);
-
         }
         return self::$schema;
     }
-
 }

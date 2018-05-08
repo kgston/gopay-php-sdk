@@ -9,7 +9,8 @@ class BankAccountsTest extends TestCase
 {
     use IntegrationSuite;
     
-       public function testGetBankAccount() {
+    public function testGetBankAccount()
+    {
         $str = <<<EOD
         {
           "id": "11111111-1111-1111-1111-111111111111",
@@ -43,7 +44,8 @@ EOD;
         $this->assertEquals(true, $bankAccount->primary);
     }
 
-    public function testListBankAccounts() {
+    public function testListBankAccounts()
+    {
         $str = <<<EOD
         {
           "items": [
@@ -86,7 +88,12 @@ EOD;
         }
 EOD;
         $json = json_decode($str, true);
-        $bankAccounts = Paginated::fromResponse($json, array(), BankAccount::class, $this->getClient()->getStoreBasedContext());
+        $bankAccounts = Paginated::fromResponse(
+            $json,
+            array(),
+            BankAccount::class,
+            $this->getClient()->getStoreBasedContext()
+        );
         $this->assertEquals(false, $bankAccounts->hasMore);
         $this->assertEquals(2, count($bankAccounts->items));
         $this->assertEquals("Holder 2", $bankAccounts->items[1]->holderName);

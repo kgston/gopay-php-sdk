@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources\Mixins;
 
-
 use Gopay\Resources\Charge;
 use Gopay\Utility\RequesterUtils;
 
@@ -11,26 +10,28 @@ trait GetCharges
 
     protected abstract function getChargeContext();
 
-    public function listCharges($lastFour=NULL,
-                                $name=NULL,
-                                $expMonth=NULL,
-                                $expYear=NULL,
-                                $cardNumber=NULL,
-                                $from=NULL,
-                                $to=NULL,
-                                $email=NULL,
-                                $phone=NULL,
-                                $amountFrom=NULL,
-                                $amountTo=NULL,
-                                $currency=NULL,
-                                $metadata=NULL,
-                                $mode=NULL,
-                                $transactionTokenId=NULL,
-                                $gatewayCredentialsId=NULL,
-                                $gatewayTransactionId=NULL,
-                                $cursor=NULL,
-                                $limit=NULL,
-                                $cursorDirection=NULL) {
+    public function listCharges(
+        $lastFour = null,
+        $name = null,
+        $expMonth = null,
+        $expYear = null,
+        $cardNumber = null,
+        $from = null,
+        $to = null,
+        $email = null,
+        $phone = null,
+        $amountFrom = null,
+        $amountTo = null,
+        $currency = null,
+        $metadata = null,
+        $mode = null,
+        $transactionTokenId = null,
+        $gatewayCredentialsId = null,
+        $gatewayTransactionId = null,
+        $cursor = null,
+        $limit = null,
+        $cursorDirection = null
+    ) {
         $context = $this->getChargeContext();
         $query = array(
             "last_four" => $lastFour,
@@ -52,7 +53,6 @@ trait GetCharges
             "limit" => $limit,
             "cursor_direction" => $cursorDirection
         );
-        return RequesterUtils::execute_get_paginated(Charge::class, $context, $query);
+        return RequesterUtils::executeGetPaginated(Charge::class, $context, $query);
     }
-
 }

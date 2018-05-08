@@ -18,10 +18,12 @@ const INTERNAL_SERVER_ERROR = 500;
 
 const CONFLICT = 409;
 
-abstract class HttpUtils {
+abstract class HttpUtils
+{
 
 
-    public static function get_query_string(array $params) {
+    public static function getQueryString(array $params)
+    {
         if (is_array($params) && sizeof($params) > 0) {
             return "?" . http_build_query($params);
         } else {
@@ -29,10 +31,11 @@ abstract class HttpUtils {
         }
     }
 
-    public static function check_response($url, $response) {
-        switch($response->status_code) {
+    public static function checkResponse($url, $response)
+    {
+        switch ($response->status_code) {
             case BAD_REQUEST:
-                throw GopayRequestError::from_json(json_decode($response->body, true));
+                throw GopayRequestError::fromJson(json_decode($response->body, true));
 
             case UNAUTHORIZED:
                 throw new GopayUnauthorizedError($url);
@@ -48,19 +51,18 @@ abstract class HttpUtils {
 
             default:
                 if ($response->body) {
-                    return json_decode($response->body, True);
+                    return json_decode($response->body, true);
                 } else {
-                    return True;
+                    return true;
                 }
         }
     }
 
-    public static function add_json_header(array $headers) {
+    public static function addJsonHeader(array $headers)
+    {
         return array_merge(array(
             "Accept" => "application/json",
             "Content-Type" => "application/json"
         ), $headers);
     }
-
 }
-

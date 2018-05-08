@@ -6,7 +6,8 @@ use Gopay\Resources\PaymentData\CardData;
 use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
 
-class TransactionToken extends Resource {
+class TransactionToken extends Resource
+{
     use Jsonable;
 
     public $storeId;
@@ -20,19 +21,20 @@ class TransactionToken extends Resource {
     public $lastUsedOn;
     public $data;
 
-    function __construct($id,
-                         $storeId,
-                         $email,
-                         $active,
-                         $paymentType,
-                         $mode,
-                         $type,
-                         $usageLimit,
-                         $createdOn,
-                         $lastUsedOn,
-                         $data,
-                         $context)
-    {
+    public function __construct(
+        $id,
+        $storeId,
+        $email,
+        $active,
+        $paymentType,
+        $mode,
+        $type,
+        $usageLimit,
+        $createdOn,
+        $lastUsedOn,
+        $data,
+        $context
+    ) {
         parent::__construct($id, $context);
         $this->email = $email;
         $this->active = $active;
@@ -46,19 +48,21 @@ class TransactionToken extends Resource {
         $this->data = $data;
     }
 
-    protected static function initSchema() {
+    protected static function initSchema()
+    {
         return JsonSchema::fromClass(self::class)
             ->upsert("data", true, $formatter = CardData::getSchema()->getParser());
     }
 
-    public function createCharge($amount, $currency, $capture = true, $metadata = NULL) {
+    public function createCharge($amount, $currency, $capture = true, $metadata = null)
+    {
         $payload = array(
             'transaction_token_id' => $this->id,
             'amount' => $amount,
             'currency' => $currency
         );
 
-        if ($metadata != NULL)  {
+        if ($metadata != null) {
             $payload = array_map(array("metadata" => $metadata), $payload);
         }
         if (!$capture) {
@@ -66,7 +70,6 @@ class TransactionToken extends Resource {
         }
 
         $context = $this->context->withPath("charges");
-        return RequesterUtils::execute_post(Charge::class, $context, $payload);
+        return RequesterUtils::executePost(Charge::class, $context, $payload);
     }
-
 }

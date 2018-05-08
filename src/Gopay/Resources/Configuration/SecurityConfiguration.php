@@ -24,6 +24,10 @@ class SecurityConfiguration
     protected static function initSchema()
     {
         return JsonSchema::fromClass(SecurityConfiguration::class)
-                ->upsert("limit_charge_by_card_configuration", false, $formatter = LimitChargeByCardConfiguration::getSchema()->getParser());
+                ->upsert(
+                    "limit_charge_by_card_configuration",
+                    false,
+                    $formatter = LimitChargeByCardConfiguration::getSchema()->getParser()
+                );
     }
 }

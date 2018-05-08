@@ -2,20 +2,22 @@
 
 namespace Gopay\Resources;
 
-
 use Gopay\Utility\RequesterUtils;
 
-abstract class Resource {
+abstract class Resource
+{
 
     public $id;
     protected $context;
 
-    function __construct($id, $context) {
+    protected function __construct($id, $context)
+    {
         $this->id = $id;
         $this->context = $context;
     }
 
-    protected function getIdContext() {
+    protected function getIdContext()
+    {
         if (strpos($this->context->getFullURL(), $this->id)) {
             return $this->context;
         } else {
@@ -23,14 +25,15 @@ abstract class Resource {
         }
     }
 
-    public function fetch() {
+    public function fetch()
+    {
         $context = $this->getIdContext();
-        return RequesterUtils::execute_get(get_class($this), $context, array());
+        return RequesterUtils::executeGet(get_class($this), $context, array());
     }
 
-    public function update(array $updates) {
+    public function update(array $updates)
+    {
         $context = $this->getIdContext();
-        return RequesterUtils::execute_patch(get_class($this), $context, $updates);
+        return RequesterUtils::executePatch(get_class($this), $context, $updates);
     }
-
 }

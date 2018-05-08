@@ -2,7 +2,6 @@
 
 namespace Gopay\Errors;
 
-
 use Throwable;
 
 class GopayResourceConflictError extends GopayError

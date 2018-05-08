@@ -2,10 +2,10 @@
 
 namespace Gopay\Errors;
 
-
 use Throwable;
 
-class GopayInvalidWebhookData extends GopayError {
+class GopayInvalidWebhookData extends GopayError
+{
 
     public function __construct($payload, $code = 0, Throwable $previous = null)
     {
@@ -14,5 +14,4 @@ class GopayInvalidWebhookData extends GopayError {
         $payloadAsString = ob_end_clean();
         parent::__construct($payloadAsString . " is not valid webhook data", $code, $previous);
     }
-
 }

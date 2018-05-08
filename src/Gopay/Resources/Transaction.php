@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources;
 
-
 use Gopay\Utility\Json\JsonSchema;
 
 class Transaction
@@ -23,8 +22,21 @@ class Transaction
     public $createdOn;
     private $context;
 
-    public function __construct($id, $storeId, $resourceId, $chargeId, $amount, $currency, $amountFormatted, $type, $status, $metadata, $mode, $createdOn, $context)
-    {
+    public function __construct(
+        $id,
+        $storeId,
+        $resourceId,
+        $chargeId,
+        $amount,
+        $currency,
+        $amountFormatted,
+        $type,
+        $status,
+        $metadata,
+        $mode,
+        $createdOn,
+        $context
+    ) {
         $this->id = $id;
         $this->storeId = $storeId;
         $this->resourceId = $resourceId;

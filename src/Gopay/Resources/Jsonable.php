@@ -2,21 +2,23 @@
 
 namespace Gopay\Resources;
 
-trait Jsonable {
+trait Jsonable
+{
 
     protected static $schema;
 
     protected abstract static function initSchema();
 
-    public static function getSchema() {
+    public static function getSchema()
+    {
         if (!isset(self::$schema)) {
             self::$schema = self::initSchema();
         }
         return self::$schema;
     }
 
-    public static function getContextParser($context) {
+    public static function getContextParser($context)
+    {
         return self::getSchema()->getParser(array($context));
     }
-
 }

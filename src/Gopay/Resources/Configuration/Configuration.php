@@ -6,8 +6,8 @@ use Gopay\Resources\Jsonable;
 use Gopay\Resources\PaymentData\Card;
 use Gopay\Utility\Json\JsonSchema;
 
-
-class Configuration {
+class Configuration
+{
     use Jsonable;
 
     public $percentFee;
@@ -27,23 +27,24 @@ class Configuration {
     public $installmentsConfiguration;
     public $cardBrandPercentFees;
 
-    public function __construct($percentFee,
-                                $flatFees,
-                                $logoUrl,
-                                $country,
-                                $language,
-                                $timeZone,
-                                $minTransferPayout,
-                                $transferSchedule,
-                                $userTransactionsConfiguration,
-                                $cardConfiguration,
-                                $qrScanConfiguration,
-                                $convenienceConfiguration,
-                                $recurringTokenConfiguration,
-                                $securityConfiguration,
-                                $installmentsConfiguration,
-                                $cardBrandPercentFees)
-    {
+    public function __construct(
+        $percentFee,
+        $flatFees,
+        $logoUrl,
+        $country,
+        $language,
+        $timeZone,
+        $minTransferPayout,
+        $transferSchedule,
+        $userTransactionsConfiguration,
+        $cardConfiguration,
+        $qrScanConfiguration,
+        $convenienceConfiguration,
+        $recurringTokenConfiguration,
+        $securityConfiguration,
+        $installmentsConfiguration,
+        $cardBrandPercentFees
+    ) {
         $this->percentFee = $percentFee;
         $this->flatFees = $flatFees;
         $this->logoUrl = $logoUrl;
@@ -65,14 +66,50 @@ class Configuration {
     protected static function initSchema()
     {
         return JsonSchema::fromClass(Configuration::class)
-                ->upsert("transfer_schedule", false, $formatter = TransferSchedule::getSchema()->getParser())
-                ->upsert("user_transactions_configuration", true, $formatter = UserTransactionsConfiguration::getSchema()->getParser())
-                ->upsert("card_configuration", true, $formatter = CardConfiguration::getSchema()->getParser())
-                ->upsert("qr_scan_configuration", true, $formatter = QRConfiguration::getSchema()->getParser())
-                ->upsert("convenience_configuration", true, $formatter = ConvenienceConfiguration::getSchema()->getParser())
-                ->upsert("recurring_token_configuration", true, $formatter = RecurringConfiguration::getSchema()->getParser())
-                ->upsert("security_configuration", true, $formatter = SecurityConfiguration::getSchema()->getParser())
-                ->upsert("installments_configuration", true, $formatter = InstallmentsConfiguration::getSchema()->getParser())
-                ->upsert("card_brand_percent_fees", true, $formatter = CardBrandPercentFees::getSchema()->getParser());
+                ->upsert(
+                    "transfer_schedule",
+                    false,
+                    $formatter = TransferSchedule::getSchema()->getParser()
+                )
+                ->upsert(
+                    "user_transactions_configuration",
+                    true,
+                    $formatter = UserTransactionsConfiguration::getSchema()->getParser()
+                )
+                ->upsert(
+                    "card_configuration",
+                    true,
+                    $formatter = CardConfiguration::getSchema()->getParser()
+                )
+                ->upsert(
+                    "qr_scan_configuration",
+                    true,
+                    $formatter = QRConfiguration::getSchema()->getParser()
+                )
+                ->upsert(
+                    "convenience_configuration",
+                    true,
+                    $formatter = ConvenienceConfiguration::getSchema()->getParser()
+                )
+                ->upsert(
+                    "recurring_token_configuration",
+                    true,
+                    $formatter = RecurringConfiguration::getSchema()->getParser()
+                )
+                ->upsert(
+                    "security_configuration",
+                    true,
+                    $formatter = SecurityConfiguration::getSchema()->getParser()
+                )
+                ->upsert(
+                    "installments_configuration",
+                    true,
+                    $formatter = InstallmentsConfiguration::getSchema()->getParser()
+                )
+                ->upsert(
+                    "card_brand_percent_fees",
+                    true,
+                    $formatter = CardBrandPercentFees::getSchema()->getParser()
+                );
     }
 }

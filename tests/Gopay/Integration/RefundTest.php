@@ -19,11 +19,10 @@ class RefundTest extends TestCase
         $this->assertEquals(['something' => 'value'], $refund->metadata);
     }
 
-    public function testInvalidRefund() {
+    public function testInvalidRefund()
+    {
         $this->expectException(GopayRequestError::class);
         $charge = $this->createValidCharge(true);
         $charge->createRefund(2000, "jpy", "fraud", "test", array("something" => "value"));
     }
-
-
 }

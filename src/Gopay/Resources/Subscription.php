@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources;
 
-
 use Gopay\Utility\Json\JsonSchema;
 
 class Subscription extends Resource
@@ -19,8 +18,20 @@ class Subscription extends Resource
     public $mode;
     public $createdOn;
 
-    public function __construct($id, $storeId, $transactionTokenId, $amount, $currency, $amountFormatted, $period, $status, $metadata, $mode, $createdOn, $context)
-    {
+    public function __construct(
+        $id,
+        $storeId,
+        $transactionTokenId,
+        $amount,
+        $currency,
+        $amountFormatted,
+        $period,
+        $status,
+        $metadata,
+        $mode,
+        $createdOn,
+        $context
+    ) {
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
@@ -43,5 +54,4 @@ class Subscription extends Resource
     {
         return JsonSchema::fromClass(self::class);
     }
-
 }

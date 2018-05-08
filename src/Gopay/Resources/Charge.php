@@ -2,7 +2,6 @@
 
 namespace Gopay\Resources;
 
-
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
@@ -29,25 +28,26 @@ class Charge extends Resource
     public $mode;
     public $createdOn;
 
-    public function __construct($id,
-                                $storeId,
-                                $transactionTokenId,
-                                $transactionTokenType,
-                                $subscriptionId,
-                                $requestedAmount,
-                                $requestedCurrency,
-                                $requestedAmountFormatted,
-                                $chargedAmount,
-                                $chargedCurrency,
-                                $chargedAmountFormatted,
-                                $captureAt,
-                                $status,
-                                $error,
-                                $metadata,
-                                $mode,
-                                $createdOn,
-                                $context)
-    {
+    public function __construct(
+        $id,
+        $storeId,
+        $transactionTokenId,
+        $transactionTokenType,
+        $subscriptionId,
+        $requestedAmount,
+        $requestedCurrency,
+        $requestedAmountFormatted,
+        $chargedAmount,
+        $chargedCurrency,
+        $chargedAmountFormatted,
+        $captureAt,
+        $status,
+        $error,
+        $metadata,
+        $mode,
+        $createdOn,
+        $context
+    ) {
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
@@ -77,12 +77,14 @@ class Charge extends Resource
         return $this->context->withPath(array("stores", $this->storeId, "charges", $this->id));
     }
 
-    public function createRefund($amount,
-                                 $currency,
-                                 $reason = NULL,
-                                 $message = NULL,
-                                 $metadata = NULL) {
-        $payload = FunctionalUtils::strip_nulls(array(
+    public function createRefund(
+        $amount,
+        $currency,
+        $reason = null,
+        $message = null,
+        $metadata = null
+    ) {
+        $payload = FunctionalUtils::stripNulls(array(
             "amount" => $amount,
             "currency" => $currency,
             "reason" => $reason,
@@ -90,58 +92,61 @@ class Charge extends Resource
             "metadata" => $metadata
             ));
         $context = $this->getIdContext()->appendPath("refunds");
-        return RequesterUtils::execute_post(Refund::class, $context, $payload);
+        return RequesterUtils::executePost(Refund::class, $context, $payload);
     }
 
-    public function listRefunds($cursor=NULL,
-                                $limit=NULL,
-                                $cursorDirection=NULL)
-    {
-        $query = FunctionalUtils::strip_nulls(array(
+    public function listRefunds(
+        $cursor = null,
+        $limit = null,
+        $cursorDirection = null
+    ) {
+        $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection
         ));
-        return RequesterUtils::execute_get_paginated(
+        return RequesterUtils::executeGetPaginated(
             Refund::class,
             $this->getIdContext()->appendPath("refunds"),
             $query
         );
     }
 
-    public function capture($amount,
-                            $currency) {
+    public function capture(
+        $amount,
+        $currency
+    ) {
         $payload = array(
             'amount' => $amount,
             'currency' => $currency
         );
         $context = $this->getIdContext()->appendPath("capture");
-        return RequesterUtils::execute_post(NULL, $context, $payload);
+        return RequesterUtils::executePost(null, $context, $payload);
     }
 
-    public function cancel($metadata = NULL){
-        $payload = FunctionalUtils::strip_nulls(array(
+    public function cancel($metadata = null)
+    {
+        $payload = FunctionalUtils::stripNulls(array(
             "metadata" => $metadata
         ));
         $context = $this->getIdContext()->appendPath("cancels");
-        return RequesterUtils::execute_post(Cancel::class, $context, $payload);
+        return RequesterUtils::executePost(Cancel::class, $context, $payload);
     }
 
-    public function listCancels($cursor=NULL,
-                                $limit=NULL,
-                                $cursorDirection=NULL)
-    {
-        $query = FunctionalUtils::strip_nulls(array(
+    public function listCancels(
+        $cursor = null,
+        $limit = null,
+        $cursorDirection = null
+    ) {
+        $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection
         ));
-        return RequesterUtils::execute_get_paginated(
+        return RequesterUtils::executeGetPaginated(
             Cancel::class,
             $this->getIdContext()->appendPath("cancels"),
             $query
         );
-
     }
-
 }

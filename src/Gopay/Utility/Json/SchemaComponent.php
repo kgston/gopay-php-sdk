@@ -15,5 +15,4 @@ class SchemaComponent
         $this->required = $required;
         $this->formatter = $formatter;
     }
-
 }

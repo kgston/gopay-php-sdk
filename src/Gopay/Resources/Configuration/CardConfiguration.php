@@ -21,8 +21,17 @@ class CardConfiguration
     public $cardLimit;
     public $allowEmptyCvv;
 
-    public function __construct($enabled, $debitEnabled, $prepaidEnabled, $forbiddenCardBrands, $allowedCountriesByIp, $foreignCardsAllowed, $failOnNewEmail, $cardLimit, $allowEmptyCvv)
-    {
+    public function __construct(
+        $enabled,
+        $debitEnabled,
+        $prepaidEnabled,
+        $forbiddenCardBrands,
+        $allowedCountriesByIp,
+        $foreignCardsAllowed,
+        $failOnNewEmail,
+        $cardLimit,
+        $allowEmptyCvv
+    ) {
         $this->enabled = $enabled;
         $this->debitEnabled = $debitEnabled;
         $this->prepaidEnabled = $prepaidEnabled;

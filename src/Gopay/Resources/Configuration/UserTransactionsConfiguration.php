@@ -5,14 +5,15 @@ namespace Gopay\Resources\Configuration;
 use Gopay\Resources\Jsonable;
 use Gopay\Utility\Json\JsonSchema;
 
-class UserTransactionsConfiguration 
+class UserTransactionsConfiguration
 {
     use Jsonable;
     
     public $enabled;
     public $notifyCustomer;
     
-    function __construct($enabled, $notifyCustomer) {
+    public function __construct($enabled, $notifyCustomer)
+    {
         $this->enabled = $enabled;
         $this->notifyCustomer = $notifyCustomer;
     }
@@ -21,6 +22,4 @@ class UserTransactionsConfiguration
     {
         return JsonSchema::fromClass(UserTransactionsConfiguration::class);
     }
-
-    
 }

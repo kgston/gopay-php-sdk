@@ -27,7 +27,7 @@ class MerchantAppJWT extends AppJWT
         $secret
     ) {
         if ($sub != "app_token") {
-            throw new Exception("Invalid JWT");
+            throw new InvalidJWTFormat("Invalid subject");
         }
         parent::__construct($token, $secret);
         $this->iat = $iat;

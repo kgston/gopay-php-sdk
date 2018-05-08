@@ -2,6 +2,7 @@
 
 namespace Gopay\Resources\Authentication;
 
+use Exception;
 use Gopay\Utility\Json\JsonSchema;
 
 abstract class AppJWT
@@ -17,8 +18,17 @@ abstract class AppJWT
 
     public static function createToken($appToken, $appSecret)
     {
-        $tokenBody = base64_decode(explode(".", $appToken)[1]);
+        try {
+            $tokenBody = base64_decode(explode(".", $appToken)[1]);
+        } catch (Exception $e) {
+            throw new InvalidJWTFormat($appToken);
+        }
         $appTokenBody = json_decode($tokenBody, true);
+
+        if ($appTokenBody == null) {
+            throw new InvalidJWTFormat("JWT body is not JSON");
+        }
+        
         if (array_key_exists("store_id", $appTokenBody)) {
             $class = StoreAppJWT::class;
         } else {

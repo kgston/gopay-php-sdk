@@ -95,14 +95,14 @@ class GopayClient
         ));
         return RequesterUtils::executeGetPaginated(
             Store::class,
-            $this->getStoreBasedContext()->withPath("stores"),
+            $this->getStoreContext(),
             $query
         );
     }
 
     public function getStore($id)
     {
-        $context = $this->getStoreBasedContext()->withPath(array("stores", $id));
+        $context = $this->getStoreContext()->appendPath($id);
         return RequesterUtils::executeGet(Store::class, $context);
     }
 
@@ -116,13 +116,13 @@ class GopayClient
             "limit" => $limit,
             "cursor_direction" => $cursorDirection
         ));
-        $context = $this->getStoreBasedContext()->withPath("bank_accounts");
+        $context = $this->getBankAccountContext();
         return RequesterUtils::executeGetPaginated(BankAccount::class, $context, $query);
     }
 
     public function getBankAccount($id)
     {
-        $context = $this->getStoreBasedContext()->withPath(array("bank_accounts", $id));
+        $context = $this->getBankAccountContext()->appendPath($id);
         return RequesterUtils::executeGet(BankAccount::class, $context);
     }
 
@@ -211,7 +211,7 @@ class GopayClient
             $payload = array_merge($payload, array("capture_at" => $captureAt));
         }
 
-        $context = $this->getStoreBasedContext()->withPath("charges");
+        $context = $this->getChargeContext();
         return RequesterUtils::executePost(Charge::class, $context, $payload);
     }
 
@@ -237,13 +237,13 @@ class GopayClient
             "limit" => $limit,
             "cursor_direction" => $cursorDirection
         ));
-        $context = $this->getStoreBasedContext()->withPath("transfers");
+        $context = $this->getTransferContext();
         return RequesterUtils::executeGetPaginated(Transfer::class, $context, $query);
     }
 
     public function getTransfer($id)
     {
-        $context = $this->getStoreBasedContext()->withPath(array("transfers", $id));
+        $context = $this->getTransferContext()->appendPath($id);
         return RequesterUtils::executeGet(Transfer::class, $context);
     }
 
@@ -253,22 +253,31 @@ class GopayClient
             $event = $data["event"];
             $parser = null;
             switch (strtolower($event)) {
+                case "charge_updated":
                 case "charge_finished":
-                    $parser = Charge::getContextParser($this->getStoreBasedContext()->withPath("charges"));
+                    $parser = Charge::getContextParser($this->getChargeContext());
                     break;
 
                 case "subscription_payment":
+                case "subscription_completed":
                 case "subscription_failure":
-                case "subscription_cancelled":
-                    $parser = Subscription::getContextParser($this->getStoreBasedContext()->withPath("subscriptions"));
+                case "subscription_canceled":
+                case "subscription_suspended":
+                    $parser = Subscription::getContextParser($this->getSubscriptionContext());
                     break;
 
                 case "refund_finished":
                     $parser = Refund::getContextParser($this->getStoreBasedContext());
                     break;
 
+                case "transfer_created":
+                case "transfer_updated":
                 case "transfer_finalized":
-                    $parser = Transfer::getContextParser($this->getStoreBasedContext()->withPath("transfers"));
+                    $parser = Transfer::getContextParser($this->getTransferContext());
+                    break;
+
+                case "cancel_finished":
+                    $parser = Cancel::getContextParser($this->getStoreBasedContext());
                     break;
 
                 default:
@@ -278,6 +287,11 @@ class GopayClient
         } catch (Exception $exception) {
             throw new GopayInvalidWebhookData($data);
         }
+    }
+
+    protected function getStoreContext()
+    {
+        return $this->getStoreBasedContext()->withPath("stores");
     }
 
     protected function getSubscriptionContext()
@@ -293,5 +307,15 @@ class GopayClient
     protected function getChargeContext()
     {
         return $this->getStoreBasedContext()->withPath("charges");
+    }
+
+    protected function getTransferContext()
+    {
+        return $this->getStoreBasedContext()->withPath("transfers");
+    }
+
+    protected function getBankAccountContext()
+    {
+        return $this->getStoreBasedContext()->withPath("bank_accounts");
     }
 }

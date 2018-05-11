@@ -19,7 +19,7 @@ class SubscriptionTest extends TestCase
       "currency": "JPY",
       "amount_formatted": 1000,
       "period": "monthly",
-      "status": "cancelled",
+      "status": "canceled",
       "metadata": {
       },
       "mode": "test",
@@ -37,7 +37,7 @@ EOD;
         $this->assertEquals("JPY", $subscription->currency);
         $this->assertEquals(1000, $subscription->amountFormatted);
         $this->assertEquals("monthly", $subscription->period);
-        $this->assertEquals("cancelled", $subscription->status);
+        $this->assertEquals("canceled", $subscription->status);
         $this->assertEquals("test", $subscription->mode);
         $this->assertEquals("2017-07-04T06:06:05.580391Z", $subscription->createdOn);
     }

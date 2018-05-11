@@ -250,7 +250,7 @@ class GopayClient
 
                 case "subscription_payment":
                 case "subscription_failure":
-                case "subscription_cancelled":
+                case "subscription_canceled":
                     $parser = Subscription::getContextParser($this->getStoreBasedContext()->withPath("subscriptions"));
                     break;
 

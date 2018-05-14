@@ -7,12 +7,15 @@ use Gopay\Utility\Json\JsonSchema;
 class Subscription extends Resource
 {
     use Jsonable;
+
     public $storeId;
     public $transactionTokenId;
     public $amount;
     public $currency;
     public $amountFormatted;
     public $period;
+    public $initialAmount;
+    public $subsequentCyclesStart;
     public $status;
     public $metadata;
     public $mode;
@@ -26,6 +29,9 @@ class Subscription extends Resource
         $currency,
         $amountFormatted,
         $period,
+        $initialAmount,
+        $subsequentCyclesStart,
+        $installmentPlan,
         $status,
         $metadata,
         $mode,
@@ -39,6 +45,9 @@ class Subscription extends Resource
         $this->currency = $currency;
         $this->amountFormatted = $amountFormatted;
         $this->period = $period;
+        $this->initialAmount = $initialAmount;
+        $this->subsequentCyclesStart = $subsequentCyclesStart;
+        $this->installmentPlan = $installmentPlan;
         $this->status = $status;
         $this->metadata = $metadata;
         $this->mode = $mode;
@@ -52,6 +61,7 @@ class Subscription extends Resource
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(self::class);
+        return JsonSchema::fromClass(self::class)
+            ->upsert("installment_plan", false, InstallmentPlan::getSchema()->getParser());
     }
 }

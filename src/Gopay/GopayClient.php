@@ -4,6 +4,7 @@ namespace Gopay;
 
 use Composer\DependencyResolver\Request;
 use Exception;
+use Gopay\Enums\Period;
 use Gopay\Errors\GopayInvalidWebhookData;
 use Gopay\Errors\GopayUnknownWebhookEvent;
 use Gopay\Requests\HttpRequester;
@@ -219,6 +220,36 @@ class GopayClient
     {
         $context = $this->getStoreBasedContext()->withPath(array("stores", $storeId, "charges", $chargeId));
         return RequesterUtils::executeGet(Charge::class, $context);
+    }
+
+    public function createSubscription(
+        $transactionTokenId,
+        $amount,
+        $currency,
+        Period $period,
+        $initialAmount = null,
+        $subsequentCyclesStart = null,
+        $installmentPlan = null,
+        $metadata = null
+    ) {
+        $payload = array(
+            'transaction_token_id' => $transactionTokenId,
+            'amount' => $amount,
+            'currency' => $currency,
+            'period' => $period
+        );
+        if ($metadata != null) {
+            $payload = array_merge(array("metadata" => $metadata), $payload);
+        }
+        if (!$initialAmount) {
+            $payload = array_merge($payload, array("initial_amount" => $initialAmount));
+        }
+        if ($subsequentCyclesStart != null) {
+            $payload = array_merge($payload, array("subsequent_cycles_start" => $subsequentCyclesStart));
+        }
+
+        $context = $this->getSubscriptionContext();
+        return RequesterUtils::executePost(Subscription::class, $context, $payload);
     }
 
     public function getSubscription($storeId, $subscriptionId)

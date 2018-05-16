@@ -1,10 +1,15 @@
 <?php
 namespace GopayTest\Integration;
 
+use Gopay\Enums\TokenType;
+
 trait Requests
 {
-    public function createValidToken()
+    public function createValidToken(TokenType $type = null)
     {
+        if ($type == null) {
+            $type = TokenType::ONE_TIME();
+        }
         $transactionToken = $this->getClient()->createCardToken(
             "test@test.com",
             "PHP test",
@@ -12,7 +17,7 @@ trait Requests
             "02",
             "2022",
             "123",
-            "one_time",
+            $type,
             null,
             "test",
             null,

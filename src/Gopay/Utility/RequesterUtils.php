@@ -62,4 +62,12 @@ abstract class RequesterUtils
         );
         return $parser::getSchema()->parse($response, array($requestContext));
     }
+
+    public static function executeDelete(RequestContext $requestContext)
+    {
+        return $requestContext->getRequester()->delete(
+            $requestContext->getFullURL(),
+            self::getHeaders($requestContext)
+        );
+    }
 }

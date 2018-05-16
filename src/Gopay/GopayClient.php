@@ -5,6 +5,7 @@ namespace Gopay;
 use Composer\DependencyResolver\Request;
 use Exception;
 use Gopay\Enums\Period;
+use Gopay\Enums\TokenType;
 use Gopay\Errors\GopayInvalidWebhookData;
 use Gopay\Errors\GopayUnknownWebhookEvent;
 use Gopay\Requests\HttpRequester;
@@ -134,7 +135,7 @@ class GopayClient
         $expMonth,
         $expYear,
         $cvv,
-        $type = "one_time",
+        TokenType $type = null,
         $usageLimit = null,
         $line1 = null,
         $line2 = null,
@@ -175,7 +176,7 @@ class GopayClient
 
         $payload = array(
             "payment_type" => "card",
-            "type" => $type,
+            "type" => $type ? TokenType::ONE_TIME()->getValue(): $type->getValue(),
             "usage_limit" => $usageLimit,
             "email" => $email,
             "data" => $data
@@ -236,7 +237,7 @@ class GopayClient
             'transaction_token_id' => $transactionTokenId,
             'amount' => $amount,
             'currency' => $currency,
-            'period' => $period
+            'period' => $period->getValue()
         );
         if ($metadata != null) {
             $payload = array_merge(array("metadata" => $metadata), $payload);
@@ -246,6 +247,11 @@ class GopayClient
         }
         if ($subsequentCyclesStart != null) {
             $payload = array_merge($payload, array("subsequent_cycles_start" => $subsequentCyclesStart));
+        if ($installmentPlan != null) {
+            $payload = array_merge(
+                $payload,
+                array("installment_plan" => $installmentPlan)
+            );
         }
 
         $context = $this->getSubscriptionContext();

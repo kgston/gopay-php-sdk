@@ -1,6 +1,7 @@
 <?php
 namespace GopayTest\Integration;
 
+use Gopay\Enums\TokenType;
 use Gopay\Errors\GopayRequestError;
 use PHPUnit\Framework\TestCase;
 
@@ -13,7 +14,7 @@ class TransactionTokenTest extends TestCase
     {
         $transactionToken = $this->createValidToken();
         $this->assertEquals("test@test.com", $transactionToken->email);
-        $this->assertEquals("one_time", $transactionToken->type);
+        $this->assertEquals(TokenType::ONE_TIME(), $transactionToken->type);
     }
 
     public function testGetExistingToken()
@@ -36,7 +37,7 @@ class TransactionTokenTest extends TestCase
             "02",
             "2022",
             "123",
-            "one_time",
+            TokenType::ONE_TIME(),
             null,
             "test",
             null,

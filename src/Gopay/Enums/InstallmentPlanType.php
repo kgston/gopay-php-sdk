@@ -2,9 +2,10 @@
 
 namespace Gopay\Enums;
 
-class InstallmentPlanType extends SplEnum
+final class InstallmentPlanType extends TypedEnum
 {
-    const REVOLVING = 'revolving';
-    const FIXED_CYCLES = 'fixed_cycles';
-    const FIXED_CYCLE_AMOUNT = 'fixed_cycle_amount';
+    // phpcs:disable
+    public static function REVOLVING() { return self::create('revolving'); }
+    public static function FIXED_CYCLES() { return self::create('fixed_cycles'); }
+    public static function FIXED_CYCLE_AMOUNT() { return self::create('fixed_cycle_amount'); }
 }

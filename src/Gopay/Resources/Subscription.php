@@ -2,6 +2,7 @@
 
 namespace Gopay\Resources;
 
+use Gopay\Enums\Period;
 use Gopay\Utility\Json\JsonSchema;
 
 class Subscription extends Resource
@@ -31,13 +32,17 @@ class Subscription extends Resource
         $period,
         $initialAmount,
         $subsequentCyclesStart,
-        $installmentPlan,
         $status,
         $metadata,
         $mode,
         $createdOn,
+        $installmentPlan,
         $context
     ) {
+        if (!$period instanceof Period) {
+            $period = Period::fromValue($period);
+        }
+
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
@@ -47,11 +52,16 @@ class Subscription extends Resource
         $this->period = $period;
         $this->initialAmount = $initialAmount;
         $this->subsequentCyclesStart = $subsequentCyclesStart;
-        $this->installmentPlan = $installmentPlan;
         $this->status = $status;
         $this->metadata = $metadata;
         $this->mode = $mode;
         $this->createdOn = $createdOn;
+        $this->installmentPlan = $installmentPlan;
+    }
+
+    public function cancel()
+    {
+        return RequesterUtils::executeDelete($this->getIdContext());
     }
 
     protected function getIdContext()

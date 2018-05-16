@@ -2,6 +2,7 @@
 
 namespace Gopay\Resources;
 
+use Gopay\Enums\TokenType;
 use Gopay\Resources\PaymentData\CardData;
 use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
@@ -35,6 +36,10 @@ class TransactionToken extends Resource
         $data,
         $context
     ) {
+        if (!$type instanceof TokenType) {
+            $type = TokenType::fromValue($type);
+        }
+        
         parent::__construct($id, $context);
         $this->email = $email;
         $this->active = $active;

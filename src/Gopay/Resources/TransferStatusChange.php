@@ -33,7 +33,7 @@ class TransferStatusChange extends Resource
         $this->oldStatus = $oldStatus;
         $this->newStatus = $newStatus;
         $this->reason = $reason;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
     }
 
     protected static function initSchema()

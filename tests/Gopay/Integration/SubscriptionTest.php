@@ -36,7 +36,6 @@ EOD;
 
         $json = json_decode($str, true);
         $subscription = Subscription::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
-        var_dump($subscription);
         $this->assertEquals(1000, $subscription->amount);
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $subscription->id);
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $subscription->storeId);
@@ -46,10 +45,10 @@ EOD;
         $this->assertEquals(1000, $subscription->amountFormatted);
         $this->assertEquals(Period::MONTHLY(), $subscription->period);
         $this->assertEquals(100, $subscription->initialAmount);
-        $this->assertEquals("2018-05-14T09:40:39.337331Z", $subscription->subsequentCyclesStart);
+        $this->assertEquals(date_create("2018-05-14T09:40:39.337331Z"), $subscription->subsequentCyclesStart);
         $this->assertEquals("canceled", $subscription->status);
         $this->assertEquals("test", $subscription->mode);
-        $this->assertEquals("2017-07-04T06:06:05.580391Z", $subscription->createdOn);
+        $this->assertEquals(date_create("2017-07-04T06:06:05.580391Z"), $subscription->createdOn);
         $this->assertEquals(InstallmentPlanType::FIXED_CYCLES(), $subscription->installmentPlan->planType);
         $this->assertEquals("10", $subscription->installmentPlan->fixedCycles);
     }

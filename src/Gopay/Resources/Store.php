@@ -33,7 +33,7 @@ class Store extends Resource
     ) {
         parent::__construct($id, $context);
         $this->name = $name;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
         $this->configuration = $configuration;
     }
 

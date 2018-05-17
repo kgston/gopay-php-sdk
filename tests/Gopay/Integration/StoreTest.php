@@ -86,7 +86,7 @@ EOD;
         $store = Store::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $store->id);
         $this->assertEquals("Store 1", $store->name);
-        $this->assertEquals("2017-03-21T01:32:13.702689Z", $store->createdOn);
+        $this->assertEquals(date_create("2017-03-21T01:32:13.702689Z"), $store->createdOn);
         $this->assertEquals("https://example.com/logo.png", $store->configuration->logoUrl);
         $this->assertTrue($store->configuration->userTransactionsConfiguration->enabled);
         $this->assertTrue($store->configuration->userTransactionsConfiguration->notifyCustomer);

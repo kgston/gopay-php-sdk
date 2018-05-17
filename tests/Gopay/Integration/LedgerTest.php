@@ -42,6 +42,6 @@ EOD;
         $this->assertEquals(105, $ledger->exchangeRate);
         $this->assertEquals("charge", $ledger->origin);
         $this->assertEquals("a note", $ledger->note);
-        $this->assertEquals("2017-10-26T17:37:33.742404+09:00", $ledger->createdOn);
+        $this->assertEquals(date_create("2017-10-26T17:37:33.742404+09:00"), $ledger->createdOn);
     }
 }

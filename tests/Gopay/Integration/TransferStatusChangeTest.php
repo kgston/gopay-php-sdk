@@ -34,6 +34,6 @@ EOD;
         $this->assertEquals("processing", $transferStatusChange->oldStatus);
         $this->assertEquals("failed", $transferStatusChange->newStatus);
         $this->assertEquals("a reason", $transferStatusChange->reason);
-        $this->assertEquals("2017-10-26T17:37:33.742404+09:00", $transferStatusChange->createdOn);
+        $this->assertEquals(date_create("2017-10-26T17:37:33.742404+09:00"), $transferStatusChange->createdOn);
     }
 }

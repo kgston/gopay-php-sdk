@@ -44,6 +44,6 @@ EOD;
         $this->assertEquals($transfer->note, "a note");
         $this->assertEquals("2017-10-07", $transfer->from);
         $this->assertEquals("2017-10-14", $transfer->to);
-        $this->assertEquals("2017-10-14T08:00:00.664568Z", $transfer->createdOn);
+        $this->assertEquals(date_create("2017-10-14T08:00:00.664568Z"), $transfer->createdOn);
     }
 }

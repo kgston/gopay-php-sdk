@@ -61,7 +61,7 @@ class BankAccount extends Resource
         $this->lastFour = $lastFour;
         $this->status = $status;
         $this->accountType = $accountType;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
     }
 
 

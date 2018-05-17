@@ -11,8 +11,7 @@ class MerchantTest extends TestCase
     public function testGetMe()
     {
         $me = $this->getClient()->getMe();
-        $createdOn = DateTime::createFromFormat(DateTime::ISO8601, $me->createdOn);
-        $this->assertLessThan(new DateTime(), $createdOn);
+        $this->assertLessThan(date_create('now'), $me->createdOn);
         $this->assertTrue(is_string($me->name));
     }
 }

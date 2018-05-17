@@ -50,7 +50,7 @@ class Transfer extends Resource
         $this->note = $note;
         $this->from = $from;
         $this->to = $to;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
     }
 
     public function listLedgers(

@@ -33,7 +33,7 @@ class Merchant extends Resource
         $this->email = $email;
         $this->verified = $verified;
         $this->configuration = $configuration;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
     }
 
     public static function fromJson(array $json, RequestContext $requestContext)

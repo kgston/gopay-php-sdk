@@ -64,7 +64,7 @@ class Charge extends Resource
         $this->error = $error;
         $this->metadata = $metadata;
         $this->mode = $mode;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
     }
 
     protected static function initSchema()

@@ -40,7 +40,7 @@ EOD;
         $this->assertEquals("7890", $bankAccount->lastFour);
         $this->assertEquals("new", $bankAccount->status);
         $this->assertEquals("checking", $bankAccount->accountType);
-        $this->assertEquals("2017-03-28T05:37:06.850707Z", $bankAccount->createdOn);
+        $this->assertEquals(date_create("2017-03-28T05:37:06.850707Z"), $bankAccount->createdOn);
         $this->assertEquals(true, $bankAccount->primary);
     }
 

@@ -49,7 +49,7 @@ class Ledger
         $this->exchangeRate = $exchangeRate;
         $this->origin = $origin;
         $this->note = $note;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
     }
 
 

@@ -48,7 +48,7 @@ class TransactionToken extends Resource
         $this->mode = $mode;
         $this->type = $type;
         $this->usageLimit = $usageLimit;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
         $this->lastUsedOn = $lastUsedOn;
         $this->data = $data;
     }

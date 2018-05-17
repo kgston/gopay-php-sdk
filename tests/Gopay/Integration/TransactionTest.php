@@ -54,7 +54,7 @@ EOD;
         $this->assertEquals("refund", $item->type);
         $this->assertEquals("failed", $item->status);
         $this->assertEquals(["key" => "value"], $item->metadata);
-        $this->assertEquals("2017-10-24T17:58:40.702667Z", $item->createdOn);
+        $this->assertEquals(date_create("2017-10-24T17:58:40.702667Z"), $item->createdOn);
         $this->assertEquals("test", $item->mode);
     }
 }

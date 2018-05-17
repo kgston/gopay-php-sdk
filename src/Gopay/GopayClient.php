@@ -3,6 +3,7 @@
 namespace Gopay;
 
 use Composer\DependencyResolver\Request;
+use DateTime;
 use Exception;
 use Gopay\Enums\Period;
 use Gopay\Enums\TokenType;
@@ -195,7 +196,7 @@ class GopayClient
         $amount,
         $currency,
         $capture = true,
-        $captureAt = null,
+        DateTime $captureAt = null,
         $metadata = null
     ) {
         $payload = array(
@@ -210,7 +211,7 @@ class GopayClient
             $payload = array_merge($payload, array("capture" => "false"));
         }
         if ($captureAt != null) {
-            $payload = array_merge($payload, array("capture_at" => $captureAt));
+            $payload = array_merge($payload, array("capture_at" => $captureAt->format(DateTime::ATOM)));
         }
 
         $context = $this->getChargeContext();
@@ -229,7 +230,7 @@ class GopayClient
         $currency,
         Period $period,
         $initialAmount = null,
-        $subsequentCyclesStart = null,
+        DateTime $subsequentCyclesStart = null,
         $installmentPlan = null,
         $metadata = null
     ) {
@@ -246,7 +247,11 @@ class GopayClient
             $payload = array_merge($payload, array("initial_amount" => $initialAmount));
         }
         if ($subsequentCyclesStart != null) {
-            $payload = array_merge($payload, array("subsequent_cycles_start" => $subsequentCyclesStart));
+            $payload = array_merge(
+                $payload,
+                array("subsequent_cycles_start" => $subsequentCyclesStart->format(DateTime::ATOM))
+            );
+        }
         if ($installmentPlan != null) {
             $payload = array_merge(
                 $payload,

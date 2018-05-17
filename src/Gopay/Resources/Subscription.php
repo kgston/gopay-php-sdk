@@ -51,11 +51,11 @@ class Subscription extends Resource
         $this->amountFormatted = $amountFormatted;
         $this->period = $period;
         $this->initialAmount = $initialAmount;
-        $this->subsequentCyclesStart = $subsequentCyclesStart;
+        $this->subsequentCyclesStart = date_create($subsequentCyclesStart);
         $this->status = $status;
         $this->metadata = $metadata;
         $this->mode = $mode;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
         $this->installmentPlan = $installmentPlan;
     }
 

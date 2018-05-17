@@ -48,7 +48,7 @@ class Transaction
         $this->status = $status;
         $this->metadata = $metadata;
         $this->mode = $mode;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
         $this->context = $context;
     }
 

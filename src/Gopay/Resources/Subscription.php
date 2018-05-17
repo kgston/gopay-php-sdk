@@ -3,6 +3,7 @@
 namespace Gopay\Resources;
 
 use Gopay\Enums\Period;
+use Gopay\Utility\RequesterUtils;
 use Gopay\Utility\Json\JsonSchema;
 
 class Subscription extends Resource

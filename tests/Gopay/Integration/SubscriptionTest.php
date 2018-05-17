@@ -3,12 +3,27 @@ namespace GopayTest\Integration;
 
 use Gopay\Enums\InstallmentPlanType;
 use Gopay\Enums\Period;
+use Gopay\Enums\TokenType;
 use Gopay\Resources\Subscription;
 use PHPUnit\Framework\TestCase;
 
 class SubscriptionTest extends TestCase
 {
     use IntegrationSuite;
+    use Requests;
+
+    public function createValidSubscription()
+    {
+        $transactionToken = $this->createValidToken(TokenType::SUBSCRIPTION());
+        return $this->getClient()->createSubscription(
+            $transactionToken->id,
+            10000,
+            "jpy",
+            Period::BIWEEKLY(),
+            1000,
+            date_create("+5 months")
+        );
+    }
 
     public function testSubscriptionParse()
     {
@@ -51,5 +66,45 @@ EOD;
         $this->assertEquals(date_create("2017-07-04T06:06:05.580391Z"), $subscription->createdOn);
         $this->assertEquals(InstallmentPlanType::FIXED_CYCLES(), $subscription->installmentPlan->planType);
         $this->assertEquals("10", $subscription->installmentPlan->fixedCycles);
+    }
+
+    public function testCreateSubscription()
+    {
+        $subscription = $this->createValidSubscription();
+        $this->assertEquals(10000, $subscription->amount);
+        $this->assertEquals("JPY", $subscription->currency);
+        $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
+        $this->assertEquals(1000, $subscription->initialAmount);
+    }
+
+    public function testGetSubscription()
+    {
+        $subscription = $this->createValidSubscription();
+
+        $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
+        $this->assertEquals(10000, $getSubscription->amount);
+        $this->assertEquals("JPY", $getSubscription->currency);
+        $this->assertEquals(Period::BIWEEKLY(), $getSubscription->period);
+        $this->assertEquals(1000, $getSubscription->initialAmount);
+    }
+
+    public function testCancelSubscription()
+    {
+        $subscription = $this->createValidSubscription();
+        sleep(1);
+
+        $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
+        $this->assertTrue($getSubscription->cancel());
+
+        $canceledSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
+        echo($canceledSubscription->id);
+        $this->assertEquals('canceled', $canceledSubscription->status);
+    }
+
+    public function testListSubscription()
+    {
+        $this->createValidSubscription();
+        $subscriptions = $this->getClient()->listSubscriptions();
+        $this->assertGreaterThan(0, count($subscriptions->items));
     }
 }

@@ -177,7 +177,7 @@ class GopayClient
 
         $payload = array(
             "payment_type" => "card",
-            "type" => $type ? TokenType::ONE_TIME()->getValue(): $type->getValue(),
+            "type" => $type == null ? TokenType::ONE_TIME()->getValue(): $type->getValue(),
             "usage_limit" => $usageLimit,
             "email" => $email,
             "data" => $data
@@ -243,7 +243,7 @@ class GopayClient
         if ($metadata != null) {
             $payload = array_merge(array("metadata" => $metadata), $payload);
         }
-        if (!$initialAmount) {
+        if ($initialAmount != null) {
             $payload = array_merge($payload, array("initial_amount" => $initialAmount));
         }
         if ($subsequentCyclesStart != null) {

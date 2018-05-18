@@ -5,7 +5,8 @@ namespace Gopay\Enums;
 final class InstallmentPlanType extends TypedEnum
 {
     // phpcs:disable
-    public static function REVOLVING() { return self::create('revolving'); }
-    public static function FIXED_CYCLES() { return self::create('fixed_cycles'); }
-    public static function FIXED_CYCLE_AMOUNT() { return self::create('fixed_cycle_amount'); }
+    public static function NONE() { return self::create('null'); } // Only when deleting an installment plan via patch
+    public static function REVOLVING() { return self::create(); }
+    public static function FIXED_CYCLES() { return self::create(); }
+    public static function FIXED_CYCLE_AMOUNT() { return self::create(); }
 }

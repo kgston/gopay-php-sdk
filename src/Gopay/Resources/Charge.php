@@ -2,6 +2,14 @@
 
 namespace Gopay\Resources;
 
+use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\ChargeStatus;
+use Gopay\Enums\Currency;
+use Gopay\Enums\Field;
+use Gopay\Enums\Reason;
+use Gopay\Enums\RefundReason;
+use Gopay\Enums\TokenType;
+use Gopay\Errors\GopayValidationError;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
 use Gopay\Utility\Json\JsonSchema;
@@ -51,19 +59,19 @@ class Charge extends Resource
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
-        $this->transactionTokenType = $transactionTokenType;
+        $this->transactionTokenType = TokenType::fromValue($transactionTokenType);
         $this->subscriptionId = $subscriptionId;
         $this->requestedAmount = $requestedAmount;
-        $this->requestedCurrency = $requestedCurrency;
+        $this->requestedCurrency = Currency::fromValue($requestedCurrency);
         $this->requestedAmountFormatted = $requestedAmountFormatted;
         $this->chargedAmount = $chargedAmount;
-        $this->chargedCurrency = $chargedCurrency;
+        $this->chargedCurrency = Currency::fromValue($chargedCurrency);
         $this->chargedAmountFormatted = $chargedAmountFormatted;
-        $this->captureAt = $captureAt;
-        $this->status = $status;
+        $this->captureAt = date_create($captureAt);
+        $this->status = ChargeStatus::fromValue($status);
         $this->error = $error;
         $this->metadata = $metadata;
-        $this->mode = $mode;
+        $this->mode = AppTokenMode::fromValue($mode);
         $this->createdOn = date_create($createdOn);
     }
 
@@ -77,22 +85,25 @@ class Charge extends Resource
         return $this->context->withPath(array("stores", $this->storeId, "charges", $this->id));
     }
 
-    public function patch($metadata)
+    public function patch(array $metadata)
     {
         return RequesterUtils::executePatch(self::class, $this->getIdContext(), array('metadata' => $metadata));
     }
 
     public function createRefund(
         $amount,
-        $currency,
-        $reason = null,
+        Currency $currency,
+        RefundReason $reason = null,
         $message = null,
-        $metadata = null
+        array $metadata = null
     ) {
+        if (isset($reason) && RefundReason::CHARGEBACK() === $reason) {
+            throw new GopayValidationError(Field::REASON(), Reason::INVALID_PERMISSIONS());
+        }
         $payload = FunctionalUtils::stripNulls(array(
             "amount" => $amount,
-            "currency" => $currency,
-            "reason" => $reason,
+            "currency" => $currency->getValue(),
+            "reason" => isset($reason) ? $reason->getValue() : $reason,
             "message" => $message,
             "metadata" => $metadata
         ));
@@ -103,12 +114,12 @@ class Charge extends Resource
     public function listRefunds(
         $cursor = null,
         $limit = null,
-        $cursorDirection = null
+        CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => $cursorDirection
+            "cursor_direction" => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
         ));
         return RequesterUtils::executeGetPaginated(
             Refund::class,
@@ -119,17 +130,17 @@ class Charge extends Resource
 
     public function capture(
         $amount,
-        $currency
+        Currency $currency
     ) {
         $payload = array(
             'amount' => $amount,
-            'currency' => $currency
+            'currency' => $currency->getValue()
         );
         $context = $this->getIdContext()->appendPath("capture");
         return RequesterUtils::executePost(null, $context, $payload);
     }
 
-    public function cancel($metadata = null)
+    public function cancel(array $metadata = null)
     {
         $payload = FunctionalUtils::stripNulls(array(
             "metadata" => $metadata
@@ -141,12 +152,12 @@ class Charge extends Resource
     public function listCancels(
         $cursor = null,
         $limit = null,
-        $cursorDirection = null
+        CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => $cursorDirection
+            "cursor_direction" => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
         ));
         return RequesterUtils::executeGetPaginated(
             Cancel::class,

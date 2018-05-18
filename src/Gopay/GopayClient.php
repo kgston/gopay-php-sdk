@@ -5,10 +5,18 @@ namespace Gopay;
 use Composer\DependencyResolver\Request;
 use DateTime;
 use Exception;
+use Gopay\Enums\Currency;
+use Gopay\Enums\CursorDirection;
+use Gopay\Enums\Field;
+use Gopay\Enums\PaymentType;
 use Gopay\Enums\Period;
+use Gopay\Enums\Reason;
 use Gopay\Enums\TokenType;
+use Gopay\Enums\WebhookEvent;
+use Gopay\Errors\GopaySDKError;
 use Gopay\Errors\GopayInvalidWebhookData;
 use Gopay\Errors\GopayUnknownWebhookEvent;
+use Gopay\Errors\GopayValidationError;
 use Gopay\Requests\HttpRequester;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
@@ -21,6 +29,8 @@ use Gopay\Resources\Merchant;
 use Gopay\Resources\Mixins\GetCharges;
 use Gopay\Resources\Mixins\GetSubscriptions;
 use Gopay\Resources\Mixins\GetTransactions;
+use Gopay\Resources\Mixins\GetTransactionTokens;
+use Gopay\Resources\PaymentMethod\PaymentMethod;
 use Gopay\Resources\Refund;
 use Gopay\Resources\Store;
 use Gopay\Resources\Subscription;
@@ -34,9 +44,10 @@ use Gopay\Utility\RequesterUtils;
 
 class GopayClient
 {
+    use GetCharges;
     use GetSubscriptions;
     use GetTransactions;
-    use GetCharges;
+    use GetTransactionTokens;
 
     private $endpoint;
     private $storeAppJWT;
@@ -48,19 +59,38 @@ class GopayClient
         AppJWT $merchantAppJWT = null,
         $endpoint = "https://api.gopay.jp"
     ) {
+        if (!isset($storeAppJWT) && !isset($merchantAppJWT)) {
+            throw new GopaySDKError(Reason::REQUIRES_APP_TOKEN());
+        }
         $this->endpoint = $endpoint;
         $this->storeAppJWT = $storeAppJWT;
         $this->merchantAppJWT = $merchantAppJWT;
         $this->requester = new HttpRequester();
     }
 
+    public function getContext($storeId = null)
+    {
+        if (isset($storeId) && isset($this->storeAppJWT) && $storeId === $this->storeAppJWT->storeId) {
+            return $this->getStoreBasedContext();
+        } elseif (isset($merchantAppJWT)) {
+            return $this->getMerchantBasedContext();
+        }
+        return $this->getStoreBasedContext();
+    }
+
     public function getStoreBasedContext()
     {
+        if (!isset($this->storeAppJWT)) {
+            throw new GopaySDKError(Reason::REQUIRES_STORE_APP_TOKEN());
+        }
         return new RequestContext($this->requester, $this->endpoint, "/", $this->storeAppJWT);
     }
 
     public function getMerchantBasedContext()
     {
+        if (!isset($this->merchantAppJWT)) {
+            throw new GopaySDKError(Reason::REQUIRES_MERCHANT_APP_TOKEN());
+        }
         return new RequestContext($this->requester, $this->endpoint, "/", $this->merchantAppJWT);
     }
 
@@ -74,7 +104,7 @@ class GopayClient
     {
         return RequesterUtils::executeGet(
             Merchant::class,
-            $this->getStoreBasedContext()->withPath("me")
+            $this->getContext()->withPath("me")
         );
     }
 
@@ -89,12 +119,12 @@ class GopayClient
     public function listStores(
         $cursor = null,
         $limit = null,
-        $cursorDirection = null
+        CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => $cursorDirection
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : $cursorDirection
         ));
         return RequesterUtils::executeGetPaginated(
             Store::class,
@@ -112,12 +142,12 @@ class GopayClient
     public function listBankAccounts(
         $cursor = null,
         $limit = null,
-        $cursorDirection = null
+        CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => $cursorDirection
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : $cursorDirection
         ));
         $context = $this->getBankAccountContext();
         return RequesterUtils::executeGetPaginated(BankAccount::class, $context, $query);
@@ -129,155 +159,93 @@ class GopayClient
         return RequesterUtils::executeGet(BankAccount::class, $context);
     }
 
-    public function createCardToken(
-        $email,
-        $cardholder,
-        $cardNumber,
-        $expMonth,
-        $expYear,
-        $cvv,
-        TokenType $type = null,
-        $usageLimit = null,
-        $line1 = null,
-        $line2 = null,
-        $state = null,
-        $city = null,
-        $country = null,
-        $zip = null,
-        $phoneNumberCountryCode = null,
-        $phoneNumberLocalNumber = null
-    ) {
-        $context = $this->getStoreBasedContext()->withPath("tokens");
-        $data = array(
-            "cardholder" => $cardholder,
-            "card_number" => $cardNumber,
-            "exp_month" => $expMonth,
-            "exp_year" => $expYear,
-            "cvv" => $cvv
-        );
-        if ($line1 &
-            $state &&
-            $city &&
-            $country &&
-            $zip &&
-            $phoneNumberCountryCode &&
-            $phoneNumberLocalNumber) {
-            $data = array_merge($data, array(
-                "line1" => $line1,
-                "line2" => $line2,
-                "state" => $state,
-                "city" => $city,
-                "country" => $country,
-                "zip" => $zip,
-                "phone_number" => array(
-                    "country_code" => $phoneNumberCountryCode,
-                    "local_number" => $phoneNumberLocalNumber
-            )));
+    public function createToken(PaymentMethod $payment, $localCustomerId = null)
+    {
+        if (isset($localCustomerId)) {
+            $customerId = $this->getCustomerId($localCustomerId);
+            if (!isset($payment->metadata)) {
+                $payment->metadata = array();
+            }
+            $payment->metadata += array('gopay-customer-id' => $customerId);
         }
 
-        $payload = array(
-            "payment_type" => "card",
-            "type" => $type == null ? TokenType::ONE_TIME()->getValue(): $type->getValue(),
-            "usage_limit" => $usageLimit,
-            "email" => $email,
-            "data" => $data
-        );
-        return RequesterUtils::executePost(TransactionToken::class, $context, $payload);
+        $context = $this->getStoreBasedContext()->withPath("tokens");
+        return RequesterUtils::executePost(TransactionToken::class, $context, $payment);
     }
 
-    public function getTransactionToken($storeId, $transactionTokenId)
+    public function getTransactionToken($transactionTokenId)
     {
-        $context = $this->getStoreBasedContext()->withPath(array("stores", $storeId, "tokens", $transactionTokenId));
+        $context = $this->getStoreBasedContext()->withPath(array(
+            "stores",
+            $this->storeAppJWT->storeId,
+            "tokens", $transactionTokenId
+        ));
         return RequesterUtils::executeGet(TransactionToken::class, $context);
     }
 
     public function createCharge(
         $transactionTokenId,
         $amount,
-        $currency,
+        Currency $currency,
         $capture = true,
         DateTime $captureAt = null,
-        $metadata = null
+        array $metadata = null
     ) {
-        $payload = array(
-            'transaction_token_id' => $transactionTokenId,
-            'amount' => $amount,
-            'currency' => $currency
-        );
-        if ($metadata != null) {
-            $payload = array_merge(array("metadata" => $metadata), $payload);
-        }
-        if (!$capture) {
-            $payload = array_merge($payload, array("capture" => "false"));
-        }
-        if ($captureAt != null) {
-            $payload = array_merge($payload, array("capture_at" => $captureAt->format(DateTime::ATOM)));
-        }
-
-        $context = $this->getChargeContext();
-        return RequesterUtils::executePost(Charge::class, $context, $payload);
+        return $this
+            ->getTransactionToken($transactionTokenId)
+            ->createCharge(
+                $amount,
+                $currency,
+                $capture,
+                $captureAt,
+                $metadata
+            );
     }
 
     public function getCharge($storeId, $chargeId)
     {
-        $context = $this->getStoreBasedContext()->withPath(array("stores", $storeId, "charges", $chargeId));
+        $context = $this->getContext()->withPath(array("stores", $storeId, "charges", $chargeId));
         return RequesterUtils::executeGet(Charge::class, $context);
     }
 
     public function createSubscription(
         $transactionTokenId,
         $amount,
-        $currency,
+        Currency $currency,
         Period $period,
         $initialAmount = null,
         DateTime $subsequentCyclesStart = null,
         $installmentPlan = null,
-        $metadata = null
+        array $metadata = null
     ) {
-        $payload = array(
-            'transaction_token_id' => $transactionTokenId,
-            'amount' => $amount,
-            'currency' => $currency,
-            'period' => $period->getValue()
-        );
-        if ($metadata != null) {
-            $payload = array_merge(array("metadata" => $metadata), $payload);
-        }
-        if ($initialAmount != null) {
-            $payload = array_merge($payload, array("initial_amount" => $initialAmount));
-        }
-        if ($subsequentCyclesStart != null) {
-            $payload = array_merge(
-                $payload,
-                array("subsequent_cycles_start" => $subsequentCyclesStart->format(DateTime::ATOM))
+        return $this
+            ->getTransactionToken($transactionTokenId)
+            ->createSubscription(
+                $amount,
+                $currency,
+                $period,
+                $initialAmount,
+                $subsequentCyclesStart,
+                $installmentPlan,
+                $metadata
             );
-        }
-        if ($installmentPlan != null) {
-            $payload = array_merge(
-                $payload,
-                array("installment_plan" => $installmentPlan)
-            );
-        }
-
-        $context = $this->getSubscriptionContext();
-        return RequesterUtils::executePost(Subscription::class, $context, $payload);
     }
 
     public function getSubscription($storeId, $subscriptionId)
     {
-        $context = $this->getStoreBasedContext()->withPath(array("stores", $storeId, "subscriptions", $subscriptionId));
+        $context = $this->getContext()->withPath(array("stores", $storeId, "subscriptions", $subscriptionId));
         return RequesterUtils::executeGet(Subscription::class, $context);
     }
 
     public function listTransfers(
         $cursor = null,
         $limit = null,
-        $cursorDirection = null
+        CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => $cursorDirection
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : $cursorDirection
         ));
         $context = $this->getTransferContext();
         return RequesterUtils::executeGetPaginated(Transfer::class, $context, $query);
@@ -292,72 +260,81 @@ class GopayClient
     public function parseWebhookData($data)
     {
         try {
-            $event = $data["event"];
+            $event = WebhookEvent::fromValue($data["event"]);
             $parser = null;
-            switch (strtolower($event)) {
-                case "charge_updated":
-                case "charge_finished":
+            switch ($event) {
+                case WebhookEvent::CHARGE_UPDATED():
+                case WebhookEvent::CHARGE_FINISHED():
                     $parser = Charge::getContextParser($this->getChargeContext());
                     break;
 
-                case "subscription_payment":
-                case "subscription_completed":
-                case "subscription_failure":
-                case "subscription_canceled":
-                case "subscription_suspended":
+                case WebhookEvent::SUBSCRIPTION_PAYMENT():
+                case WebhookEvent::SUBSCRIPTION_COMPLETED():
+                case WebhookEvent::SUBSCRIPTION_FAILURE():
+                case WebhookEvent::SUBSCRIPTION_CANCELED():
+                case WebhookEvent::SUBSCRIPTION_SUSPENDED():
                     $parser = Subscription::getContextParser($this->getSubscriptionContext());
                     break;
-
-                case "refund_finished":
+                
+                case WebhookEvent::REFUND_FINISHED():
                     $parser = Refund::getContextParser($this->getStoreBasedContext());
                     break;
 
-                case "transfer_created":
-                case "transfer_updated":
-                case "transfer_finalized":
+                case WebhookEvent::TRANSFER_CREATED():
+                case WebhookEvent::TRANSFER_UPDATED():
+                case WebhookEvent::TRANSFER_FINALIZED():
                     $parser = Transfer::getContextParser($this->getTransferContext());
                     break;
 
-                case "cancel_finished":
+                case WebhookEvent::CANCEL_FINISHED():
                     $parser = Cancel::getContextParser($this->getStoreBasedContext());
                     break;
-
-                default:
-                    throw new GopayUnknownWebhookEvent($event);
             }
             return new WebhookPayload($event, $parser($data["data"]));
+        } catch (OutOfRangeException $exception) {
+            throw new GopayUnknownWebhookEvent($data["event"]);
         } catch (Exception $exception) {
             throw new GopayInvalidWebhookData($data);
         }
     }
 
-    protected function getStoreContext()
+    protected function getCustomerId($localCustomerId)
     {
-        return $this->getStoreBasedContext()->withPath("stores");
+        return $this->getStore($this->storeAppJWT->storeId)->getCustomerId($localCustomerId);
     }
 
-    protected function getSubscriptionContext()
+    protected function getStoreContext($storeId = null)
     {
-        return $this->getStoreBasedContext()->withPath("subscriptions");
+        return $this->getContext($storeId)->withPath("stores");
     }
 
-    protected function getTransactionContext()
+    protected function getSubscriptionContext($storeId = null)
     {
-        return $this->getStoreBasedContext()->withPath("transaction_history");
+        return $this->getContext($storeId)->withPath("subscriptions");
     }
 
-    protected function getChargeContext()
+    protected function getTransactionTokenContext()
     {
-        return $this->getStoreBasedContext()->withPath("charges");
+        return $this->getStoreBasedContext()->withPath("tokens");
     }
 
-    protected function getTransferContext()
+    protected function getTransactionContext($storeId = null)
     {
-        return $this->getStoreBasedContext()->withPath("transfers");
+        return $this->getContext($storeId)->withPath("transaction_history");
     }
 
-    protected function getBankAccountContext()
+    protected function getChargeContext($storeId = null)
     {
-        return $this->getStoreBasedContext()->withPath("bank_accounts");
+        return $this->getContext($storeId)->withPath("charges");
+    }
+
+    protected function getTransferContext($storeId = null)
+    {
+        return $this->getContext($storeId)->withPath("transfers");
+    }
+
+    protected function getBankAccountContext($storeId = null)
+    {
+        return $this->getContext($storeId)->withPath("bank_accounts");
     }
 }

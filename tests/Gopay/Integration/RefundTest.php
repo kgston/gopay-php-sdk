@@ -1,6 +1,8 @@
 <?php
 namespace GopayTest\Integration;
 
+use Gopay\Enums\Currency;
+use Gopay\Enums\RefundReason;
 use Gopay\Errors\GopayRequestError;
 use PHPUnit\Framework\TestCase;
 
@@ -12,9 +14,9 @@ class RefundTest extends TestCase
     public function testCreateRefund()
     {
         $refund = $this->createValidRefund();
-        $this->assertEquals("JPY", $refund->currency);
+        $this->assertEquals(Currency::JPY(), $refund->currency);
         $this->assertEquals(1000, $refund->amount);
-        $this->assertEquals("fraud", $refund->reason);
+        $this->assertEquals(RefundReason::FRAUD(), $refund->reason);
         $this->assertEquals("test", $refund->message);
         $this->assertEquals(['something' => 'value'], $refund->metadata);
     }
@@ -23,6 +25,6 @@ class RefundTest extends TestCase
     {
         $this->expectException(GopayRequestError::class);
         $charge = $this->createValidCharge(true);
-        $charge->createRefund(2000, "jpy", "fraud", "test", array("something" => "value"));
+        $charge->createRefund(2000, Currency::JPY(), RefundReason::FRAUD(), "test", array("something" => "value"));
     }
 }

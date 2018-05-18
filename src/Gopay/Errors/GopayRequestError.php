@@ -6,9 +6,7 @@ class GopayRequestError extends GopayError
 {
 
     public $status;
-
     public $code;
-
     public $errors;
 
     public function __construct($status, $code, $errors)

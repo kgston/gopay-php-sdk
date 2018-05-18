@@ -2,6 +2,7 @@
 
 namespace Gopay\Resources\Authentication;
 
+use Gopay\Enums\AppTokenMode;
 use Gopay\Resources\Jsonable;
 use Gopay\Utility\Json\JsonSchema;
 
@@ -40,7 +41,7 @@ class StoreAppJWT extends AppJWT
         $this->merchantId = $merchantId;
         $this->storeId = $storeId;
         $this->domains = $domains;
-        $this->mode = $mode;
+        $this->mode = AppTokenMode::fromValue($mode);
         $this->creatorId = $creatorId;
         $this->version = $version;
         $this->jti = $jti;

@@ -25,7 +25,10 @@ class StoreTest extends TestCase
             "logo_url": "https://example.com/logo.png",
             "country": null,
             "language": null,
-            "time_zone": null,
+            "display_time_zone": null,
+            "min_transfer_payout": 15000,
+            "maximum_charge_amounts": 500000,
+            "transfer_schedule": null,
             "user_transactions_configuration":{
                "enabled": true,
                "notify_customer": true
@@ -53,7 +56,11 @@ class StoreTest extends TestCase
             },
             "recurring_token_configuration": {
               "recurring_type": "bounded",
-              "charge_wait_period": null
+              "charge_wait_period": null,
+              "card_charge_cvv_confirmation": {
+                "enabled": true,
+                "threshold": 1500
+              }
             },
             "security_configuration": {
               "inspect_suspicious_login_after": "P7D",
@@ -88,6 +95,8 @@ EOD;
         $this->assertEquals("Store 1", $store->name);
         $this->assertEquals(date_create("2017-03-21T01:32:13.702689Z"), $store->createdOn);
         $this->assertEquals("https://example.com/logo.png", $store->configuration->logoUrl);
+        $this->assertEquals(15000, $store->configuration->minTransferPayout);
+        $this->assertEquals(500000, $store->configuration->maximumChargeAmounts);
         $this->assertTrue($store->configuration->userTransactionsConfiguration->enabled);
         $this->assertTrue($store->configuration->userTransactionsConfiguration->notifyCustomer);
         $this->assertTrue($store->configuration->cardConfiguration->enabled);
@@ -97,6 +106,12 @@ EOD;
         );
         $this->assertTrue($store->configuration->qrScanConfiguration->enabled);
         $this->assertTrue($store->configuration->convenienceConfiguration->enabled);
+        $this->assertEquals("bounded", $store->configuration->recurringTokenConfiguration->recurringType);
+        $this->assertTrue($store->configuration->recurringTokenConfiguration->cardChargeCvvConfirmation->enabled);
+        $this->assertEquals(
+            1500,
+            $store->configuration->recurringTokenConfiguration->cardChargeCvvConfirmation->threshold
+        );
         $this->assertEquals("bounded", $store->configuration->recurringTokenConfiguration->recurringType);
         $this->assertEquals("P7D", $store->configuration->securityConfiguration->inspectSuspiciousLoginAfter);
         $this->assertEquals(80, $store->configuration->securityConfiguration->refundPercentLimit);

@@ -2,11 +2,14 @@
 
 namespace Gopay\Resources;
 
+use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\Currency;
+use Gopay\Enums\RefundReason;
+use Gopay\Enums\RefundStatus;
 use Gopay\Utility\Json\JsonSchema;
 
 class Refund extends Resource
 {
-
     use Jsonable;
     use Pollable;
 
@@ -42,15 +45,15 @@ class Refund extends Resource
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->chargeId = $chargeId;
-        $this->status = $status;
+        $this->status = RefundStatus::fromValue($status);
         $this->amount = $amount;
-        $this->currency = $currency;
+        $this->currency = Currency::fromValue($currency);
         $this->amountFormatted = $amountFormatted;
-        $this->reason = $reason;
+        $this->reason = RefundReason::fromValue($reason);
         $this->message = $message;
         $this->error = $error;
         $this->metadata = $metadata;
-        $this->mode = $mode;
+        $this->mode = AppTokenMode::fromValue($mode);
         $this->createdOn = date_create($createdOn);
     }
 

@@ -21,9 +21,10 @@ class InstallmentPlan implements JsonSerializable
             $planType = InstallmentPlanType::fromValue($planType);
         }
         
-        if ($planType == InstallmentPlanType::REVOLVING() &&
+        if (($planType == InstallmentPlanType::NONE() || $planType == InstallmentPlanType::REVOLVING()) &&
         ($fixedCycles != null || $fixedCycleAmount != null)) {
-            throw new InvalidArgumentException('Revolving plans do not accept $fixedCycles or $fixedCycleAmount');
+            throw new InvalidArgumentException('None or revolving plans do not accept 
+                $fixedCycles or $fixedCycleAmount');
         } elseif ($planType == InstallmentPlanType::FIXED_CYCLES() &&
         ($fixedCycles == null || $fixedCycleAmount != null)) {
             throw new InvalidArgumentException('Fixed cycle plans requires $fixedCycles and not $fixedCycleAmount');
@@ -41,16 +42,16 @@ class InstallmentPlan implements JsonSerializable
 
     public function jsonSerialize()
     {
-        $data = array('plan_type' => $planType->getValue());
-        switch ($planType->getValue()) {
-            case $planType::FIXED_CYCLES():
-                $data[$planType->getValue()] = $fixedCycles;
+        $data = array('plan_type' => $this->planType->getValue());
+        switch ($this->planType) {
+            case InstallmentPlanType::FIXED_CYCLES():
+                $data[$this->planType->getValue()] = $this->fixedCycles;
                 break;
-            case $planType::FIXED_CYCLE_AMOUNT():
-                $data[$planType->getValue()] = $fixedCycleAmount;
+            case InstallmentPlanType::FIXED_CYCLE_AMOUNT():
+                $data[$this->planType->getValue()] = $this->fixedCycleAmount;
                 break;
         }
-        return data;
+        return $data;
     }
 
     protected static function initSchema()

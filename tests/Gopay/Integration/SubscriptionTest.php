@@ -1,9 +1,15 @@
 <?php
 namespace GopayTest\Integration;
 
+use Gopay\Enums\ActiveFilter;
+use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\Currency;
 use Gopay\Enums\InstallmentPlanType;
+use Gopay\Enums\PaymentType;
 use Gopay\Enums\Period;
+use Gopay\Enums\SubscriptionStatus;
 use Gopay\Enums\TokenType;
+use Gopay\Resources\InstallmentPlan;
 use Gopay\Resources\Subscription;
 use PHPUnit\Framework\TestCase;
 
@@ -12,17 +18,49 @@ class SubscriptionTest extends TestCase
     use IntegrationSuite;
     use Requests;
 
-    public function createValidSubscription()
+    private function createValidSubscription()
     {
-        $transactionToken = $this->createValidToken(TokenType::SUBSCRIPTION());
-        return $this->getClient()->createSubscription(
-            $transactionToken->id,
-            10000,
-            "jpy",
-            Period::BIWEEKLY(),
-            1000,
-            date_create("+5 months")
+        $this->deactivateExistingSubscriptionToken();
+        return $this
+            ->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION())
+            ->createSubscription(
+                10000,
+                Currency::JPY(),
+                Period::BIWEEKLY(),
+                1000,
+                date_create("+5 months")
+            )
+            ->awaitResult();
+    }
+
+    private function createUnconfirmedSubscription()
+    {
+        $this->deactivateExistingSubscriptionToken();
+        return $this
+            ->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION(), static::$CHARGE_FAIL)
+            ->createSubscription(
+                10000,
+                Currency::JPY(),
+                Period::BIWEEKLY(),
+                1000,
+                date_create("+5 months")
+            )
+            ->awaitResult();
+    }
+
+    private function deactivateExistingSubscriptionToken()
+    {
+        $tokenList = $this->getClient()->listTransactionTokens(
+            null,
+            null,
+            TokenType::SUBSCRIPTION(),
+            AppTokenMode::TEST(),
+            ActiveFilter::ACTIVE()
         );
+
+        foreach ($tokenList->items as $token) {
+            $token->deactivate();
+        }
     }
 
     public function testSubscriptionParse()
@@ -56,13 +94,13 @@ EOD;
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $subscription->storeId);
         $this->assertEquals("33333333-3333-3333-3333-333333333333", $subscription->transactionTokenId);
         $this->assertEquals(1000, $subscription->amount);
-        $this->assertEquals("JPY", $subscription->currency);
+        $this->assertEquals(Currency::JPY(), $subscription->currency);
         $this->assertEquals(1000, $subscription->amountFormatted);
         $this->assertEquals(Period::MONTHLY(), $subscription->period);
         $this->assertEquals(100, $subscription->initialAmount);
         $this->assertEquals(date_create("2018-05-14T09:40:39.337331Z"), $subscription->subsequentCyclesStart);
-        $this->assertEquals("canceled", $subscription->status);
-        $this->assertEquals("test", $subscription->mode);
+        $this->assertEquals(SubscriptionStatus::CANCELED(), $subscription->status);
+        $this->assertEquals(AppTokenMode::TEST(), $subscription->mode);
         $this->assertEquals(date_create("2017-07-04T06:06:05.580391Z"), $subscription->createdOn);
         $this->assertEquals(InstallmentPlanType::FIXED_CYCLES(), $subscription->installmentPlan->planType);
         $this->assertEquals("10", $subscription->installmentPlan->fixedCycles);
@@ -72,7 +110,7 @@ EOD;
     {
         $subscription = $this->createValidSubscription();
         $this->assertEquals(10000, $subscription->amount);
-        $this->assertEquals("JPY", $subscription->currency);
+        $this->assertEquals(Currency::JPY(), $subscription->currency);
         $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
         $this->assertEquals(1000, $subscription->initialAmount);
     }
@@ -83,22 +121,44 @@ EOD;
 
         $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
         $this->assertEquals(10000, $getSubscription->amount);
-        $this->assertEquals("JPY", $getSubscription->currency);
+        $this->assertEquals(Currency::JPY(), $getSubscription->currency);
         $this->assertEquals(Period::BIWEEKLY(), $getSubscription->period);
         $this->assertEquals(1000, $getSubscription->initialAmount);
+    }
+
+    public function testPatchSubscription()
+    {
+        $subscription = $this->createUnconfirmedSubscription();
+
+        $updatedToken = $this->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION());
+        $patchedSubscription = $subscription->patch(
+            $updatedToken->id,
+            99999,
+            null,
+            null,
+            null,
+            new InstallmentPlan(InstallmentPlanType::FIXED_CYCLES(), 9)
+        );
+        $this->assertEquals(99999, $patchedSubscription->amount);
+        $this->assertEquals(Currency::JPY(), $patchedSubscription->currency);
+        $this->assertEquals(Period::BIWEEKLY(), $patchedSubscription->period);
+        $this->assertEquals(1000, $patchedSubscription->initialAmount);
+        $this->assertEquals(
+            InstallmentPlanType::FIXED_CYCLES(),
+            $patchedSubscription->installmentPlan->planType
+        );
+        $this->assertEquals(9, $patchedSubscription->installmentPlan->fixedCycles);
     }
 
     public function testCancelSubscription()
     {
         $subscription = $this->createValidSubscription();
-        sleep(1);
 
         $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
         $this->assertTrue($getSubscription->cancel());
 
         $canceledSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
-        echo($canceledSubscription->id);
-        $this->assertEquals('canceled', $canceledSubscription->status);
+        $this->assertEquals(SubscriptionStatus::CANCELED(), $canceledSubscription->status);
     }
 
     public function testListSubscription()

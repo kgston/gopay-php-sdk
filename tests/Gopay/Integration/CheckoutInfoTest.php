@@ -1,9 +1,10 @@
 <?php
 namespace GopayTest\Integration;
 
+use DateTime;
+use Gopay\Enums\AppTokenMode;
 use Gopay\Resources\CheckoutInfo;
 use PHPUnit\Framework\TestCase;
-use \DateTime;
 
 class CheckoutInfoTest extends TestCase
 {
@@ -51,7 +52,7 @@ EOD;
 
         $json = json_decode($str, true);
         $checkoutInfo = CheckoutInfo::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
-        $this->assertEquals("test", $checkoutInfo->mode);
+        $this->assertEquals(AppTokenMode::TEST(), $checkoutInfo->mode);
         $this->assertEquals("infinite", $checkoutInfo->recurringTokenPrivilege);
         $this->assertEquals("My Store", $checkoutInfo->name);
         $this->assertEquals(true, $checkoutInfo->cardConfiguration->enabled);

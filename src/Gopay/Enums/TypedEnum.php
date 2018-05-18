@@ -22,6 +22,10 @@ abstract class TypedEnum
 
     private static function fromGetter($getter, $value)
     {
+        if ($value == null || $value == "") {
+            return null;
+        }
+
         $reflectionClass = new ReflectionClass(get_called_class());
         $methods = $reflectionClass->getMethods(ReflectionMethod::IS_STATIC | ReflectionMethod::IS_PUBLIC);
         $className = get_called_class();
@@ -39,13 +43,20 @@ abstract class TypedEnum
         throw new OutOfRangeException("$value is not defined in $className as an enum");
     }
 
-    protected static function create($value)
+    private static function getLastFunctionName()
+    {
+        $dbt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+        return isset($dbt[2]['function']) ? strtolower($dbt[2]['function']) : null;
+    }
+
+    protected static function create($value = null)
     {
         if (self::$instancedValues === null) {
             self::$instancedValues = array();
         }
 
         $className = get_called_class();
+        $value = isset($value) ? $value : self::getLastFunctionName();
 
         if (!isset(self::$instancedValues[$className])) {
             self::$instancedValues[$className] = array();
@@ -63,6 +74,21 @@ abstract class TypedEnum
         }
 
         return self::$instancedValues[$className][$value];
+    }
+
+    public static function findValues()
+    {
+        $values = array();
+        $reflectionClass = new ReflectionClass(get_called_class());
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_STATIC | ReflectionMethod::IS_PUBLIC);
+        $className = get_called_class();
+
+        foreach ($methods as $method) {
+            if ($method->class === $className) {
+                $values[] = $method->invoke(null);
+            }
+        }
+        return $values;
     }
 
     public static function fromValue($value)

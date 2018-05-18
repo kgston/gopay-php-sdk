@@ -1,8 +1,8 @@
 <?php
 namespace GopayTest\Integration;
 
+use DateTime;
 use PHPUnit\Framework\TestCase;
-use \DateTime;
 
 class MerchantTest extends TestCase
 {

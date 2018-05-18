@@ -17,7 +17,7 @@ abstract class RequesterUtils
         );
     }
 
-    public static function executeGet($parser, RequestContext $requestContext, array $query = array())
+    public static function executeGet($parser, RequestContext $requestContext, $query = array())
     {
         $response = $requestContext->getRequester()->get(
             $requestContext->getFullURL(),
@@ -27,7 +27,7 @@ abstract class RequesterUtils
         return $parser::getSchema()->parse($response, array($requestContext));
     }
 
-    public static function executeGetPaginated($parser, RequestContext $context, array $query = array())
+    public static function executeGetPaginated($parser, RequestContext $context, $query = array())
     {
         $response = $context->getRequester()->get($context->getFullURL(), $query, self::getHeaders($context));
         return Paginated::fromResponse($response, $query, $parser, $context);
@@ -36,7 +36,7 @@ abstract class RequesterUtils
     public static function executePost(
         $parser,
         RequestContext $requestContext,
-        array $payload = array()
+        $payload = array()
     ) {
         $response = $requestContext->getRequester()->post(
             $requestContext->getFullURL(),
@@ -53,13 +53,17 @@ abstract class RequesterUtils
     public static function executePatch(
         $parser,
         RequestContext $requestContext,
-        array $payload = array()
+        $payload = array()
     ) {
         $response = $requestContext->getRequester()->patch(
             $requestContext->getFullURL(),
             $payload,
             self::getHeaders($requestContext)
         );
+        if (is_bool($response)) {
+            echo $requestContext->getFullURL();
+            var_dump($payload);
+        }
         return $parser::getSchema()->parse($response, array($requestContext));
     }
 

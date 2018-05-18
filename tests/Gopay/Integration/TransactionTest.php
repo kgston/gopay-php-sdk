@@ -1,6 +1,10 @@
 <?php
 namespace GopayTest\Integration;
 
+use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\Currency;
+use Gopay\Enums\ChargeStatus;
+use Gopay\Enums\TransactionType;
 use Gopay\Resources\Paginated;
 use Gopay\Resources\Subscription;
 use Gopay\Resources\Transaction;
@@ -49,12 +53,12 @@ EOD;
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $item->resourceId);
         $this->assertEquals("33333333-3333-3333-3333-333333333333", $item->chargeId);
         $this->assertEquals(1000, $item->amount);
-        $this->assertEquals("JPY", $item->currency);
+        $this->assertEquals(Currency::JPY(), $item->currency);
         $this->assertEquals(1000, $item->amountFormatted);
-        $this->assertEquals("refund", $item->type);
-        $this->assertEquals("failed", $item->status);
+        $this->assertEquals(TransactionType::REFUND(), $item->type);
+        $this->assertEquals(ChargeStatus::FAILED(), $item->status);
         $this->assertEquals(["key" => "value"], $item->metadata);
         $this->assertEquals(date_create("2017-10-24T17:58:40.702667Z"), $item->createdOn);
-        $this->assertEquals("test", $item->mode);
+        $this->assertEquals(AppTokenMode::TEST(), $item->mode);
     }
 }

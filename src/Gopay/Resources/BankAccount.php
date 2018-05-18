@@ -2,6 +2,9 @@
 
 namespace Gopay\Resources;
 
+use Gopay\Enums\BankAccountStatus;
+use Gopay\Enums\BankAccountType;
+use Gopay\Enums\Currency;
 use Gopay\Utility\Json\JsonSchema;
 
 class BankAccount extends Resource
@@ -52,15 +55,15 @@ class BankAccount extends Resource
         $this->branchName = $branchName;
         $this->country = $country;
         $this->bankAddress = $bankAddress;
-        $this->currency = $currency;
+        $this->currency = Currency::fromValue($currency);
         $this->accountNumber = $accountNumber;
         $this->routingNumber = $routingNumber;
         $this->swiftCode = $swiftCode;
         $this->ifscCode = $ifscCode;
         $this->routingCode = $routingCode;
         $this->lastFour = $lastFour;
-        $this->status = $status;
-        $this->accountType = $accountType;
+        $this->status = BankAccountStatus::fromValue($status);
+        $this->accountType = BankAccountType::fromValue($accountType);
         $this->createdOn = date_create($createdOn);
     }
 

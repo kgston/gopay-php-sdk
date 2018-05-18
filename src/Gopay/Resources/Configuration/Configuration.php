@@ -15,8 +15,9 @@ class Configuration
     public $logoUrl;
     public $country;
     public $language;
-    public $timeZone;
+    public $displayTimeZone;
     public $minTransferPayout;
+    public $maximumChargeAmounts;
     public $transferSchedule;
     public $userTransactionsConfiguration;
     public $cardConfiguration;
@@ -33,8 +34,9 @@ class Configuration
         $logoUrl,
         $country,
         $language,
-        $timeZone,
+        $displayTimeZone,
         $minTransferPayout,
+        $maximumChargeAmounts,
         $transferSchedule,
         $userTransactionsConfiguration,
         $cardConfiguration,
@@ -50,8 +52,9 @@ class Configuration
         $this->logoUrl = $logoUrl;
         $this->country = $country;
         $this->language = $language;
-        $this->timeZone = $timeZone;
+        $this->displayTimeZone = $displayTimeZone;
         $this->minTransferPayout = $minTransferPayout;
+        $this->maximumChargeAmounts = $maximumChargeAmounts;
         $this->transferSchedule = $transferSchedule;
         $this->userTransactionsConfiguration = $userTransactionsConfiguration;
         $this->cardConfiguration = $cardConfiguration;

@@ -1,48 +1,71 @@
 <?php
 namespace GopayTest\Integration;
 
+use Gopay\Enums\Currency;
+use Gopay\Enums\PaymentType;
+use Gopay\Enums\RefundReason;
 use Gopay\Enums\TokenType;
+use Gopay\Resources\PaymentMethod\CardPayment;
+
+use GopayTest\Integration\CardNumber;
 
 trait Requests
 {
-    public function createValidToken(TokenType $type = null)
-    {
-        if ($type == null) {
-            $type = TokenType::ONE_TIME();
+    public static $SUCCESSFUL = '4242424242424242';
+    public static $CHARGE_FAIL = '4111111111111111';
+
+    public function createValidToken(
+        PaymentType $paymentType = null,
+        TokenType $type = null,
+        $cardNumber = null
+    ) {
+        $paymentType = isset($paymentType) ? $paymentType : PaymentType::CARD();
+        $cardNumber = isset($cardNumber) ? $cardNumber : static::$SUCCESSFUL;
+        $paymentMethod = null;
+
+        switch ($paymentType) {
+            case PaymentType::CARD():
+                $paymentMethod = new CardPayment(
+                    "test@test.com",
+                    "PHP test",
+                    $cardNumber,
+                    "02",
+                    "2022",
+                    "123",
+                    $type,
+                    null,
+                    "test line 1",
+                    "test line 2",
+                    "test state",
+                    "test city",
+                    "jp",
+                    "101-1111",
+                    "81",
+                    "12910298309128",
+                    array('customer_id' => 'PHP TEST')
+                );
+                break;
         }
-        $transactionToken = $this->getClient()->createCardToken(
-            "test@test.com",
-            "PHP test",
-            "4242424242424242",
-            "02",
-            "2022",
-            "123",
-            $type,
-            null,
-            "test",
-            null,
-            "test",
-            "test",
-            "jp",
-            "101-1111",
-            "81",
-            "12910298309128"
-        );
+        $transactionToken = $this->getClient()->createToken($paymentMethod);
         return $transactionToken;
     }
 
     public function createValidCharge(bool $capture = true)
     {
         $transactionToken = $this->createValidToken();
-        $charge = $this->getClient()->createCharge($transactionToken->id, 1000, "jpy", $capture);
-        $charge = $charge->awaitResult();
-        return $charge;
+        $charge = $this->getClient()->createCharge($transactionToken->id, 1000, Currency::JPY(), $capture);
+        return $charge->awaitResult();
     }
 
     public function createValidRefund()
     {
         $charge = $this->createValidCharge(true);
-        $refund = $charge->createRefund(1000, "jpy", "fraud", "test", array("something" => "value"));
-        return $refund;
+        return $charge->createRefund(
+            1000,
+            Currency::JPY(),
+            RefundReason::FRAUD(),
+            "test",
+            array("something" => "value")
+        )->awaitResult();
     }
 }

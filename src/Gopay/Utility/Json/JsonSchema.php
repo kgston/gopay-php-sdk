@@ -64,7 +64,7 @@ class JsonSchema
                     return null;
                 }
             }
-            return call_user_func($component->formatter, $value);
+            return call_user_func($component->formatter, $value, $json);
         }, $this->components);
     }
 
@@ -105,6 +105,11 @@ class JsonSchema
             throw new NoSuchPathException(null);
         }
         $nextKey = $paths[0];
+
+        if (is_bool($json)) {
+            echo $nextKey;
+            var_dump($json);
+        }
         if (!array_key_exists($nextKey, $json)) {
             if ($required) {
                 throw new NoSuchPathException($nextKey);

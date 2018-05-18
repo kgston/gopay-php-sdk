@@ -19,7 +19,6 @@ function get_other_direction($direction)
 
 class Paginated
 {
-
     public $items;
     public $hasMore;
     private $jsonableClass;

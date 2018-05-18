@@ -4,6 +4,7 @@ namespace Gopay\Utility;
 
 use Gopay\Errors\GopayNotFoundError;
 use Gopay\Errors\GopayRequestError;
+use Gopay\Errors\GopayResourceConflictError;
 use Gopay\Errors\GopayUnauthorizedError;
 
 const BAD_REQUEST = 400;
@@ -20,8 +21,6 @@ const CONFLICT = 409;
 
 abstract class HttpUtils
 {
-
-
     public static function getQueryString(array $params)
     {
         if (is_array($params) && sizeof($params) > 0) {

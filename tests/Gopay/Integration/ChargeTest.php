@@ -30,6 +30,15 @@ class ChargeTest extends TestCase
         $this->assertTrue($captured);
     }
 
+    public function testPatchCharge()
+    {
+        $charge = $this->createValidCharge(true);
+        $this->assertEquals(0, count($charge->metadata));
+        
+        $charge = $charge->patch(array('testId' => 12345));
+        $this->assertTrue($charge->metadata['testId'] === 12345);
+    }
+
     public function testInvalidCharge()
     {
         $this->expectException(GopayRequestError::class);

@@ -3,8 +3,8 @@
 namespace Gopay\Resources;
 
 use Gopay\Utility\FunctionalUtils;
-use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
+use Gopay\Utility\Json\JsonSchema;
 
 class Charge extends Resource
 {
@@ -75,6 +75,11 @@ class Charge extends Resource
     protected function getIdContext()
     {
         return $this->context->withPath(array("stores", $this->storeId, "charges", $this->id));
+    }
+
+    public function patch($metadata)
+    {
+        return RequesterUtils::executePatch(self::class, $this->getIdContext(), array('metadata' => $metadata));
     }
 
     public function createRefund(

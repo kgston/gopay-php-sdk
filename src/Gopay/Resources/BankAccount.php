@@ -64,7 +64,6 @@ class BankAccount extends Resource
         $this->createdOn = date_create($createdOn);
     }
 
-
     protected static function initSchema()
     {
         return JsonSchema::fromClass(BankAccount::class);

@@ -24,12 +24,12 @@ class RequestContext
         return $this->requester;
     }
 
-    public function withAppToken($appJWT): self
+    public function withAppToken($appJWT)
     {
         return new RequestContext($this->requester, $this->endpoint, $this->path, $appJWT);
     }
 
-    public function withPath($path): self
+    public function withPath($path)
     {
         $newPath = is_array($path) ? join("/", $path) : $path;
         return new RequestContext($this->requester, $this->endpoint, $newPath, $this->appJWT);

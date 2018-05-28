@@ -50,8 +50,9 @@ trait Requests
         return $transactionToken;
     }
 
-    public function createValidCharge(bool $capture = true)
+    public function createValidCharge($capture = null)
     {
+        $capture = isset($capture) ? $capture : true;
         $transactionToken = $this->createValidToken();
         $charge = $this->getClient()->createCharge($transactionToken->id, 1000, Currency::JPY(), $capture);
         return $charge->awaitResult();

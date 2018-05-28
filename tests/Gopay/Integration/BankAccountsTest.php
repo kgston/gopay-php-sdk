@@ -41,7 +41,7 @@ EOD;
         $this->assertEquals(Currency::JPY(), $bankAccount->currency);
         $this->assertEquals("XXXXXXX890", $bankAccount->accountNumber);
         $this->assertEquals("7890", $bankAccount->lastFour);
-        $this->assertEquals(BankAccountStatus::NEW(), $bankAccount->status);
+        $this->assertEquals(BankAccountStatus::NEW_ACCOUNT(), $bankAccount->status);
         $this->assertEquals(BankAccountType::CHECKING(), $bankAccount->accountType);
         $this->assertEquals(date_create("2017-03-28T05:37:06.850707Z"), $bankAccount->createdOn);
         $this->assertEquals(true, $bankAccount->primary);

@@ -22,13 +22,12 @@ module.exports = function (grunt) {
             ]
         },
         phpcs: {
-            library: {
-                dir: ['src', 'tests']
+            application: {
+                src: ['src/**/*.php', 'tests/**/*.php']
             },
             options: {
                 bin: 'vendor/bin/phpcs',
-                standard: 'PSR2',
-                extensions: 'php'
+                standard: 'PSR2'
             }
         },
         phpunit: {

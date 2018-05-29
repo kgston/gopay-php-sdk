@@ -4,7 +4,7 @@ namespace Gopay\Errors;
 
 use Throwable;
 
-class GopayUnauthorizedError extends GopayRequestError
+class GopayForbiddenError extends GopayRequestError
 {
     public function __construct($url = "", $json = array(), $code = 0, Throwable $previous = null)
     {

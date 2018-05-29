@@ -60,10 +60,6 @@ abstract class RequesterUtils
             $payload,
             self::getHeaders($requestContext)
         );
-        if (is_bool($response)) {
-            echo $requestContext->getFullURL();
-            var_dump($payload);
-        }
         return $parser::getSchema()->parse($response, array($requestContext));
     }
 

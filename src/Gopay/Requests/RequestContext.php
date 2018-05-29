@@ -66,12 +66,4 @@ class RequestContext
                 "/" .
                 trim($this->path, "/"));
     }
-
-    public function getWebsocketURL()
-    {
-        $authHeaders = $this->getAuthorizationHeaders();
-        $auth = str_replace(" ", ":", $authHeaders["Authorization"]);
-        $path = preg_replace("/https?:\/\//", "", $this->getFullURL());
-        return "ws://" . $auth . "@" . $path;
-    }
 }

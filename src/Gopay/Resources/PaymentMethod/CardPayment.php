@@ -43,7 +43,6 @@ class CardPayment extends PaymentMethod implements JsonSerializable
         $phoneNumberLocalNumber = null,
         array $metadata = null
     ) {
-        $this->acceptedTypes = TokenType::findValues();
         $type = $type === null ? TokenType::ONE_TIME(): $type;
         parent::__construct($email, PaymentType::CARD(), $type, $usageLimit, $metadata);
 
@@ -56,6 +55,7 @@ class CardPayment extends PaymentMethod implements JsonSerializable
         $this->line2 = $line2;
         $this->state = $state;
         $this->city = $city;
+        $this->country = $country;
         $this->zip = $zip;
         $this->phoneNumberCountryCode = $phoneNumberCountryCode;
         $this->phoneNumberLocalNumber = $phoneNumberLocalNumber;

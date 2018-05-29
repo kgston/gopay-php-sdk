@@ -2,6 +2,7 @@
 
 namespace Gopay\Utility;
 
+use Gopay\Errors\GopayForbiddenError;
 use Gopay\Errors\GopayNotFoundError;
 use Gopay\Errors\GopayRequestError;
 use Gopay\Errors\GopayResourceConflictError;
@@ -34,13 +35,13 @@ abstract class HttpUtils
     {
         switch ($response->status_code) {
             case BAD_REQUEST:
-                throw GopayRequestError::fromJson(json_decode($response->body, true));
+                throw GopayRequestError::fromJson($url, json_decode($response->body, true));
 
             case UNAUTHORIZED:
-                throw new GopayUnauthorizedError($url);
+                throw new GopayUnauthorizedError($url, json_decode($response->body, true));
 
             case FORBIDDEN:
-                throw new GopayUnauthorizedError($url);
+                throw new GopayForbiddenError($url, json_decode($response->body, true));
 
             case NOT_FOUND:
                 throw new GopayNotFoundError($url);

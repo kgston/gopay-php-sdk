@@ -35,24 +35,10 @@ class TransactionTokenTest extends TestCase
     public function testListExistingTokens()
     {
         $localCustomerId = substr(sha1(rand()), 0, 15);
-        $transactionToken = $this->getClient()->createToken(new CardPayment(
-            "test@test.com",
-            "PHP test",
-            "4242424242424242",
-            "02",
-            "2022",
-            "123",
-            TokenType::Recurring(),
-            null,
-            "test line 1",
-            "test line 2",
-            "test state",
-            "test city",
-            "jp",
-            "101-1111",
-            "81",
-            "12910298309128"
-        ), $localCustomerId);
+        $transactionToken = $this->getClient()->createToken(
+            $this->createCardPayment(TokenType::RECURRING()),
+            $localCustomerId
+        );
         
         $maxRetries = 3;
         $tokenList = null;
@@ -116,23 +102,6 @@ class TransactionTokenTest extends TestCase
     public function testInvalidCardNumber()
     {
         $this->expectException(GopayRequestError::class);
-        $this->getClient()->createToken(new CardPayment(
-            "test@test.com",
-            "PHP test",
-            "4242424242424243",
-            "02",
-            "2022",
-            "123",
-            null,
-            null,
-            "test line 1",
-            "test line 2",
-            "test state",
-            "test city",
-            "jp",
-            "101-1111",
-            "81",
-            "12910298309128"
-        ));
+        $this->getClient()->createToken($this->createCardPayment(TokenType::ONE_TIME(), "4242424242424243"));
     }
 }

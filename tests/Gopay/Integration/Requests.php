@@ -11,7 +11,7 @@ use GopayTest\Integration\CardNumber;
 
 trait Requests
 {
-    public static $SUCCESSFUL = '4242424242424242';
+    public static $SUCCESSFUL = '4916741415383284';
     public static $CHARGE_FAIL = '4111111111111111';
 
     public function createValidToken(
@@ -20,34 +20,41 @@ trait Requests
         $cardNumber = null
     ) {
         $paymentType = isset($paymentType) ? $paymentType : PaymentType::CARD();
+        $type = isset($type) ? $type : TokenType::ONE_TIME();
         $cardNumber = isset($cardNumber) ? $cardNumber : static::$SUCCESSFUL;
         $paymentMethod = null;
 
         switch ($paymentType) {
             case PaymentType::CARD():
-                $paymentMethod = new CardPayment(
-                    "test@test.com",
-                    "PHP test",
-                    $cardNumber,
-                    "02",
-                    "2022",
-                    "123",
-                    $type,
-                    null,
-                    "test line 1",
-                    "test line 2",
-                    "test state",
-                    "test city",
-                    "jp",
-                    "101-1111",
-                    "81",
-                    "12910298309128",
-                    array('customer_id' => 'PHP TEST')
-                );
+                $paymentMethod = $this->createCardPayment($type, $cardNumber);
                 break;
         }
         $transactionToken = $this->getClient()->createToken($paymentMethod);
         return $transactionToken;
+    }
+
+    public function createCardPayment(TokenType $type, $cardNumber = null)
+    {
+        $cardNumber = isset($cardNumber) ? $cardNumber : static::$SUCCESSFUL;
+        return new CardPayment(
+            "test@test.com",
+            "PHP test",
+            $cardNumber,
+            "02",
+            "2022",
+            "123",
+            $type,
+            null,
+            "test line 1",
+            "test line 2",
+            "test state",
+            "test city",
+            "jp",
+            "101-1111",
+            "81",
+            "12910298309128",
+            array('customer_id' => 'PHP TEST')
+        );
     }
 
     public function createValidCharge($capture = null)

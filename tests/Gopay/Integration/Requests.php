@@ -1,13 +1,12 @@
 <?php
 namespace GopayTest\Integration;
 
-use Gopay\Enums\Currency;
 use Gopay\Enums\PaymentType;
 use Gopay\Enums\RefundReason;
 use Gopay\Enums\TokenType;
 use Gopay\Resources\PaymentMethod\CardPayment;
-
 use GopayTest\Integration\CardNumber;
+use Money\Money;
 
 trait Requests
 {
@@ -61,7 +60,7 @@ trait Requests
     {
         $capture = isset($capture) ? $capture : true;
         $transactionToken = $this->createValidToken();
-        $charge = $this->getClient()->createCharge($transactionToken->id, 1000, Currency::JPY(), $capture);
+        $charge = $this->getClient()->createCharge($transactionToken->id, Money::JPY(1000), $capture);
         return $charge->awaitResult();
     }
 
@@ -69,8 +68,7 @@ trait Requests
     {
         $charge = $this->createValidCharge(true);
         return $charge->createRefund(
-            1000,
-            Currency::JPY(),
+            Money::JPY(1000),
             RefundReason::FRAUD(),
             "test",
             array("something" => "value")

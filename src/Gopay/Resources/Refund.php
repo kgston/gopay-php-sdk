@@ -3,10 +3,10 @@
 namespace Gopay\Resources;
 
 use Gopay\Enums\AppTokenMode;
-use Gopay\Enums\Currency;
 use Gopay\Enums\RefundReason;
 use Gopay\Enums\RefundStatus;
 use Gopay\Utility\Json\JsonSchema;
+use Money\Currency;
 
 class Refund extends Resource
 {
@@ -47,7 +47,7 @@ class Refund extends Resource
         $this->chargeId = $chargeId;
         $this->status = RefundStatus::fromValue($status);
         $this->amount = $amount;
-        $this->currency = Currency::fromValue($currency);
+        $this->currency = new Currency($currency);
         $this->amountFormatted = $amountFormatted;
         $this->reason = RefundReason::fromValue($reason);
         $this->message = $message;

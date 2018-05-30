@@ -3,8 +3,9 @@ namespace GopayTest\Integration;
 
 use Gopay\Enums\CancelStatus;
 use Gopay\Enums\ChargeStatus;
-use Gopay\Enums\Currency;
 use Gopay\Errors\GopayRequestError;
+use Money\Currency;
+use Money\Money;
 use PHPUnit\Framework\TestCase;
 
 class ChargeTest extends TestCase
@@ -16,20 +17,20 @@ class ChargeTest extends TestCase
     {
         $charge = $this->createValidCharge(true);
         $this->assertEquals(1000, $charge->requestedAmount);
-        $this->assertEquals(Currency::JPY(), $charge->requestedCurrency);
+        $this->assertEquals(new Currency('JPY'), $charge->requestedCurrency);
     }
 
     public function testCreateChargeOnToken()
     {
-        $charge = $this->createValidToken()->createCharge(1000, Currency::JPY());
+        $charge = $this->createValidToken()->createCharge(Money::JPY(1000));
         $this->assertEquals(1000, $charge->requestedAmount);
-        $this->assertEquals(Currency::JPY(), $charge->requestedCurrency);
+        $this->assertEquals(new Currency('JPY'), $charge->requestedCurrency);
     }
 
     public function testAuthCaptureCharge()
     {
         $charge = $this->createValidCharge(false);
-        $captured = $charge->capture(1000, Currency::JPY());
+        $captured = $charge->capture(Money::JPY(1000));
         $this->assertTrue($captured);
     }
 
@@ -46,14 +47,14 @@ class ChargeTest extends TestCase
     {
         $this->expectException(GopayRequestError::class);
         $transactionToken = $this->createValidToken();
-        $this->getClient()->createCharge($transactionToken->id, -1000, Currency::JPY());
+        $this->getClient()->createCharge($transactionToken->id, Money::JPY(-1000));
     }
 
     public function testInvalidAuthCapture()
     {
         $this->expectException(GopayRequestError::class);
         $charge = $this->createValidCharge(false);
-        $charge->capture(2000, Currency::JPY());
+        $charge->capture(Money::JPY(2000));
     }
     
     public function testCancelAuthCharge()

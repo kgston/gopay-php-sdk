@@ -3,7 +3,6 @@
 namespace Gopay\Resources;
 
 use Gopay\Enums\AppTokenMode;
-use Gopay\Enums\Currency;
 use Gopay\Enums\InstallmentPlanType;
 use Gopay\Enums\Period;
 use Gopay\Enums\Reason;
@@ -11,6 +10,8 @@ use Gopay\Enums\SubscriptionStatus;
 use Gopay\Errors\GopayLogicError;
 use Gopay\Utility\RequesterUtils;
 use Gopay\Utility\Json\JsonSchema;
+use Money\Currency;
+use Money\Money;
 
 class Subscription extends Resource
 {
@@ -51,7 +52,7 @@ class Subscription extends Resource
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
         $this->amount = $amount;
-        $this->currency = Currency::fromValue($currency);
+        $this->currency = new Currency($currency);
         $this->amountFormatted = $amountFormatted;
         $this->period = Period::fromValue($period);
         $this->initialAmount = $initialAmount;
@@ -65,9 +66,8 @@ class Subscription extends Resource
 
     public function patch(
         $transactionTokenId = null,
-        $amount = null,
-        Currency $currency = null,
-        $initialAmount = null,
+        Money $money = null,
+        Money $initialAmount = null,
         array $metadata = null,
         InstallmentPlan $installmentPlan = null
     ) {
@@ -77,7 +77,7 @@ class Subscription extends Resource
         if ($this->isProcessing()) {
             throw new GopayLogicError(Reason::SUBSCRIPTION_PROCESSING());
         }
-        if ($this->installmentPlan === null && $installmentPlan->planType === InstallmentPlanType::NONE()) {
+        if (!isset($this->installmentPlan) && $installmentPlan->planType === InstallmentPlanType::NONE()) {
             throw new GopayLogicError(Reason::INSTALLMENT_PLAN_NOT_FOUND());
         }
 
@@ -85,14 +85,11 @@ class Subscription extends Resource
         if (isset($transactionTokenId)) {
             $payload['transaction_token_id'] = $transactionTokenId;
         }
-        if (isset($amount)) {
-            $payload['amount'] = $amount;
-        }
-        if (isset($currency)) {
-            $payload['currency'] = $currency->getValue();
+        if (isset($money)) {
+            $payload += $money->jsonSerialize();
         }
         if (isset($initialAmount)) {
-            $payload['initial_amount'] = $initialAmount;
+            $payload['initial_amount'] = $initialAmount->getAmount();
         }
         if (isset($metadata)) {
             $payload['metadata'] = $metadata;

@@ -3,7 +3,6 @@ namespace GopayTest\Integration;
 
 use Gopay\Enums\ActiveFilter;
 use Gopay\Enums\AppTokenMode;
-use Gopay\Enums\Currency;
 use Gopay\Enums\InstallmentPlanType;
 use Gopay\Enums\PaymentType;
 use Gopay\Enums\Period;
@@ -11,6 +10,8 @@ use Gopay\Enums\SubscriptionStatus;
 use Gopay\Enums\TokenType;
 use Gopay\Resources\InstallmentPlan;
 use Gopay\Resources\Subscription;
+use Money\Currency;
+use Money\Money;
 use PHPUnit\Framework\TestCase;
 
 class SubscriptionTest extends TestCase
@@ -24,10 +25,9 @@ class SubscriptionTest extends TestCase
         return $this
             ->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION())
             ->createSubscription(
-                10000,
-                Currency::JPY(),
+                Money::JPY(10000),
                 Period::BIWEEKLY(),
-                1000,
+                Money::JPY(1000),
                 date_create("+5 months")
             )
             ->awaitResult();
@@ -39,10 +39,9 @@ class SubscriptionTest extends TestCase
         return $this
             ->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION(), static::$CHARGE_FAIL)
             ->createSubscription(
-                10000,
-                Currency::JPY(),
+                Money::JPY(10000),
                 Period::BIWEEKLY(),
-                1000,
+                Money::JPY(1000),
                 date_create("+5 months")
             )
             ->awaitResult();
@@ -94,7 +93,7 @@ EOD;
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $subscription->storeId);
         $this->assertEquals("33333333-3333-3333-3333-333333333333", $subscription->transactionTokenId);
         $this->assertEquals(1000, $subscription->amount);
-        $this->assertEquals(Currency::JPY(), $subscription->currency);
+        $this->assertEquals(new Currency('JPY'), $subscription->currency);
         $this->assertEquals(1000, $subscription->amountFormatted);
         $this->assertEquals(Period::MONTHLY(), $subscription->period);
         $this->assertEquals(100, $subscription->initialAmount);
@@ -110,7 +109,7 @@ EOD;
     {
         $subscription = $this->createValidSubscription();
         $this->assertEquals(10000, $subscription->amount);
-        $this->assertEquals(Currency::JPY(), $subscription->currency);
+        $this->assertEquals(new Currency('JPY'), $subscription->currency);
         $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
         $this->assertEquals(1000, $subscription->initialAmount);
     }
@@ -121,7 +120,7 @@ EOD;
 
         $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
         $this->assertEquals(10000, $getSubscription->amount);
-        $this->assertEquals(Currency::JPY(), $getSubscription->currency);
+        $this->assertEquals(new Currency('JPY'), $getSubscription->currency);
         $this->assertEquals(Period::BIWEEKLY(), $getSubscription->period);
         $this->assertEquals(1000, $getSubscription->initialAmount);
     }
@@ -131,18 +130,18 @@ EOD;
         $subscription = $this->createUnconfirmedSubscription();
 
         $updatedToken = $this->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION());
+        
         $patchedSubscription = $subscription->patch(
             $updatedToken->id,
-            99999,
-            null,
-            null,
+            Money::JPY(99999),
+            Money::JPY(2000),
             null,
             new InstallmentPlan(InstallmentPlanType::FIXED_CYCLES(), 9)
         );
         $this->assertEquals(99999, $patchedSubscription->amount);
-        $this->assertEquals(Currency::JPY(), $patchedSubscription->currency);
+        $this->assertEquals(new Currency('JPY'), $patchedSubscription->currency);
         $this->assertEquals(Period::BIWEEKLY(), $patchedSubscription->period);
-        $this->assertEquals(1000, $patchedSubscription->initialAmount);
+        $this->assertEquals(2000, $patchedSubscription->initialAmount);
         $this->assertEquals(
             InstallmentPlanType::FIXED_CYCLES(),
             $patchedSubscription->installmentPlan->planType

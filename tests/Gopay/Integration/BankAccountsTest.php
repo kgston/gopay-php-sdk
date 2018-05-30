@@ -3,9 +3,9 @@ namespace GopayTest\Integration;
 
 use Gopay\Enums\BankAccountStatus;
 use Gopay\Enums\BankAccountType;
-use Gopay\Enums\Currency;
 use Gopay\Resources\BankAccount;
 use Gopay\Resources\Paginated;
+use Money\Currency;
 use PHPUnit\Framework\TestCase;
 
 class BankAccountsTest extends TestCase
@@ -38,7 +38,7 @@ EOD;
         $this->assertEquals("Test bank", $bankAccount->bankName);
         $this->assertEquals("Test branch", $bankAccount->branchName);
         $this->assertEquals("JP", $bankAccount->country);
-        $this->assertEquals(Currency::JPY(), $bankAccount->currency);
+        $this->assertEquals(new Currency('JPY'), $bankAccount->currency);
         $this->assertEquals("XXXXXXX890", $bankAccount->accountNumber);
         $this->assertEquals("7890", $bankAccount->lastFour);
         $this->assertEquals(BankAccountStatus::NEW_ACCOUNT(), $bankAccount->status);

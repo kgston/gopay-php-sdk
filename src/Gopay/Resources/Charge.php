@@ -4,7 +4,6 @@ namespace Gopay\Resources;
 
 use Gopay\Enums\AppTokenMode;
 use Gopay\Enums\ChargeStatus;
-use Gopay\Enums\Currency;
 use Gopay\Enums\Field;
 use Gopay\Enums\Reason;
 use Gopay\Enums\RefundReason;
@@ -13,6 +12,8 @@ use Gopay\Errors\GopayValidationError;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
 use Gopay\Utility\Json\JsonSchema;
+use Money\Currency;
+use Money\Money;
 
 class Charge extends Resource
 {
@@ -62,10 +63,10 @@ class Charge extends Resource
         $this->transactionTokenType = TokenType::fromValue($transactionTokenType);
         $this->subscriptionId = $subscriptionId;
         $this->requestedAmount = $requestedAmount;
-        $this->requestedCurrency = Currency::fromValue($requestedCurrency);
+        $this->requestedCurrency = new Currency($requestedCurrency);
         $this->requestedAmountFormatted = $requestedAmountFormatted;
         $this->chargedAmount = $chargedAmount;
-        $this->chargedCurrency = Currency::fromValue($chargedCurrency);
+        $this->chargedCurrency = isset($chargedCurrency) ? new Currency($chargedCurrency) : null;
         $this->chargedAmountFormatted = $chargedAmountFormatted;
         $this->captureAt = date_create($captureAt);
         $this->status = ChargeStatus::fromValue($status);
@@ -91,8 +92,7 @@ class Charge extends Resource
     }
 
     public function createRefund(
-        $amount,
-        Currency $currency,
+        Money $money,
         RefundReason $reason = null,
         $message = null,
         array $metadata = null
@@ -100,13 +100,14 @@ class Charge extends Resource
         if (isset($reason) && RefundReason::CHARGEBACK() === $reason) {
             throw new GopayValidationError(Field::REASON(), Reason::INVALID_PERMISSIONS());
         }
-        $payload = FunctionalUtils::stripNulls(array(
-            "amount" => $amount,
-            "currency" => $currency->getValue(),
-            "reason" => isset($reason) ? $reason->getValue() : $reason,
-            "message" => $message,
-            "metadata" => $metadata
-        ));
+        $payload = FunctionalUtils::stripNulls(
+            $money->jsonSerialize() +
+            array(
+                "reason" => isset($reason) ? $reason->getValue() : null,
+                "message" => $message,
+                "metadata" => $metadata
+            )
+        );
         $context = $this->getIdContext()->appendPath("refunds");
         return RequesterUtils::executePost(Refund::class, $context, $payload);
     }
@@ -128,14 +129,9 @@ class Charge extends Resource
         );
     }
 
-    public function capture(
-        $amount,
-        Currency $currency
-    ) {
-        $payload = array(
-            'amount' => $amount,
-            'currency' => $currency->getValue()
-        );
+    public function capture(Money $money)
+    {
+        $payload = $money->jsonSerialize();
         $context = $this->getIdContext()->appendPath("capture");
         return RequesterUtils::executePost(null, $context, $payload);
     }

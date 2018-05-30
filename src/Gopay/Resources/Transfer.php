@@ -2,12 +2,12 @@
 
 namespace Gopay\Resources;
 
-use Gopay\Enums\Currency;
 use Gopay\Enums\CursorDirection;
 use Gopay\Enums\TransferStatus;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
+use Money\Currency;
 
 class Transfer extends Resource
 {
@@ -45,7 +45,7 @@ class Transfer extends Resource
         parent::__construct($id, $context);
         $this->bankAccountId = $bankAccountId;
         $this->amount = $amount;
-        $this->currency = Currency::fromValue($currency);
+        $this->currency = new Currency($currency);
         $this->amountFormatted = $amountFormatted;
         $this->status = TransferStatus::fromValue($status);
         $this->errorCode = $errorCode;
@@ -65,7 +65,7 @@ class Transfer extends Resource
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection.getValue() : $cursorDirection
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection.getValue() : null
         ));
         $context = $this->getIdContext()->appendPath("ledgers");
         return RequesterUtils::executeGetPaginated(Ledger::class, $context, $query);

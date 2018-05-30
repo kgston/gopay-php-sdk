@@ -52,7 +52,7 @@ class TransactionTokenTest extends TestCase
                 AppTokenMode::TEST(),
                 ActiveFilter::ACTIVE()
             );
-        } while (empty($tokenList->items) || empty($maxRetries));
+        } while (empty($tokenList->items) && $maxRetries > 0);
         
         $this->assertTrue(count($tokenList->items) === 1);
         $this->assertTrue(array_key_exists('gopay-customer-id', $tokenList->items[0]->metadata));

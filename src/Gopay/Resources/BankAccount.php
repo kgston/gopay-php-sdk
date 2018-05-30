@@ -4,8 +4,8 @@ namespace Gopay\Resources;
 
 use Gopay\Enums\BankAccountStatus;
 use Gopay\Enums\BankAccountType;
-use Gopay\Enums\Currency;
 use Gopay\Utility\Json\JsonSchema;
+use Money\Currency;
 
 class BankAccount extends Resource
 {
@@ -55,7 +55,7 @@ class BankAccount extends Resource
         $this->branchName = $branchName;
         $this->country = $country;
         $this->bankAddress = $bankAddress;
-        $this->currency = Currency::fromValue($currency);
+        $this->currency = new Currency($currency);
         $this->accountNumber = $accountNumber;
         $this->routingNumber = $routingNumber;
         $this->swiftCode = $swiftCode;

@@ -31,13 +31,13 @@ trait GetTransactions
         $query = FunctionalUtils::stripNulls(array(
             "from" => $from->getTimestamp() * 1000,
             "to" => $to->getTimestamp() * 1000,
-            "status" => isset($status) ? $status->getValue() : $status,
-            "type" => isset($type) ? $type->getValue() : $type,
+            "status" => isset($status) ? $status->getValue() : null,
+            "type" => isset($type) ? $type->getValue() : null,
             "search" => $search,
-            "mode" => isset($mode) ? $mode->getValue() : $mode,
+            "mode" => isset($mode) ? $mode->getValue() : null,
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursorDirection" => isset($cursorDirection) ? $cursorDirection.getValue() : $cursorDirection
+            "cursorDirection" => isset($cursorDirection) ? $cursorDirection.getValue() : null
         ));
         $context = $this->getTransactionContext();
         $response = $context->getRequester()->get($context->getFullURL(), $query, RequesterUtils::getHeaders($context));

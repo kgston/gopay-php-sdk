@@ -2,9 +2,9 @@
 
 namespace Gopay\Resources;
 
-use Gopay\Enums\Currency;
 use Gopay\Enums\LedgerOrigin;
 use Gopay\Utility\Json\JsonSchema;
+use Money\Currency;
 
 class Ledger
 {
@@ -42,11 +42,11 @@ class Ledger
         $this->id = $id;
         $this->storeId = $storeId;
         $this->amount = $amount;
-        $this->currency = Currency::fromValue($currency);
+        $this->currency = new Currency($currency);
         $this->amountFormatted = $amountFormatted;
         $this->percentFee = $percentFee;
         $this->flatFeeAmount = $flatFeeAmount;
-        $this->flatFeeCurrency = Currency::fromValue($flatFeeCurrency);
+        $this->flatFeeCurrency = new Currency($flatFeeCurrency);
         $this->flatFeeFormatted = $flatFeeFormatted;
         $this->exchangeRate = $exchangeRate;
         $this->origin = LedgerOrigin::fromValue($origin);

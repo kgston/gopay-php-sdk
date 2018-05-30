@@ -5,7 +5,6 @@ namespace Gopay;
 use Composer\DependencyResolver\Request;
 use DateTime;
 use Exception;
-use Gopay\Enums\Currency;
 use Gopay\Enums\CursorDirection;
 use Gopay\Enums\Field;
 use Gopay\Enums\PaymentType;
@@ -41,6 +40,7 @@ use Gopay\Resources\WebhookPayload;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\HttpUtils;
 use Gopay\Utility\RequesterUtils;
+use Money\Money;
 
 class GopayClient
 {
@@ -124,7 +124,7 @@ class GopayClient
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : $cursorDirection
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ));
         return RequesterUtils::executeGetPaginated(
             Store::class,
@@ -147,7 +147,7 @@ class GopayClient
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : $cursorDirection
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ));
         $context = $this->getBankAccountContext();
         return RequesterUtils::executeGetPaginated(BankAccount::class, $context, $query);
@@ -185,8 +185,7 @@ class GopayClient
 
     public function createCharge(
         $transactionTokenId,
-        $amount,
-        Currency $currency,
+        Money $money,
         $capture = true,
         DateTime $captureAt = null,
         array $metadata = null
@@ -194,8 +193,7 @@ class GopayClient
         return $this
             ->getTransactionToken($transactionTokenId)
             ->createCharge(
-                $amount,
-                $currency,
+                $money,
                 $capture,
                 $captureAt,
                 $metadata
@@ -210,10 +208,9 @@ class GopayClient
 
     public function createSubscription(
         $transactionTokenId,
-        $amount,
-        Currency $currency,
+        Money $money,
         Period $period,
-        $initialAmount = null,
+        Money $initialAmount = null,
         DateTime $subsequentCyclesStart = null,
         $installmentPlan = null,
         array $metadata = null
@@ -221,8 +218,7 @@ class GopayClient
         return $this
             ->getTransactionToken($transactionTokenId)
             ->createSubscription(
-                $amount,
-                $currency,
+                $money,
                 $period,
                 $initialAmount,
                 $subsequentCyclesStart,
@@ -245,7 +241,7 @@ class GopayClient
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : $cursorDirection
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ));
         $context = $this->getTransferContext();
         return RequesterUtils::executeGetPaginated(Transfer::class, $context, $query);

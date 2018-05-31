@@ -131,9 +131,8 @@ class Charge extends Resource
 
     public function capture(Money $money)
     {
-        $payload = $money->jsonSerialize();
         $context = $this->getIdContext()->appendPath("capture");
-        return RequesterUtils::executePost(null, $context, $payload);
+        return RequesterUtils::executePost(null, $context, $money);
     }
 
     public function cancel(array $metadata = null)

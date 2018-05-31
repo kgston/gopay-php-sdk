@@ -108,11 +108,11 @@ class TransactionToken extends Resource
             'transaction_token_id' => $this->id
         );
 
-        if ($metadata != null) {
-            $payload = array_map(array("metadata" => $metadata), $payload);
+        if (isset($metadata)) {
+            $payload['metadata'] = $metadata;
         }
         if (!$capture) {
-            $payload = array_merge($payload, array("capture" => "false"));
+            $payload['capture'] = $capture;
         }
 
         $context = $this->context->withPath("charges");

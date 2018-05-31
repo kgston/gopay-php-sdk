@@ -7,7 +7,6 @@ use Gopay\Utility\Json\JsonSchema;
 
 class CardData
 {
-
     public $card;
     public $billing;
 

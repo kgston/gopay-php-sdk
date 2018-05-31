@@ -2,13 +2,17 @@
 
 namespace Gopay\Resources;
 
+use Gopay\Enums\CursorDirection;
+use Gopay\Enums\TransferStatus;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
+use Money\Currency;
 
 class Transfer extends Resource
 {
     use Jsonable;
+    
     public $bankAccountId;
     public $amount;
     public $currency;
@@ -41,30 +45,36 @@ class Transfer extends Resource
         parent::__construct($id, $context);
         $this->bankAccountId = $bankAccountId;
         $this->amount = $amount;
-        $this->currency = $currency;
+        $this->currency = new Currency($currency);
         $this->amountFormatted = $amountFormatted;
-        $this->status = $status;
+        $this->status = TransferStatus::fromValue($status);
         $this->errorCode = $errorCode;
         $this->errorText = $errorText;
         $this->metadata = $metadata;
         $this->note = $note;
-        $this->from = $from;
-        $this->to = $to;
-        $this->createdOn = $createdOn;
+        $this->from = date_create($from);
+        $this->to = date_create($to);
+        $this->createdOn = date_create($createdOn);
     }
 
     public function listLedgers(
         $cursor = null,
         $limit = null,
-        $cursorDirection = null
+        CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls(array(
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => $cursorDirection
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection.getValue() : null
         ));
         $context = $this->getIdContext()->appendPath("ledgers");
         return RequesterUtils::executeGetPaginated(Ledger::class, $context, $query);
+    }
+
+    public function listStatusChanges()
+    {
+        $context = $this->getIdContext()->appendPath("status_changes");
+        return RequesterUtils::executeGetPaginated(TransferStatusChange::class, $context, $query);
     }
 
     protected static function initSchema()

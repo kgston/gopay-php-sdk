@@ -4,10 +4,15 @@ namespace Gopay\Errors;
 
 use Throwable;
 
-class GopayUnauthorizedError extends GopayError
+class GopayUnauthorizedError extends GopayRequestError
 {
-    public function __construct($url = "", $code = 0, Throwable $previous = null)
+    public function __construct($url = "", $json = array(), $code = 0, Throwable $previous = null)
     {
-        parent::__construct("Unauthorized to request resource " . $url, $code, $previous);
+        parent::__construct(
+            $url,
+            $json["status"],
+            $json["code"],
+            $json["errors"]
+        );
     }
 }

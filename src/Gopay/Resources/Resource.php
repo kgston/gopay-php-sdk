@@ -31,7 +31,7 @@ abstract class Resource
         return RequesterUtils::executeGet(get_class($this), $context, array());
     }
 
-    public function update(array $updates)
+    public function update($updates)
     {
         $context = $this->getIdContext();
         return RequesterUtils::executePatch(get_class($this), $context, $updates);

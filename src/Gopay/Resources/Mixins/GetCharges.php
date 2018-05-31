@@ -2,12 +2,16 @@
 
 namespace Gopay\Resources\Mixins;
 
+use DateTime;
+use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\CursorDirection;
 use Gopay\Resources\Charge;
+use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
+use Money\Currency;
 
 trait GetCharges
 {
-
     protected abstract function getChargeContext();
 
     public function listCharges(
@@ -16,43 +20,43 @@ trait GetCharges
         $expMonth = null,
         $expYear = null,
         $cardNumber = null,
-        $from = null,
-        $to = null,
+        DateTime $from = null,
+        DateTime $to = null,
         $email = null,
         $phone = null,
         $amountFrom = null,
         $amountTo = null,
-        $currency = null,
-        $metadata = null,
-        $mode = null,
+        Currency $currency = null,
+        array $metadata = null,
+        AppTokenMode $mode = null,
         $transactionTokenId = null,
         $gatewayCredentialsId = null,
         $gatewayTransactionId = null,
         $cursor = null,
         $limit = null,
-        $cursorDirection = null
+        CursorDirection $cursorDirection = null
     ) {
         $context = $this->getChargeContext();
-        $query = array(
+        $query = FunctionalUtils::stripNulls(array(
             "last_four" => $lastFour,
             "name" => $name,
             "exp_month" => $expMonth,
             "exp_year" => $expYear,
             "card_number" => $cardNumber,
-            "from" => $from,
-            "to" => $to,
+            "from" => isset($from) ? $from->format(DateTime::ATOM) : null,
+            "to" => isset($to) ? $to->format(DateTime::ATOM) : null,
             "email" => $email,
             "phone" => $phone,
             "amount_from" => $amountFrom,
             "amount_to" => $amountTo,
-            "currency" => $currency,
+            "currency" => isset($currency) ? $currency->getCode() : null,
             "metadata" => $metadata,
-            "mode" => $mode,
+            "mode" => isset($mode) ? $mode->getValue() : null,
             "transaction_token_id" => $transactionTokenId,
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => $cursorDirection
-        );
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
+        ));
         return RequesterUtils::executeGetPaginated(Charge::class, $context, $query);
     }
 }

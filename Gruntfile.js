@@ -13,22 +13,13 @@ module.exports = function (grunt) {
             ],
             tasks: ['default']
         },
-        phplint: {
-            options: {
-                swapPath: '/tmp'
-            },
-            library: [
-                'src/**/*.php'
-            ]
-        },
         phpcs: {
-            library: {
-                dir: ['src', 'tests']
+            application: {
+                src: ['src/**/*.php', 'tests/**/*.php']
             },
             options: {
                 bin: 'vendor/bin/phpcs',
-                standard: 'PSR2',
-                extensions: 'php'
+                standard: 'PSR2'
             }
         },
         phpunit: {

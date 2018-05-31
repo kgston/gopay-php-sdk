@@ -2,6 +2,8 @@
 
 namespace Gopay\Resources;
 
+use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\CancelStatus;
 use Gopay\Utility\Json\JsonSchema;
 
 class Cancel extends Resource
@@ -22,11 +24,11 @@ class Cancel extends Resource
         parent::__construct($id, $context);
         $this->chargeId = $chargeId;
         $this->storeId = $storeId;
-        $this->status = $status;
+        $this->status = CancelStatus::fromValue($status);
         $this->error = $error;
         $this->metadata = $metadata;
-        $this->mode = $mode;
-        $this->createdOn = $createdOn;
+        $this->mode = AppTokenMode::fromValue($mode);
+        $this->createdOn = date_create($createdOn);
     }
 
     protected static function initSchema()

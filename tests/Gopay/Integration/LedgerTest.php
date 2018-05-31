@@ -1,9 +1,11 @@
 <?php
 namespace GopayTest\Integration;
 
+use DateTime;
+use Gopay\Enums\LedgerOrigin;
 use Gopay\Resources\Ledger;
+use Money\Currency;
 use PHPUnit\Framework\TestCase;
-use \DateTime;
 
 class LedgerTest extends TestCase
 {
@@ -34,14 +36,14 @@ EOD;
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $ledger->id);
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $ledger->storeId);
         $this->assertEquals(1200, $ledger->amount);
-        $this->assertEquals("USD", $ledger->currency);
+        $this->assertEquals(new Currency('USD'), $ledger->currency);
         $this->assertEquals(12, $ledger->amountFormatted);
         $this->assertEquals(3.5, $ledger->percentFee);
         $this->assertEquals(30, $ledger->flatFeeAmount);
-        $this->assertEquals("USD", $ledger->flatFeeCurrency);
+        $this->assertEquals(new Currency('USD'), $ledger->flatFeeCurrency);
         $this->assertEquals(105, $ledger->exchangeRate);
-        $this->assertEquals("charge", $ledger->origin);
+        $this->assertEquals(LedgerOrigin::CHARGE(), $ledger->origin);
         $this->assertEquals("a note", $ledger->note);
-        $this->assertEquals("2017-10-26T17:37:33.742404+09:00", $ledger->createdOn);
+        $this->assertEquals(date_create("2017-10-26T17:37:33.742404+09:00"), $ledger->createdOn);
     }
 }

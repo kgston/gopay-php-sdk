@@ -2,30 +2,32 @@
 
 namespace Gopay\Resources\Mixins;
 
+use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\CursorDirection;
+use Gopay\Enums\SubscriptionStatus;
 use Gopay\Resources\Subscription;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
 
 trait GetSubscriptions
 {
-
     protected abstract function getSubscriptionContext();
 
     public function listSubscriptions(
         $search = null,
-        $status = null,
-        $mode = null,
+        SubscriptionStatus $status = null,
+        AppTokenMode $mode = null,
         $cursor = null,
         $limit = null,
-        $cursorDirection = null
+        CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls(array(
             "search" => $search,
-            "status" => $status,
-            "mode" => $mode,
+            "status" => isset($status) ? $status->getValue() : null,
+            "mode" => isset($mode) ? $mode->getValue() : null,
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursor_direction" => $cursorDirection
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ));
 
         return RequesterUtils::executeGetPaginated(

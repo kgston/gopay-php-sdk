@@ -24,12 +24,12 @@ class RequestContext
         return $this->requester;
     }
 
-    public function withAppToken($appJWT): self
+    public function withAppToken($appJWT)
     {
         return new RequestContext($this->requester, $this->endpoint, $this->path, $appJWT);
     }
 
-    public function withPath($path): self
+    public function withPath($path)
     {
         $newPath = is_array($path) ? join("/", $path) : $path;
         return new RequestContext($this->requester, $this->endpoint, $newPath, $this->appJWT);
@@ -65,13 +65,5 @@ class RequestContext
         return (trim($this->endpoint, "/") .
                 "/" .
                 trim($this->path, "/"));
-    }
-
-    public function getWebsocketURL()
-    {
-        $authHeaders = $this->getAuthorizationHeaders();
-        $auth = str_replace(" ", ":", $authHeaders["Authorization"]);
-        $path = preg_replace("/https?:\/\//", "", $this->getFullURL());
-        return "ws://" . $auth . "@" . $path;
     }
 }

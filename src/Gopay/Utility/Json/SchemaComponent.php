@@ -4,7 +4,6 @@ namespace Gopay\Utility\Json;
 
 class SchemaComponent
 {
-
     public $path;
     public $required;
     public $formatter;

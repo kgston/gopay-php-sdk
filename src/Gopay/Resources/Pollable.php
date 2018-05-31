@@ -2,17 +2,15 @@
 
 namespace Gopay\Resources;
 
-use WebSocket\Client;
+use Gopay\Utility\RequesterUtils;
 
 trait Pollable
 {
+    abstract protected function getIdContext();
 
     public function awaitResult()
     {
         $idContext = $this->getIdContext();
-        $url = $idContext->appendPath("events")->getWebsocketURL();
-        $parser = self::getContextParser($idContext);
-        $client = new Client($url);
-        return $parser(json_decode($client->receive(), true));
+        return RequesterUtils::executeGet(self::class, $idContext, array('polling' => 'true'));
     }
 }

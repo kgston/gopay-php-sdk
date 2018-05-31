@@ -1,8 +1,11 @@
 <?php
 namespace GopayTest\Integration;
 
+use Gopay\Enums\BankAccountStatus;
+use Gopay\Enums\BankAccountType;
 use Gopay\Resources\BankAccount;
 use Gopay\Resources\Paginated;
+use Money\Currency;
 use PHPUnit\Framework\TestCase;
 
 class BankAccountsTest extends TestCase
@@ -35,12 +38,12 @@ EOD;
         $this->assertEquals("Test bank", $bankAccount->bankName);
         $this->assertEquals("Test branch", $bankAccount->branchName);
         $this->assertEquals("JP", $bankAccount->country);
-        $this->assertEquals("JPY", $bankAccount->currency);
+        $this->assertEquals(new Currency('JPY'), $bankAccount->currency);
         $this->assertEquals("XXXXXXX890", $bankAccount->accountNumber);
         $this->assertEquals("7890", $bankAccount->lastFour);
-        $this->assertEquals("new", $bankAccount->status);
-        $this->assertEquals("checking", $bankAccount->accountType);
-        $this->assertEquals("2017-03-28T05:37:06.850707Z", $bankAccount->createdOn);
+        $this->assertEquals(BankAccountStatus::NEW_ACCOUNT(), $bankAccount->status);
+        $this->assertEquals(BankAccountType::CHECKING(), $bankAccount->accountType);
+        $this->assertEquals(date_create("2017-03-28T05:37:06.850707Z"), $bankAccount->createdOn);
         $this->assertEquals(true, $bankAccount->primary);
     }
 

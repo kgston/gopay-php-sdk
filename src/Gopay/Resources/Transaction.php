@@ -2,7 +2,11 @@
 
 namespace Gopay\Resources;
 
+use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\ChargeStatus;
+use Gopay\Enums\TransactionType;
 use Gopay\Utility\Json\JsonSchema;
+use Money\Currency;
 
 class Transaction
 {
@@ -42,13 +46,13 @@ class Transaction
         $this->resourceId = $resourceId;
         $this->chargeId = $chargeId;
         $this->amount = $amount;
-        $this->currency = $currency;
+        $this->currency = new Currency($currency);
         $this->amountFormatted = $amountFormatted;
-        $this->type = $type;
-        $this->status = $status;
+        $this->type = TransactionType::fromValue($type);
+        $this->status = ChargeStatus::fromValue($status);
         $this->metadata = $metadata;
-        $this->mode = $mode;
-        $this->createdOn = $createdOn;
+        $this->mode = AppTokenMode::fromValue($mode);
+        $this->createdOn = date_create($createdOn);
         $this->context = $context;
     }
 

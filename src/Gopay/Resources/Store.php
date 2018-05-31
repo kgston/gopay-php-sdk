@@ -23,7 +23,6 @@ class Store extends Resource
     public $createdOn;
     public $configuration;
 
-
     public function __construct(
         $id,
         $name,
@@ -33,14 +32,14 @@ class Store extends Resource
     ) {
         parent::__construct($id, $context);
         $this->name = $name;
-        $this->createdOn = $createdOn;
+        $this->createdOn = date_create($createdOn);
         $this->configuration = $configuration;
     }
 
     protected static function initSchema()
     {
         return JsonSchema::fromClass(Store::class)
-            ->upsert("configuration", false, Configuration::getSchema()->getParser());
+            ->upsert("configuration", false, Configuration::getSchema()->getParser()); // TODO: Set required to true
     }
 
     public function getCharge($chargeId)
@@ -53,6 +52,15 @@ class Store extends Resource
     {
         $context = $this->getIdContext()->appendPath(array("subscriptions", $subscriptionId));
         return RequesterUtils::executeGet(Subscription::class, $context);
+    }
+
+    public function getCustomerId($localCustomerId)
+    {
+        return RequesterUtils::executePost(
+            null,
+            $this->getIdContext()->appendPath("create_customer_id"),
+            array('customer_id' => $localCustomerId)
+        )['customer_id'];
     }
 
     protected function getSubscriptionContext()

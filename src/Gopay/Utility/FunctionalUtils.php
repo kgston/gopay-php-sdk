@@ -43,7 +43,6 @@ abstract class FunctionalUtils
 
     public static function getClassVarsAssoc($called, $includeParentVars)
     {
-        // echo "called: $called \n";
         $classVars = array_keys(get_class_vars($called));
 
         $parent = get_parent_class($called);

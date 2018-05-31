@@ -3,10 +3,29 @@
 require_once("vendor/autoload.php");
 
 use Gopay\GopayClient;
-$client = new GopayClient("token", "secret");
+use Gopay\Resources\PaymentMethod\CardPayment;
 
-$client->createCardToken("test@test.com", "test account", "4242424242424242", "02", "2022", "123", "one_time", null, "test", null, "test", "test", "jp", "101-1111", "81", "12910298309128")->createCharge(1000, "usd");
-$token = $client->createCardToken("test@test.com", "test account", "4242424242424242", "02", "2022", "123", "one_time", null, "test", null, "test", "test", "jp", "101-1111", "81", "12910298309128");
+$client = new GopayClient("token", "secret");
+$paymentMethod = new CardPayment(
+    "test@test.com",
+    "PHP example",
+    "4242424242424242",
+    "02",
+    "2022",
+    "123",
+    null,
+    "test line 1",
+    "test line 2",
+    "test state",
+    "jp",
+    "101-1111",
+    "81",
+    "12910298309128"
+);
+
+$client->createToken($paymentMethod)->createCharge(1000, "usd");
+// Or
+$token = $client->createToken($paymentMethod);
 $charge = $client->createCharge($token->id, 1000, "usd");
 
 $charge = $charge->awaitResult();

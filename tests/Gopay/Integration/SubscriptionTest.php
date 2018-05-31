@@ -32,7 +32,7 @@ class SubscriptionTest extends TestCase
             )
             ->awaitResult();
     }
-
+    
     private function createUnconfirmedSubscription()
     {
         $this->deactivateExistingSubscriptionToken();
@@ -56,7 +56,7 @@ class SubscriptionTest extends TestCase
             AppTokenMode::TEST(),
             ActiveFilter::ACTIVE()
         );
-
+        
         foreach ($tokenList->items as $token) {
             $token->deactivate();
         }
@@ -137,7 +137,7 @@ EOD;
             Money::JPY(2000),
             null,
             new InstallmentPlan(InstallmentPlanType::FIXED_CYCLES(), 9)
-        );
+        )->awaitResult();
         $this->assertEquals(99999, $patchedSubscription->amount);
         $this->assertEquals(new Currency('JPY'), $patchedSubscription->currency);
         $this->assertEquals(Period::BIWEEKLY(), $patchedSubscription->period);
@@ -148,7 +148,7 @@ EOD;
         );
         $this->assertEquals(9, $patchedSubscription->installmentPlan->fixedCycles);
     }
-
+    
     public function testCancelSubscription()
     {
         $subscription = $this->createValidSubscription();

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b57b752fe89e9a120d2b0c9f03ba4717",
+    "content-hash": "92dab912679c8fbc97b07ce8f0936e03",
     "packages": [
         {
             "name": "moneyphp/money",
@@ -2113,7 +2113,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0"
+        "php": ">=5.6.0"
     },
     "platform-dev": [],
     "platform-overrides": {

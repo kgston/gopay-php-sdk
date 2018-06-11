@@ -44,10 +44,9 @@ use Money\Money;
 
 class GopayClient
 {
-    use GetCharges;
-    use GetSubscriptions;
-    use GetTransactions;
-    use GetTransactionTokens;
+    use GetCharges, GetSubscriptions, GetTransactions, GetTransactionTokens {
+        GetCharges::validate insteadof GetSubscriptions, GetTransactions, GetTransactionTokens;
+    }
 
     private $endpoint;
     private $storeAppJWT;

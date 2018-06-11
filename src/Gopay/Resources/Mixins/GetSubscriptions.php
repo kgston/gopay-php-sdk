@@ -7,10 +7,13 @@ use Gopay\Enums\CursorDirection;
 use Gopay\Enums\SubscriptionStatus;
 use Gopay\Resources\Subscription;
 use Gopay\Utility\FunctionalUtils;
+use Gopay\Utility\OptionsValidator;
 use Gopay\Utility\RequesterUtils;
 
 trait GetSubscriptions
 {
+    use OptionsValidator;
+    
     protected abstract function getSubscriptionContext();
 
     public function listSubscriptions(
@@ -30,6 +33,25 @@ trait GetSubscriptions
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ));
 
+        return RequesterUtils::executeGetPaginated(
+            Subscription::class,
+            $this->getSubscriptionContext(),
+            $query
+        );
+    }
+
+    /**
+     * See listSubscriptions parameters for valid opts keys
+     */
+    public function listSubscriptionsByOptions(array $opts = array())
+    {
+        $rules = [
+            'status' => 'ValidationHelper::getEnumValue',
+            'type' => 'ValidationHelper::getEnumValue',
+            'cursor_direction' => 'ValidationHelper::getEnumValue',
+        ];
+
+        $query = $this->validate(FunctionalUtils::stripNulls($opts), $rules);
         return RequesterUtils::executeGetPaginated(
             Subscription::class,
             $this->getSubscriptionContext(),

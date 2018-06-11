@@ -9,12 +9,15 @@ use Gopay\Enums\ChargeStatus;
 use Gopay\Resources\Paginated;
 use Gopay\Resources\Transaction;
 use Gopay\Utility\FunctionalUtils;
+use Gopay\Utility\OptionsValidator;
 use Gopay\Utility\RequesterUtils;
 
 trait GetTransactions
 {
-    protected abstract function getTransactionContext();
+    use OptionsValidator;
 
+    protected abstract function getTransactionContext();
+    
     public function listTransactions(
         DateTime $from = null,
         DateTime $to = null,
@@ -37,10 +40,27 @@ trait GetTransactions
             "mode" => isset($mode) ? $mode->getValue() : null,
             "cursor" => $cursor,
             "limit" => $limit,
-            "cursorDirection" => isset($cursorDirection) ? $cursorDirection.getValue() : null
+            "cursor_direction" => isset($cursorDirection) ? $cursorDirection.getValue() : null
         ));
-        $context = $this->getTransactionContext();
-        $response = $context->getRequester()->get($context->getFullURL(), $query, RequesterUtils::getHeaders($context));
-        return Paginated::fromResponse($response, $query, Transaction::class, $context);
+        
+        return RequesterUtils::executeGetPaginated(Transaction::class, $this->getTransactionContext(), $query);
+    }
+
+    /**
+     * See listTransactions parameters for valid opts keys
+     */
+    public function listTransactionsByOptions(array $opts = array())
+    {
+        $rules = [
+            'from' => 'ValidationHelper::getAtomDate',
+            'to' => 'ValidationHelper::getAtomDate',
+            'status' => 'ValidationHelper::getEnumValue',
+            'type' => 'ValidationHelper::getEnumValue',
+            'mode' => 'ValidationHelper::getEnumValue',
+            'cursor_direction' => 'ValidationHelper::getEnumValue',
+        ];
+
+        $query = $this->validate(FunctionalUtils::stripNulls($opts), $rules);
+        return RequesterUtils::executeGetPaginated(Transaction::class, $this->getTransactionContext(), $query);
     }
 }

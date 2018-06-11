@@ -3,6 +3,7 @@
 require_once("vendor/autoload.php");
 
 use Gopay\GopayClient;
+
 $client = new GopayClient("token", "secret");
 
 $client->getMe();

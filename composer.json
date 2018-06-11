@@ -1,7 +1,7 @@
 {
     "name": "gopay-japan/gopay-sdk",
     "description": "PHP SDK for Gyro-n Gopay payments",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "type": "library",
     "keywords": [],
     "homepage": "https://github.com/gyro-n/gopay-php-sdk",

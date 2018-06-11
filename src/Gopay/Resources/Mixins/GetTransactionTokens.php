@@ -12,10 +12,13 @@ use Gopay\Enums\TransactionType;
 use Gopay\Errors\GopayValidationError;
 use Gopay\Resources\TransactionToken;
 use Gopay\Utility\FunctionalUtils;
+use Gopay\Utility\OptionsValidator;
 use Gopay\Utility\RequesterUtils;
 
 trait GetTransactionTokens
 {
+    use OptionsValidator;
+
     protected abstract function getCustomerId($localCustomerId);
 
     protected abstract function getTransactionTokenContext();
@@ -47,5 +50,26 @@ trait GetTransactionTokens
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ));
         return RequesterUtils::executeGetPaginated(TransactionToken::class, $context, $query);
+    }
+
+    /**
+     * See listTransactionTokens parameters for valid opts keys
+     */
+    public function listTransactionTokensByOptions(array $opts = array())
+    {
+        $rules = [
+            'active' => 'ValidationHelper::getEnumValue',
+            'status' => 'ValidationHelper::getEnumValue',
+            'type' => 'ValidationHelper::getEnumValue',
+            'mode' => 'ValidationHelper::getEnumValue',
+            'cursor_direction' => 'ValidationHelper::getEnumValue',
+        ];
+    
+        $query = $this->validate(FunctionalUtils::stripNulls($opts), $rules);
+        return RequesterUtils::executeGetPaginated(
+            Subscription::class,
+            $this->getSubscriptionContext(),
+            $query
+        );
     }
 }

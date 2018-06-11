@@ -62,36 +62,37 @@ class Paginated
 
     public function getNext()
     {
-        if (!is_array($this->items) || !sizeof($this->items) === 0) {
+        if (!$this->hasMore) {
             throw new GopayNoMoreItemsError();
         }
         $last = end($this->items);
-        if (!property_exists($last, "id")) {
-            throw new GopayNoMoreItemsError();
-        }
-        $nextCursor = $last->id;
-        $newQuery = array_merge(array("cursor" => $nextCursor), $this->query);
+        $newQuery = array("cursor" => $last->id) + $this->query;
         return RequesterUtils::executeGetPaginated($this->jsonableClass, $this->context, $newQuery);
-    }
-
-    public function reverse()
-    {
-        $currentDirection = fp::getOrElse($this->query, "cursor_direction", "desc");
-        $newQuery = array_merge(
-            array("cursor_direction" => get_other_direction($currentDirection)),
-            $this->query
-        );
-        return new Paginated(
-            array_reverse($this->items),
-            $this->hasMore,
-            $newQuery,
-            $this->jsonableClass,
-            $this->context
-        );
     }
 
     public function getPrevious()
     {
-        return $this->reverse()->getNext()->reverse();
+        if (!array_key_exists('cursor', $this->query)) {
+            throw new GopayNoMoreItemsError();
+        }
+
+        $previousPage = $this->reverse()->getNext();
+        if (empty($previousPage->items)) {
+            throw new GopayNoMoreItemsError();
+        }
+        return $previousPage->reverse();
+    }
+
+    private function reverse()
+    {
+        $currentDirection = fp::getOrElse($this->query, "cursor_direction", "desc");
+        $newQuery = array("cursor_direction" => get_other_direction($currentDirection)) + $this->query;
+        return new Paginated(
+            array_reverse($this->items),
+            true,
+            $newQuery,
+            $this->jsonableClass,
+            $this->context
+        );
     }
 }

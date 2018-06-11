@@ -3,6 +3,7 @@
 namespace Gopay\Resources;
 
 use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\RecurringTokenPrivilege;
 use Gopay\Resources\Configuration\CardConfiguration;
 use Gopay\Resources\Configuration\QRConfiguration;
 use Gopay\Resources\Configuration\ConvenienceConfiguration;
@@ -32,7 +33,7 @@ class CheckoutInfo
         $theme
     ) {
         $this->mode = AppTokenMode::fromValue($mode);
-        $this->recurringTokenPrivilege = $recurringTokenPrivilege;
+        $this->recurringTokenPrivilege = RecurringTokenPrivilege::fromValue($recurringTokenPrivilege);
         $this->name = $name;
         $this->cardConfiguration = $cardConfiguration;
         $this->qrScanConfiguration = $qrScanConfiguration;

@@ -3,9 +3,11 @@
 require_once("vendor/autoload.php");
 
 use Gopay\GopayClient;
+use Gopay\Enums\RefundReason;
 use Gopay\Resources\PaymentMethod\CardPayment;
+use Money\Money;
 
-$client = new GopayClient("token", "secret");
+$client = new GopayClient(AppJWT::createToken('token', 'secret'));
 $paymentMethod = new CardPayment(
     "test@test.com",
     "PHP example",
@@ -23,12 +25,15 @@ $paymentMethod = new CardPayment(
     "12910298309128"
 );
 
-$client->createToken($paymentMethod)->createCharge(1000, "usd");
+$client->createToken($paymentMethod)->createCharge(Money::USD(1000));
 // Or
 $token = $client->createToken($paymentMethod);
-$charge = $client->createCharge($token->id, 1000, "usd");
-
+$charge = $client->createCharge($token->id, Money::USD(1000));
 $charge = $charge->awaitResult();
 
-$refund = $charge->createRefund(1000, "usd", "fraud", "test", array("something" => null));
+$refund = $charge
+    ->createRefund(Money::USD(1000), RefundReason::FRAUD(), "test", array("something" => null))
+    ->awaitResult(); // Long polls for the next status change, with a 5s timeout
+
+// Use fetch to fetch the latest data from the API
 $refund->fetch();

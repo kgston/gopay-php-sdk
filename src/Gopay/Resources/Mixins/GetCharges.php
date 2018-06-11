@@ -3,15 +3,19 @@
 namespace Gopay\Resources\Mixins;
 
 use DateTime;
+use Traversable;
 use Gopay\Enums\AppTokenMode;
 use Gopay\Enums\CursorDirection;
 use Gopay\Resources\Charge;
 use Gopay\Utility\FunctionalUtils;
+use Gopay\Utility\OptionsValidator;
 use Gopay\Utility\RequesterUtils;
 use Money\Currency;
 
 trait GetCharges
 {
+    use OptionsValidator;
+
     protected abstract function getChargeContext();
 
     public function listCharges(
@@ -36,7 +40,6 @@ trait GetCharges
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $context = $this->getChargeContext();
         $query = FunctionalUtils::stripNulls(array(
             "last_four" => $lastFour,
             "name" => $name,
@@ -57,6 +60,25 @@ trait GetCharges
             "limit" => $limit,
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ));
-        return RequesterUtils::executeGetPaginated(Charge::class, $context, $query);
+
+        return RequesterUtils::executeGetPaginated(Charge::class, $this->getChargeContext(), $query);
+    }
+
+    /**
+     * See listCharges parameters for valid opts keys
+     */
+    public function listChargesByOptions(array $opts = array())
+    {
+        $rules = [
+            'from' => 'ValidationHelper::getAtomDate',
+            'to' => 'ValidationHelper::getAtomDate',
+            'currency' => 'ValidationHelper::getEnumValue',
+            'metadata' => 'ValidationHelper::isArray',
+            'mode' => 'ValidationHelper::getEnumValue',
+            'cursor_direction' => 'ValidationHelper::getEnumValue',
+        ];
+
+        $query = $this->validate(FunctionalUtils::stripNulls($opts), $rules);
+        return RequesterUtils::executeGetPaginated(Charge::class, $this->getChargeContext(), $query);
     }
 }

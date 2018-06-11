@@ -74,6 +74,7 @@ class SubscriptionTest extends TestCase
       "amount_formatted": 1000,
       "period": "monthly",
       "initial_amount": 100,
+      "initial_amount_formatted": 100,
       "subsequent_cycles_start": "2018-05-14T09:40:39.337331Z",
       "status": "canceled",
       "installment_plan": {
@@ -93,10 +94,11 @@ EOD;
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $subscription->storeId);
         $this->assertEquals("33333333-3333-3333-3333-333333333333", $subscription->transactionTokenId);
         $this->assertEquals(1000, $subscription->amount);
-        $this->assertEquals(new Currency('JPY'), $subscription->currency);
         $this->assertEquals(1000, $subscription->amountFormatted);
+        $this->assertEquals(new Currency('JPY'), $subscription->currency);
         $this->assertEquals(Period::MONTHLY(), $subscription->period);
         $this->assertEquals(100, $subscription->initialAmount);
+        $this->assertEquals(100, $subscription->initialAmountFormatted);
         $this->assertEquals(date_create("2018-05-14T09:40:39.337331Z"), $subscription->subsequentCyclesStart);
         $this->assertEquals(SubscriptionStatus::CANCELED(), $subscription->status);
         $this->assertEquals(AppTokenMode::TEST(), $subscription->mode);

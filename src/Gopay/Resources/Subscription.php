@@ -21,10 +21,11 @@ class Subscription extends Resource
     public $storeId;
     public $transactionTokenId;
     public $amount;
-    public $currency;
     public $amountFormatted;
+    public $currency;
     public $period;
     public $initialAmount;
+    public $initialAmountFormatted;
     public $subsequentCyclesStart;
     public $status;
     public $metadata;
@@ -36,10 +37,11 @@ class Subscription extends Resource
         $storeId,
         $transactionTokenId,
         $amount,
-        $currency,
         $amountFormatted,
+        $currency,
         $period,
         $initialAmount,
+        $initialAmountFormatted,
         $subsequentCyclesStart,
         $status,
         $metadata,
@@ -52,10 +54,11 @@ class Subscription extends Resource
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
         $this->amount = $amount;
-        $this->currency = new Currency($currency);
         $this->amountFormatted = $amountFormatted;
+        $this->currency = new Currency($currency);
         $this->period = Period::fromValue($period);
         $this->initialAmount = $initialAmount;
+        $this->initialAmountFormatted = $initialAmountFormatted;
         $this->subsequentCyclesStart = date_create($subsequentCyclesStart);
         $this->status = SubscriptionStatus::fromValue($status);
         $this->metadata = $metadata;

@@ -15,9 +15,9 @@ use Gopay\Utility\RequesterUtils;
 class Store extends Resource
 {
     use Jsonable;
-    use GetSubscriptions;
-    use GetTransactions;
-    use GetCharges;
+    use GetCharges, GetSubscriptions, GetTransactions {
+        GetCharges::validate insteadof GetSubscriptions, GetTransactions;
+    }
 
     public $name;
     public $createdOn;

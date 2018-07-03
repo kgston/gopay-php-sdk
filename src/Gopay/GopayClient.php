@@ -160,7 +160,7 @@ class GopayClient
 
     public function createToken(PaymentMethod $payment, $localCustomerId = null)
     {
-        if (isset($localCustomerId)) {
+        if (isset($localCustomerId) && $payment->type === TokenType::RECURRING()) {
             $customerId = $this->getCustomerId($localCustomerId);
             if (!isset($payment->metadata)) {
                 $payment->metadata = array();

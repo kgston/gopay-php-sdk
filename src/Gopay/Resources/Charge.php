@@ -129,7 +129,7 @@ class Charge extends Resource
         );
     }
 
-    public function capture(Money $money)
+    public function capture(Money $money = null)
     {
         $context = $this->getIdContext()->appendPath("capture");
         return RequesterUtils::executePost(null, $context, $money);

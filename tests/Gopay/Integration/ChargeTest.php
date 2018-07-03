@@ -34,6 +34,20 @@ class ChargeTest extends TestCase
         $this->assertTrue($captured);
     }
 
+    public function testPartialAuthCaptureCharge()
+    {
+        $charge = $this->createValidCharge(false);
+        $captured = $charge->capture(Money::JPY(500));
+        $this->assertTrue($captured);
+    }
+
+    public function testDefaultAuthCaptureCharge()
+    {
+        $charge = $this->createValidCharge(false);
+        $captured = $charge->capture();
+        $this->assertTrue($captured);
+    }
+
     public function testPatchCharge()
     {
         $charge = $this->createValidCharge(true);

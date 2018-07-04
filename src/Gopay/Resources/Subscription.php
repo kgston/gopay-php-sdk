@@ -108,6 +108,9 @@ class Subscription extends Resource
 
     public function cancel()
     {
+        if ($this->isTerminal()) {
+            throw new GopayLogicError(Reason::SUBSCRIPTION_ALREADY_ENDED());
+        }
         return RequesterUtils::executeDelete($this->getIdContext());
     }
 

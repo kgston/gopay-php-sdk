@@ -1,6 +1,7 @@
 <?php
 namespace GopayTest\Integration;
 
+use DateTime;
 use Gopay\Enums\ActiveFilter;
 use Gopay\Enums\AppTokenMode;
 use Gopay\Enums\InstallmentPlanType;
@@ -83,7 +84,8 @@ class SubscriptionTest extends TestCase
       },
       "metadata": {},
       "mode": "test",
-      "created_on": "2017-07-04T06:06:05.580391Z"
+      "created_on": "2017-07-04T06:06:05.580391Z",
+      "updated_on": "2017-07-04T06:06:05.580391Z"
     }
 EOD;
 
@@ -103,6 +105,7 @@ EOD;
         $this->assertEquals(SubscriptionStatus::CANCELED(), $subscription->status);
         $this->assertEquals(AppTokenMode::TEST(), $subscription->mode);
         $this->assertEquals(date_create("2017-07-04T06:06:05.580391Z"), $subscription->createdOn);
+        $this->assertEquals(date_create("2017-07-04T06:06:05.580391Z"), $subscription->updatedOn);
         $this->assertEquals(InstallmentPlanType::FIXED_CYCLES(), $subscription->installmentPlan->planType);
         $this->assertEquals("10", $subscription->installmentPlan->fixedCycles);
     }
@@ -114,6 +117,8 @@ EOD;
         $this->assertEquals(new Currency('JPY'), $subscription->currency);
         $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
         $this->assertEquals(1000, $subscription->initialAmount);
+        $this->assertInstanceOf(DateTime::class, $subscription->createdOn);
+        $this->assertInstanceOf(DateTime::class, $subscription->updatedOn);
     }
 
     public function testGetSubscription()

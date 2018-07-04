@@ -36,6 +36,7 @@ class Charge extends Resource
     public $metadata;
     public $mode;
     public $createdOn;
+    public $updatedOn;
 
     public function __construct(
         $id,
@@ -55,6 +56,7 @@ class Charge extends Resource
         $metadata,
         $mode,
         $createdOn,
+        $updatedOn,
         $context
     ) {
         parent::__construct($id, $context);
@@ -74,6 +76,7 @@ class Charge extends Resource
         $this->metadata = $metadata;
         $this->mode = AppTokenMode::fromValue($mode);
         $this->createdOn = date_create($createdOn);
+        $this->updatedOn = date_create($updatedOn);
     }
 
     protected static function initSchema()

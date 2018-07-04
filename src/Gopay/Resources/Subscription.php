@@ -31,6 +31,7 @@ class Subscription extends Resource
     public $metadata;
     public $mode;
     public $createdOn;
+    public $updatedOn;
 
     public function __construct(
         $id,
@@ -47,6 +48,7 @@ class Subscription extends Resource
         $metadata,
         $mode,
         $createdOn,
+        $updatedOn,
         $installmentPlan,
         $context
     ) {
@@ -64,6 +66,7 @@ class Subscription extends Resource
         $this->metadata = $metadata;
         $this->mode = AppTokenMode::fromValue($mode);
         $this->createdOn = date_create($createdOn);
+        $this->updatedOn = date_create($updatedOn);
         $this->installmentPlan = $installmentPlan;
     }
 

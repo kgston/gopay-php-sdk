@@ -2,6 +2,9 @@
 
 namespace Gopay\Resources\PaymentData;
 
+use Gopay\Enums\CardBrand;
+use Gopay\Enums\CardCategory;
+use Gopay\Enums\CardSubBrand;
 use Gopay\Utility\Json\JsonSchema;
 
 class Card
@@ -33,11 +36,11 @@ class Card
         $this->expMonth = $expMonth;
         $this->expYear = $expYear;
         $this->lastFour = $lastFour;
-        $this->brand = $brand;
+        $this->brand = CardBrand::fromValue($brand);
         $this->country = $country;
-        $this->category = $category;
+        $this->category = CardCategory::fromValue($category);
         $this->issuer = $issuer;
-        $this->subBrand = $subBrand;
+        $this->subBrand = CardSubBrand::fromValue($subBrand);
     }
 
 

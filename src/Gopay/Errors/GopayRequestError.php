@@ -15,7 +15,7 @@ class GopayRequestError extends GopayError
         $this->status = $status;
         $this->code = $code;
         $this->errors = $errors;
-        parent::__construct(var_dump(array('url' => $url, 'status' => $status, 'code' => $code, 'errors' => $errors)));
+        parent::__construct(print_r(['url' => $url, 'status' => $status, 'code' => $code, 'errors' => $errors], true));
     }
 
     public static function fromJson($url, $json)

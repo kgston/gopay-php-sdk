@@ -8,7 +8,6 @@ use Gopay\Utility\StringUtils;
 
 class JsonSchema
 {
-
     public $components;
     public $prefix;
     public $targetClass;

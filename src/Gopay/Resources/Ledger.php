@@ -54,7 +54,6 @@ class Ledger
         $this->createdOn = date_create($createdOn);
     }
 
-
     public static function getSchema()
     {
         if (!isset(self::$schema)) {

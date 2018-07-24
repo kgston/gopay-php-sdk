@@ -110,4 +110,9 @@ abstract class TypedEnum
     {
         return $this->name;
     }
+
+    public function __toString()
+    {
+        return get_called_class() . "::{$this->name}";
+    }
 }

@@ -10,6 +10,7 @@ use Gopay\Enums\Period;
 use Gopay\Enums\SubscriptionStatus;
 use Gopay\Enums\TokenType;
 use Gopay\Resources\InstallmentPlan;
+use Gopay\Resources\Paginated;
 use Gopay\Resources\Subscription;
 use Money\Currency;
 use Money\Money;
@@ -28,8 +29,7 @@ class SubscriptionTest extends TestCase
             ->createSubscription(
                 Money::JPY(10000),
                 Period::BIWEEKLY(),
-                Money::JPY(1000),
-                date_create("+5 months")
+                Money::JPY(1000)
             )
             ->awaitResult();
     }
@@ -43,7 +43,7 @@ class SubscriptionTest extends TestCase
                 Money::JPY(10000),
                 Period::BIWEEKLY(),
                 Money::JPY(1000),
-                date_create("+5 months")
+                date_create("+1 day")
             )
             ->awaitResult();
     }
@@ -172,5 +172,13 @@ EOD;
         $this->createValidSubscription();
         $subscriptions = $this->getClient()->listSubscriptions();
         $this->assertGreaterThan(0, count($subscriptions->items));
+    }
+
+    public function testListChargesForSubscription()
+    {
+        $subscription = $this->createValidSubscription();
+        $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
+        $charges = $getSubscription->listCharges();
+        $this->assertInstanceOf(Paginated::class, $charges);
     }
 }

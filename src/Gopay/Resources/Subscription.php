@@ -8,6 +8,8 @@ use Gopay\Enums\Period;
 use Gopay\Enums\Reason;
 use Gopay\Enums\SubscriptionStatus;
 use Gopay\Errors\GopayLogicError;
+use Gopay\Resources\Mixins\GetCharges;
+use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
 use Gopay\Utility\Json\JsonSchema;
 use Money\Currency;
@@ -17,6 +19,7 @@ class Subscription extends Resource
 {
     use Jsonable;
     use Pollable;
+    use GetCharges;
 
     public $storeId;
     public $transactionTokenId;
@@ -87,23 +90,16 @@ class Subscription extends Resource
             throw new GopayLogicError(Reason::INSTALLMENT_PLAN_NOT_FOUND());
         }
 
-        $payload = array();
-        if (isset($transactionTokenId)) {
-            $payload['transaction_token_id'] = $transactionTokenId;
-        }
+        $payload = [
+            'transaction_token_id' => $transactionTokenId,
+            'initial_amount' => isset($initialAmount) ? $initialAmount->getAmount() : null,
+            'metadata' => $metadata,
+            'installment_plan' => $installmentPlan
+        ];
         if (isset($money)) {
             $payload += $money->jsonSerialize();
         }
-        if (isset($initialAmount)) {
-            $payload['initial_amount'] = $initialAmount->getAmount();
-        }
-        if (isset($metadata)) {
-            $payload['metadata'] = $metadata;
-        }
-        if (isset($installmentPlan)) {
-            $payload['installment_plan'] = $installmentPlan;
-        }
-        return $this->update($payload);
+        return $this->update(FunctionalUtils::stripNulls($payload));
     }
 
     public function cancel()
@@ -142,12 +138,17 @@ class Subscription extends Resource
 
     protected function getIdContext()
     {
-        return $this->context->withPath(array("stores", $this->storeId, "subscriptions", $this->id));
+        return $this->context->withPath(array('stores', $this->storeId, 'subscriptions', $this->id));
+    }
+
+    protected function getChargeContext()
+    {
+        return $this->context->withPath(array('stores', $this->storeId, 'subscriptions', $this->id, 'charges'));
     }
 
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert("installment_plan", false, InstallmentPlan::getSchema()->getParser());
+            ->upsert('installment_plan', false, InstallmentPlan::getSchema()->getParser());
     }
 }

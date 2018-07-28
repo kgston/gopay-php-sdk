@@ -142,4 +142,4 @@ The following env vars are required when running the tests:
 ```shell
 grunt phpunit
 ```
-_Note: CircleCI only runs on branches that has a open PR_
+_Note: CircleCI only runs on branches that has an open PR_

@@ -31,7 +31,7 @@ trait GetTransactions
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
+        $query = FunctionalUtils::stripNulls([
             "from" => $from->getTimestamp() * 1000,
             "to" => $to->getTimestamp() * 1000,
             "status" => isset($status) ? $status->getValue() : null,
@@ -41,7 +41,7 @@ trait GetTransactions
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection.getValue() : null
-        ));
+        ]);
         
         return RequesterUtils::executeGetPaginated(Transaction::class, $this->getTransactionContext(), $query);
     }
@@ -49,7 +49,7 @@ trait GetTransactions
     /**
      * See listTransactions parameters for valid opts keys
      */
-    public function listTransactionsByOptions(array $opts = array())
+    public function listTransactionsByOptions(array $opts = [])
     {
         $rules = [
             'from' => 'ValidationHelper::getAtomDate',

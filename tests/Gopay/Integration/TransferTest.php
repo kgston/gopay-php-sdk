@@ -33,7 +33,7 @@ class TransferTest extends TestCase
 EOD;
 
         $json = json_decode($str, true);
-        $transfer = Transfer::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
+        $transfer = Transfer::getSchema()->parse($json, [$this->getClient()->getStoreBasedContext()]);
         $this->assertEquals("11111111-1111-1111-1111-11111111111", $transfer->id);
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $transfer->bankAccountId);
         $this->assertEquals(0, $transfer->amount);

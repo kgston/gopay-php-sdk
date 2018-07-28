@@ -14,7 +14,7 @@ class JsonSchema
 
     public function __construct($targetClass, $prefix = null)
     {
-        $this->components = array();
+        $this->components = [];
         $this->targetClass = $targetClass;
         $this->prefix = $prefix;
     }
@@ -41,9 +41,7 @@ class JsonSchema
         if ($index !== null) {
             $this->components = array_replace(
                 $this->components,
-                array($index =>
-                    new SchemaComponent($this->prefix . "/" .$path, $required, $formatter)
-                )
+                [$index => new SchemaComponent($this->prefix . "/" .$path, $required, $formatter)]
             );
             return $this;
         } else {
@@ -67,14 +65,14 @@ class JsonSchema
         }, $this->components);
     }
 
-    public function parse($json, array $additionalArgs = array())
+    public function parse($json, array $additionalArgs = [])
     {
         $targetClass = new ReflectionClass($this->targetClass);
         $arguments = array_merge($this->getValues($json), $additionalArgs);
         return $targetClass->newInstanceArgs($arguments);
     }
 
-    public function getParser(array $additionalArgs = array())
+    public function getParser(array $additionalArgs = [])
     {
         return function ($json) use ($additionalArgs) {
             return $this->parse($json, $additionalArgs);

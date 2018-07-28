@@ -27,7 +27,7 @@ EOD;
         $json = json_decode($str, true);
         $transferStatusChange = TransferStatusChange::getSchema()->parse(
             $json,
-            array($this->getClient()->getStoreBasedContext())
+            [$this->getClient()->getStoreBasedContext()]
         );
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $transferStatusChange->id);
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $transferStatusChange->merchantId);

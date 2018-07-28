@@ -52,7 +52,7 @@ class CheckoutInfoTest extends TestCase
 EOD;
 
         $json = json_decode($str, true);
-        $checkoutInfo = CheckoutInfo::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
+        $checkoutInfo = CheckoutInfo::getSchema()->parse($json, [$this->getClient()->getStoreBasedContext()]);
         $this->assertEquals(AppTokenMode::TEST(), $checkoutInfo->mode);
         $this->assertEquals(RecurringTokenPrivilege::INFINITE(), $checkoutInfo->recurringTokenPrivilege);
         $this->assertEquals("My Store", $checkoutInfo->name);

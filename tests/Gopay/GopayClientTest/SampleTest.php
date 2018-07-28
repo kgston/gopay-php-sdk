@@ -7,7 +7,7 @@ class SampleTest extends TestCase
 {
     public function testPushAndPop()
     {
-        $stack = array();
+        $stack = [];
         $this->assertEquals(0, count($stack));
 
         array_push($stack, 'foo');

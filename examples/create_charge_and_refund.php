@@ -32,7 +32,7 @@ $charge = $client->createCharge($token->id, Money::USD(1000));
 $charge = $charge->awaitResult();
 
 $refund = $charge
-    ->createRefund(Money::USD(1000), RefundReason::FRAUD(), "test", array("something" => null))
+    ->createRefund(Money::USD(1000), RefundReason::FRAUD(), "test", ["something" => null])
     ->awaitResult(); // Long polls for the next status change, with a 5s timeout
 
 // Use fetch to fetch the latest data from the API

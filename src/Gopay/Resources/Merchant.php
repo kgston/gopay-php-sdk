@@ -44,7 +44,7 @@ class Merchant extends Resource
             $json["name"],
             $json["email"],
             $json["verified"],
-            Configuration::fromJson(fp::getOrElse($json, "configuration", array())),
+            Configuration::fromJson(fp::getOrElse($json, "configuration", [])),
             $json["created_on"],
             $context = $requestContext
         );

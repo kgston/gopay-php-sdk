@@ -138,12 +138,12 @@ class Subscription extends Resource
 
     protected function getIdContext()
     {
-        return $this->context->withPath(array('stores', $this->storeId, 'subscriptions', $this->id));
+        return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id]);
     }
 
     protected function getChargeContext()
     {
-        return $this->context->withPath(array('stores', $this->storeId, 'subscriptions', $this->id, 'charges'));
+        return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id, 'charges']);
     }
 
     protected static function initSchema()

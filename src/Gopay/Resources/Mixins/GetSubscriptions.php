@@ -24,14 +24,14 @@ trait GetSubscriptions
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
+        $query = FunctionalUtils::stripNulls([
             "search" => $search,
             "status" => isset($status) ? $status->getValue() : null,
             "mode" => isset($mode) ? $mode->getValue() : null,
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
-        ));
+        ]);
 
         return RequesterUtils::executeGetPaginated(
             Subscription::class,
@@ -43,7 +43,7 @@ trait GetSubscriptions
     /**
      * See listSubscriptions parameters for valid opts keys
      */
-    public function listSubscriptionsByOptions(array $opts = array())
+    public function listSubscriptionsByOptions(array $opts = [])
     {
         $rules = [
             'status' => 'ValidationHelper::getEnumValue',

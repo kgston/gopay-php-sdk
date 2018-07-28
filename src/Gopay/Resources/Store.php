@@ -44,13 +44,13 @@ class Store extends Resource
 
     public function getCharge($chargeId)
     {
-        $context = $this->getIdContext()->appendPath(array("charges", $chargeId));
+        $context = $this->getIdContext()->appendPath(["charges", $chargeId]);
         return RequesterUtils::executeGet(Charge::class, $context);
     }
 
     public function getSubscription($subscriptionId)
     {
-        $context = $this->getIdContext()->appendPath(array("subscriptions", $subscriptionId));
+        $context = $this->getIdContext()->appendPath(["subscriptions", $subscriptionId]);
         return RequesterUtils::executeGet(Subscription::class, $context);
     }
 
@@ -59,7 +59,7 @@ class Store extends Resource
         return RequesterUtils::executePost(
             null,
             $this->getIdContext()->appendPath("create_customer_id"),
-            array('customer_id' => $localCustomerId)
+            ['customer_id' => $localCustomerId]
         )['customer_id'];
     }
 

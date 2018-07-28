@@ -34,7 +34,7 @@ abstract class AppJWT
         } else {
             $class = MerchantAppJWT::class;
         }
-        $result = $class::getSchema()->parse($appTokenBody, array($appToken, $appSecret));
+        $result = $class::getSchema()->parse($appTokenBody, [$appToken, $appSecret]);
         return $result;
     }
 }

@@ -40,7 +40,7 @@ trait GetCharges
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
+        $query = FunctionalUtils::stripNulls([
             "last_four" => $lastFour,
             "name" => $name,
             "exp_month" => $expMonth,
@@ -59,7 +59,7 @@ trait GetCharges
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
-        ));
+        ]);
 
         return RequesterUtils::executeGetPaginated(Charge::class, $this->getChargeContext(), $query);
     }
@@ -67,7 +67,7 @@ trait GetCharges
     /**
      * See listCharges parameters for valid opts keys
      */
-    public function listChargesByOptions(array $opts = array())
+    public function listChargesByOptions(array $opts = [])
     {
         $rules = [
             'from' => 'ValidationHelper::getAtomDate',

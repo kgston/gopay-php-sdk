@@ -28,7 +28,7 @@ abstract class Resource
     public function fetch()
     {
         $context = $this->getIdContext();
-        return RequesterUtils::executeGet(get_class($this), $context, array());
+        return RequesterUtils::executeGet(get_class($this), $context, []);
     }
 
     public function update($updates)

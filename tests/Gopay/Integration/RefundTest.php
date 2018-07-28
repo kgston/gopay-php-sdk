@@ -26,6 +26,6 @@ class RefundTest extends TestCase
     {
         $this->expectException(GopayRequestError::class);
         $charge = $this->createValidCharge(true);
-        $charge->createRefund(Money::JPY(2000), RefundReason::FRAUD(), "test", array("something" => "value"));
+        $charge->createRefund(Money::JPY(2000), RefundReason::FRAUD(), "test", ["something" => "value"]);
     }
 }

@@ -66,7 +66,7 @@ class TransactionTokenTest extends TestCase
         
         $patchRequest = new PaymentMethodPatch(
             "test@changed.int",
-            array('customer_id' => 'PHP TESTER')
+            ['customer_id' => 'PHP TESTER']
         );
         $patchedTxToken = $transactionToken->patch($patchRequest);
         $this->assertEquals("test@changed.int", $patchedTxToken->email);

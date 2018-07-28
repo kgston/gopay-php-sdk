@@ -56,7 +56,7 @@ class ChargeTest extends TestCase
         $charge = $this->createValidCharge(true);
         $this->assertEquals(0, count($charge->metadata));
         
-        $charge = $charge->patch(array('testId' => 12345));
+        $charge = $charge->patch(['testId' => 12345]);
         $this->assertTrue($charge->metadata['testId'] === 12345);
     }
 
@@ -78,9 +78,7 @@ class ChargeTest extends TestCase
     {
         $charge = $this->createValidCharge(false);
         $this->assertEquals(ChargeStatus::AUTHORIZED(), $charge->status);
-        $cancel = $charge->cancel(array(
-            'something'=>'anything'
-        ))->awaitResult();
+        $cancel = $charge->cancel(['something'=>'anything'])->awaitResult();
         $this->assertEquals(CancelStatus::SUCCESSFUL(), $cancel->status);
         $this->assertEquals($cancel->metadata['something'], 'anything');
     }

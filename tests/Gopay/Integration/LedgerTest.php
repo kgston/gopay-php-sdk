@@ -32,7 +32,7 @@ class LedgerTest extends TestCase
 EOD;
 
         $json = json_decode($str, true);
-        $ledger = Ledger::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
+        $ledger = Ledger::getSchema()->parse($json, [$this->getClient()->getStoreBasedContext()]);
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $ledger->id);
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $ledger->storeId);
         $this->assertEquals(1200, $ledger->amount);

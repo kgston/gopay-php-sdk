@@ -86,12 +86,12 @@ class Charge extends Resource
 
     protected function getIdContext()
     {
-        return $this->context->withPath(array("stores", $this->storeId, "charges", $this->id));
+        return $this->context->withPath(["stores", $this->storeId, "charges", $this->id]);
     }
 
     public function patch(array $metadata)
     {
-        return RequesterUtils::executePatch(self::class, $this->getIdContext(), array('metadata' => $metadata));
+        return RequesterUtils::executePatch(self::class, $this->getIdContext(), ['metadata' => $metadata]);
     }
 
     public function createRefund(
@@ -105,11 +105,11 @@ class Charge extends Resource
         }
         $payload = FunctionalUtils::stripNulls(
             $money->jsonSerialize() +
-            array(
+            [
                 "reason" => isset($reason) ? $reason->getValue() : null,
                 "message" => $message,
                 "metadata" => $metadata
-            )
+            ]
         );
         $context = $this->getIdContext()->appendPath("refunds");
         return RequesterUtils::executePost(Refund::class, $context, $payload);
@@ -120,11 +120,11 @@ class Charge extends Resource
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
+        $query = FunctionalUtils::stripNulls([
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
-        ));
+        ]);
         return RequesterUtils::executeGetPaginated(
             Refund::class,
             $this->getIdContext()->appendPath("refunds"),
@@ -140,9 +140,9 @@ class Charge extends Resource
 
     public function cancel(array $metadata = null)
     {
-        $payload = FunctionalUtils::stripNulls(array(
+        $payload = FunctionalUtils::stripNulls([
             "metadata" => $metadata
-        ));
+        ]);
         $context = $this->getIdContext()->appendPath("cancels");
         return RequesterUtils::executePost(Cancel::class, $context, $payload);
     }
@@ -152,11 +152,11 @@ class Charge extends Resource
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
+        $query = FunctionalUtils::stripNulls([
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
-        ));
+        ]);
         return RequesterUtils::executeGetPaginated(
             Cancel::class,
             $this->getIdContext()->appendPath("cancels"),

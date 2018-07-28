@@ -60,9 +60,9 @@ abstract class HttpUtils
 
     public static function addJsonHeader(array $headers)
     {
-        return array_merge(array(
+        return array_merge([
             "Accept" => "application/json",
             "Content-Type" => "application/json"
-        ), $headers);
+        ], $headers);
     }
 }

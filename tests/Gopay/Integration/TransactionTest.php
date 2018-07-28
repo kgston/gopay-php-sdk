@@ -42,7 +42,7 @@ EOD;
         $json = json_decode($str, true);
         $transactions = Paginated::fromResponse(
             $json,
-            array(),
+            [],
             Transaction::class,
             $this->getClient()->getStoreBasedContext()
         );

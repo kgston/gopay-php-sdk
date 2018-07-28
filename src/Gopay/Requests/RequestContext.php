@@ -49,14 +49,12 @@ class RequestContext
     public function getAuthorizationHeaders()
     {
         if ($this->appJWT == null) {
-            return array();
+            return [];
         } else {
             $key = $this->appJWT->token;
             $secret = $this->appJWT->secret;
             $secretText = $secret ? $secret . "." : "";
-            return array(
-                "Authorization" => "Bearer $secretText$key"
-            );
+            return ["Authorization" => "Bearer $secretText$key"];
         }
     }
 

@@ -62,11 +62,11 @@ class Transfer extends Resource
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
+        $query = FunctionalUtils::stripNulls([
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection.getValue() : null
-        ));
+        ]);
         $context = $this->getIdContext()->appendPath("ledgers");
         return RequesterUtils::executeGetPaginated(Ledger::class, $context, $query);
     }

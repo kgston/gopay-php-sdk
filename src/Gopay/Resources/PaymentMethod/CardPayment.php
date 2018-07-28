@@ -69,13 +69,13 @@ class CardPayment extends PaymentMethod implements JsonSerializable
     public function jsonSerialize()
     {
         $parentData = parent::jsonSerialize();
-        $data = array(
+        $data = [
             "cardholder" => $this->cardholder,
             "card_number" => $this->cardNumber,
             "exp_month" => $this->expMonth,
             "exp_year" => $this->expYear,
             "cvv" => $this->cvv
-        );
+        ];
         
         if ($this->line1 &
             $this->state &&
@@ -84,17 +84,18 @@ class CardPayment extends PaymentMethod implements JsonSerializable
             $this->zip &&
             $this->phoneNumberCountryCode &&
             $this->phoneNumberLocalNumber) {
-            $this->data = array_merge($data, array(
+            $this->data = array_merge($data, [
                 "line1" => $this->line1,
                 "line2" => $this->line2,
                 "state" => $this->state,
                 "city" => $this->city,
                 "country" => $this->country,
                 "zip" => $this->zip,
-                "phone_number" => array(
+                "phone_number" => [
                     "country_code" => $this->phoneNumberCountryCode,
                     "local_number" => $this->phoneNumberLocalNumber
-            )));
+                ]
+            ]);
         }
         $parentData['data'] = $data;
 

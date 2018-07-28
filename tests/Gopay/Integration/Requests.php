@@ -52,7 +52,7 @@ trait Requests
             "101-1111",
             "81",
             "12910298309128",
-            array('customer_id' => 'PHP TEST')
+            ['customer_id' => 'PHP TEST']
         );
     }
 
@@ -71,7 +71,7 @@ trait Requests
             Money::JPY(1000),
             RefundReason::FRAUD(),
             "test",
-            array("something" => "value")
+            ["something" => "value"]
         )->awaitResult();
     }
 }

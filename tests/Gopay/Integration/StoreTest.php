@@ -90,7 +90,7 @@ class StoreTest extends TestCase
         }
 EOD;
         $json = json_decode($str, true);
-        $store = Store::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
+        $store = Store::getSchema()->parse($json, [$this->getClient()->getStoreBasedContext()]);
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $store->id);
         $this->assertEquals("Store 1", $store->name);
         $this->assertEquals(date_create("2017-03-21T01:32:13.702689Z"), $store->createdOn);
@@ -101,7 +101,7 @@ EOD;
         $this->assertTrue($store->configuration->userTransactionsConfiguration->notifyCustomer);
         $this->assertTrue($store->configuration->cardConfiguration->enabled);
         $this->assertEquals(
-            array("maestro", "unionpay"),
+            ["maestro", "unionpay"],
             $store->configuration->cardConfiguration->forbiddenCardBrands
         );
         $this->assertTrue($store->configuration->qrScanConfiguration->enabled);
@@ -154,7 +154,7 @@ EOD;
         }
 EOD;
         $json = json_decode($str, true);
-        $stores = Paginated::fromResponse($json, array(), Store::class, $this->getClient()->getStoreBasedContext());
+        $stores = Paginated::fromResponse($json, [], Store::class, $this->getClient()->getStoreBasedContext());
         $this->assertEquals(false, $stores->hasMore);
         $this->assertEquals(2, count($stores->items));
         $this->assertEquals("Store 2", $stores->items[1]->name);

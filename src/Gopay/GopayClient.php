@@ -120,11 +120,11 @@ class GopayClient
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
+        $query = FunctionalUtils::stripNulls([
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
-        ));
+        ]);
         return RequesterUtils::executeGetPaginated(
             Store::class,
             $this->getStoreContext(),
@@ -143,11 +143,11 @@ class GopayClient
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
+        $query = FunctionalUtils::stripNulls([
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
-        ));
+        ]);
         $context = $this->getBankAccountContext();
         return RequesterUtils::executeGetPaginated(BankAccount::class, $context, $query);
     }
@@ -163,9 +163,9 @@ class GopayClient
         if (isset($localCustomerId) && $payment->type === TokenType::RECURRING()) {
             $customerId = $this->getCustomerId($localCustomerId);
             if (!isset($payment->metadata)) {
-                $payment->metadata = array();
+                $payment->metadata = [];
             }
-            $payment->metadata += array('gopay-customer-id' => $customerId);
+            $payment->metadata += ['gopay-customer-id' => $customerId];
         }
 
         $context = $this->getStoreBasedContext()->withPath("tokens");
@@ -174,11 +174,11 @@ class GopayClient
 
     public function getTransactionToken($transactionTokenId)
     {
-        $context = $this->getStoreBasedContext()->withPath(array(
+        $context = $this->getStoreBasedContext()->withPath([
             "stores",
             $this->storeAppJWT->storeId,
             "tokens", $transactionTokenId
-        ));
+        ]);
         return RequesterUtils::executeGet(TransactionToken::class, $context);
     }
 
@@ -201,7 +201,7 @@ class GopayClient
 
     public function getCharge($storeId, $chargeId)
     {
-        $context = $this->getContext()->withPath(array("stores", $storeId, "charges", $chargeId));
+        $context = $this->getContext()->withPath(["stores", $storeId, "charges", $chargeId]);
         return RequesterUtils::executeGet(Charge::class, $context);
     }
 
@@ -228,7 +228,7 @@ class GopayClient
 
     public function getSubscription($storeId, $subscriptionId)
     {
-        $context = $this->getContext()->withPath(array("stores", $storeId, "subscriptions", $subscriptionId));
+        $context = $this->getContext()->withPath(["stores", $storeId, "subscriptions", $subscriptionId]);
         return RequesterUtils::executeGet(Subscription::class, $context);
     }
 
@@ -237,11 +237,11 @@ class GopayClient
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
+        $query = FunctionalUtils::stripNulls([
             "cursor" => $cursor,
             "limit" => $limit,
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
-        ));
+        ]);
         $context = $this->getTransferContext();
         return RequesterUtils::executeGetPaginated(Transfer::class, $context, $query);
     }

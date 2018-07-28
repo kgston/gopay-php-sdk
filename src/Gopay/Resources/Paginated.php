@@ -66,7 +66,7 @@ class Paginated
             throw new GopayNoMoreItemsError();
         }
         $last = end($this->items);
-        $newQuery = array("cursor" => $last->id) + $this->query;
+        $newQuery = ["cursor" => $last->id] + $this->query;
         return RequesterUtils::executeGetPaginated($this->jsonableClass, $this->context, $newQuery);
     }
 
@@ -86,7 +86,7 @@ class Paginated
     private function reverse()
     {
         $currentDirection = fp::getOrElse($this->query, "cursor_direction", "desc");
-        $newQuery = array("cursor_direction" => get_other_direction($currentDirection)) + $this->query;
+        $newQuery = ["cursor_direction" => get_other_direction($currentDirection)] + $this->query;
         return new Paginated(
             array_reverse($this->items),
             true,

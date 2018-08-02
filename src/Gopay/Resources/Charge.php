@@ -75,7 +75,7 @@ class Charge extends Resource
         $this->chargedCurrency = isset($chargedCurrency) ? new Currency($chargedCurrency) : null;
         $this->chargedAmount = isset($chargedAmount) ? new Money($chargedAmount, $this->chargedCurrency) : null;
         $this->chargedAmountFormatted = $chargedAmountFormatted;
-        $this->captureAt = date_create($captureAt);
+        $this->captureAt = isset($captureAt) ? date_create($captureAt) : null;
         $this->status = ChargeStatus::fromValue($status);
         $this->error = $error;
         $this->metadata = $metadata;

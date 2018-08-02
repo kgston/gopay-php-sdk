@@ -26,6 +26,10 @@ class ScheduleSettings implements JsonSerializable
         $this->startOn = $startOn;
         $this->zoneId = $zoneId;
         $this->preserveEndOfMonth = $preserveEndOfMonth;
+
+        if (isset($this->$startOn) && isset($zoneId)) {
+            $this->$startOn->setTimezone($zoneId);
+        }
     }
 
     public function jsonSerialize()

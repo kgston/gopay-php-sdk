@@ -63,7 +63,7 @@ class TransactionToken extends Resource
         $this->usageLimit = UsageLimit::fromValue($usageLimit);
         $this->metadata = $metadata;
         $this->createdOn = date_create($createdOn);
-        $this->lastUsedOn = date_create($lastUsedOn);
+        $this->lastUsedOn = isset($lastUsedOn) ? date_create($lastUsedOn) : null;
         // The payment data may not be available when retrieving from a list. Triggering a ->fetch() will fix this
         $this->data = $data;
     }

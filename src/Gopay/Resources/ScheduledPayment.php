@@ -42,8 +42,8 @@ class ScheduledPayment extends Resource
     ) {
         parent::__construct($id, $context);
         $this->subscriptionId = $subscriptionId;
-        $this->dueDate = date_create($dueDate);
         $this->zoneId = new DateTimeZone($zoneId);
+        $this->dueDate = date_create($dueDate)->setTimezone($this->zoneId);
         $this->currency = new Currency($currency);
         $this->amount = new Money($amount, $this->currency);
         $this->amountFormatted = $amountFormatted;

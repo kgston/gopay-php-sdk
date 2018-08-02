@@ -91,7 +91,7 @@ class Charge extends Resource
 
     protected function getIdContext()
     {
-        return $this->context->withPath(["stores", $this->storeId, "charges", $this->id]);
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id]);
     }
 
     public function patch(array $metadata)
@@ -111,37 +111,37 @@ class Charge extends Resource
         $payload = FunctionalUtils::stripNulls(
             $money->jsonSerialize() +
             [
-                "reason" => isset($reason) ? $reason->getValue() : null,
-                "message" => $message,
-                "metadata" => $metadata
+                'reason' => isset($reason) ? $reason->getValue() : null,
+                'message' => $message,
+                'metadata' => $metadata
             ]
         );
-        $context = $this->getIdContext()->appendPath("refunds");
+        $context = $this->getIdContext()->appendPath('refunds');
         return RequesterUtils::executePost(Refund::class, $context, $payload);
     }
 
     public function capture(Money $money = null)
     {
-        $context = $this->getIdContext()->appendPath("capture");
+        $context = $this->getIdContext()->appendPath('capture');
         return RequesterUtils::executePost(null, $context, $money);
     }
 
     public function cancel(array $metadata = null)
     {
         $payload = FunctionalUtils::stripNulls([
-            "metadata" => $metadata
+            'metadata' => $metadata
         ]);
-        $context = $this->getIdContext()->appendPath("cancels");
+        $context = $this->getIdContext()->appendPath('cancels');
         return RequesterUtils::executePost(Cancel::class, $context, $payload);
     }
 
     protected function getCancelContext()
     {
-        return $this->context->withPath(["stores", $this->storeId, "charges", $this->id, 'cancels']);
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'cancels']);
     }
 
     protected function getRefundContext()
     {
-        return $this->context->withPath(["stores", $this->storeId, "charges", $this->id, 'refunds']);
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'refunds']);
     }
 }

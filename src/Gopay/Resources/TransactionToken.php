@@ -71,7 +71,7 @@ class TransactionToken extends Resource
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert("data", false, function ($value, $json) {
+            ->upsert('data', false, function ($value, $json) {
                 $paymentType = PaymentType::fromValue($json['payment_type']);
                 switch ($paymentType) {
                     case PaymentType::CARD():
@@ -86,7 +86,7 @@ class TransactionToken extends Resource
 
     protected function getIdContext()
     {
-        return $this->context->withPath(["stores", $this->storeId, "tokens", $this->id]);
+        return $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id]);
     }
 
     public function patch(PaymentMethodPatch $paymentPatch)
@@ -114,7 +114,7 @@ class TransactionToken extends Resource
             'metadata' => $metadata
         ];
 
-        $context = $this->context->withPath("charges");
+        $context = $this->context->withPath('charges');
         return RequesterUtils::executePost(Charge::class, $context, FunctionalUtils::stripNulls($payload));
     }
 
@@ -150,7 +150,7 @@ class TransactionToken extends Resource
             'metadata' => $metadata
         ];
 
-        $context = $this->context->withPath("subscriptions");
+        $context = $this->context->withPath('subscriptions');
         return RequesterUtils::executePost(Subscription::class, $context, FunctionalUtils::stripNulls($payload));
     }
 }

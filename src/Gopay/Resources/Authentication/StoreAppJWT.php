@@ -33,8 +33,8 @@ class StoreAppJWT extends AppJWT
         $token,
         $secret
     ) {
-        if ($sub != "app_token") {
-            throw new InvalidJWTFormat("Invalid subject");
+        if ($sub != 'app_token') {
+            throw new InvalidJWTFormat('Invalid subject');
         }
         parent::__construct($token, $secret);
         $this->iat = $iat;

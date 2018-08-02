@@ -43,22 +43,22 @@ trait Requests
     {
         $cardNumber = isset($cardNumber) ? $cardNumber : static::$SUCCESSFUL;
         return new CardPayment(
-            "test@test.com",
-            "PHP test",
+            'test@test.com',
+            'PHP test',
             $cardNumber,
-            "02",
-            "2022",
-            "123",
+            '02',
+            '2022',
+            '123',
             $type,
             null,
-            "test line 1",
-            "test line 2",
-            "test state",
-            "test city",
-            "jp",
-            "101-1111",
-            "81",
-            "12910298309128",
+            'test line 1',
+            'test line 2',
+            'test state',
+            'test city',
+            'jp',
+            '101-1111',
+            '81',
+            '12910298309128',
             ['customer_id' => 'PHP TEST']
         );
     }
@@ -77,8 +77,8 @@ trait Requests
         return $charge->createRefund(
             Money::JPY(1000),
             RefundReason::FRAUD(),
-            "test",
-            ["something" => "value"]
+            'test',
+            ['something' => 'value']
         )->awaitResult();
     }
 

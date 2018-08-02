@@ -19,6 +19,6 @@ class ThemeConfiguration
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert("colors", true, ColorsConfiguration::getSchema()->getparser());
+            ->upsert('colors', true, ColorsConfiguration::getSchema()->getparser());
     }
 }

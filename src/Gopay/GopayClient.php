@@ -67,7 +67,7 @@ class GopayClient
     public function __construct(
         AppJWT $storeAppJWT = null,
         AppJWT $merchantAppJWT = null,
-        $endpoint = "https://api.gopay.jp"
+        $endpoint = 'https://api.gopay.jp'
     ) {
         if (!isset($storeAppJWT) && !isset($merchantAppJWT)) {
             throw new GopaySDKError(Reason::REQUIRES_APP_TOKEN());
@@ -93,7 +93,7 @@ class GopayClient
         if (!isset($this->storeAppJWT)) {
             throw new GopaySDKError(Reason::REQUIRES_STORE_APP_TOKEN());
         }
-        return new RequestContext($this->requester, $this->endpoint, "/", $this->storeAppJWT);
+        return new RequestContext($this->requester, $this->endpoint, '/', $this->storeAppJWT);
     }
 
     public function getMerchantBasedContext()
@@ -101,7 +101,7 @@ class GopayClient
         if (!isset($this->merchantAppJWT)) {
             throw new GopaySDKError(Reason::REQUIRES_MERCHANT_APP_TOKEN());
         }
-        return new RequestContext($this->requester, $this->endpoint, "/", $this->merchantAppJWT);
+        return new RequestContext($this->requester, $this->endpoint, '/', $this->merchantAppJWT);
     }
 
     public function withRequester(Requester $requester)
@@ -114,7 +114,7 @@ class GopayClient
     {
         return RequesterUtils::executeGet(
             Merchant::class,
-            $this->getContext()->withPath("me")
+            $this->getContext()->withPath('me')
         );
     }
 
@@ -122,7 +122,7 @@ class GopayClient
     {
         return RequesterUtils::executeGet(
             CheckoutInfo::class,
-            $this->getStoreBasedContext()->withPath("checkout_info")
+            $this->getStoreBasedContext()->withPath('checkout_info')
         );
     }
 
@@ -148,16 +148,17 @@ class GopayClient
             $payment->metadata += ['gopay-customer-id' => $customerId];
         }
 
-        $context = $this->getStoreBasedContext()->withPath("tokens");
+        $context = $this->getStoreBasedContext()->withPath('tokens');
         return RequesterUtils::executePost(TransactionToken::class, $context, $payment);
     }
 
     public function getTransactionToken($transactionTokenId)
     {
         $context = $this->getStoreBasedContext()->withPath([
-            "stores",
+            'stores',
             $this->storeAppJWT->storeId,
-            "tokens", $transactionTokenId
+            'tokens',
+            $transactionTokenId
         ]);
         return RequesterUtils::executeGet(TransactionToken::class, $context);
     }
@@ -181,7 +182,7 @@ class GopayClient
 
     public function getCharge($storeId, $chargeId)
     {
-        $context = $this->getContext()->withPath(["stores", $storeId, "charges", $chargeId]);
+        $context = $this->getContext()->withPath(['stores', $storeId, 'charges', $chargeId]);
         return RequesterUtils::executeGet(Charge::class, $context);
     }
 
@@ -208,7 +209,7 @@ class GopayClient
 
     public function getSubscription($storeId, $subscriptionId)
     {
-        $context = $this->getContext()->withPath(["stores", $storeId, "subscriptions", $subscriptionId]);
+        $context = $this->getContext()->withPath(['stores', $storeId, 'subscriptions', $subscriptionId]);
         return RequesterUtils::executeGet(Subscription::class, $context);
     }
 
@@ -221,7 +222,7 @@ class GopayClient
     public function parseWebhookData($data)
     {
         try {
-            $event = WebhookEvent::fromValue($data["event"]);
+            $event = WebhookEvent::fromValue($data['event']);
             $parser = null;
             switch ($event) {
                 case WebhookEvent::CHARGE_UPDATED():
@@ -251,9 +252,9 @@ class GopayClient
                     $parser = Cancel::getContextParser($this->getStoreBasedContext());
                     break;
             }
-            return new WebhookPayload($event, $parser($data["data"]));
+            return new WebhookPayload($event, $parser($data['data']));
         } catch (OutOfRangeException $exception) {
-            throw new GopayUnknownWebhookEvent($data["event"]);
+            throw new GopayUnknownWebhookEvent($data['event']);
         } catch (Exception $exception) {
             throw new GopayInvalidWebhookData($data);
         }
@@ -261,7 +262,7 @@ class GopayClient
 
     protected function getBankAccountContext($storeId = null)
     {
-        return $this->getContext($storeId)->withPath("bank_accounts");
+        return $this->getContext($storeId)->withPath('bank_accounts');
     }
 
     protected function getCustomerId($localCustomerId)
@@ -271,31 +272,31 @@ class GopayClient
 
     protected function getChargeContext($storeId = null)
     {
-        return $this->getContext($storeId)->withPath("charges");
+        return $this->getContext($storeId)->withPath('charges');
     }
 
     protected function getStoreContext($storeId = null)
     {
-        return $this->getContext($storeId)->withPath("stores");
+        return $this->getContext($storeId)->withPath('stores');
     }
 
     protected function getSubscriptionContext($storeId = null)
     {
-        return $this->getContext($storeId)->withPath("subscriptions");
+        return $this->getContext($storeId)->withPath('subscriptions');
     }
 
     protected function getTransactionTokenContext()
     {
-        return $this->getStoreBasedContext()->withPath("tokens");
+        return $this->getStoreBasedContext()->withPath('tokens');
     }
 
     protected function getTransactionContext($storeId = null)
     {
-        return $this->getContext($storeId)->withPath("transaction_history");
+        return $this->getContext($storeId)->withPath('transaction_history');
     }
 
     protected function getTransferContext($storeId = null)
     {
-        return $this->getContext($storeId)->withPath("transfers");
+        return $this->getContext($storeId)->withPath('transfers');
     }
 }

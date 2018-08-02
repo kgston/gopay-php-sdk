@@ -22,8 +22,8 @@ class CardData
     {
         if (!isset(self::$schema)) {
             self::$schema = (new JsonSchema(CardData::class))
-                ->with("card", true, Card::getSchema()->getParser())
-                ->with("billing", false, Address::getSchema()->getParser());
+                ->with('card', true, Card::getSchema()->getParser())
+                ->with('billing', false, Address::getSchema()->getParser());
         }
         return self::$schema;
     }

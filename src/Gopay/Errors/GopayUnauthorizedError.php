@@ -10,9 +10,9 @@ class GopayUnauthorizedError extends GopayRequestError
     {
         parent::__construct(
             $url,
-            $json["status"],
-            $json["code"],
-            $json["errors"]
+            $json['status'],
+            $json['code'],
+            $json['errors']
         );
     }
 }

@@ -39,18 +39,18 @@ class Store extends Resource
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert("configuration", false, Configuration::getSchema()->getParser()); // TODO: Set required to true
+            ->upsert('configuration', false, Configuration::getSchema()->getParser()); // TODO: Set required to true
     }
 
     public function getCharge($chargeId)
     {
-        $context = $this->getIdContext()->appendPath(["charges", $chargeId]);
+        $context = $this->getIdContext()->appendPath(['charges', $chargeId]);
         return RequesterUtils::executeGet(Charge::class, $context);
     }
 
     public function getSubscription($subscriptionId)
     {
-        $context = $this->getIdContext()->appendPath(["subscriptions", $subscriptionId]);
+        $context = $this->getIdContext()->appendPath(['subscriptions', $subscriptionId]);
         return RequesterUtils::executeGet(Subscription::class, $context);
     }
 
@@ -58,23 +58,23 @@ class Store extends Resource
     {
         return RequesterUtils::executePost(
             null,
-            $this->getIdContext()->appendPath("create_customer_id"),
+            $this->getIdContext()->appendPath('create_customer_id'),
             ['customer_id' => $localCustomerId]
         )['customer_id'];
     }
 
     protected function getSubscriptionContext()
     {
-        return $this->getIdContext()->appendPath("subscriptions");
+        return $this->getIdContext()->appendPath('subscriptions');
     }
 
     protected function getTransactionContext()
     {
-        return $this->getIdContext()->appendPath("transaction_history");
+        return $this->getIdContext()->appendPath('transaction_history');
     }
 
     protected function getChargeContext()
     {
-        return $this->getIdContext()->appendPath("charges");
+        return $this->getIdContext()->appendPath('charges');
     }
 }

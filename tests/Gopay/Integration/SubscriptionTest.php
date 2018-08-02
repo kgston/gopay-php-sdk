@@ -70,25 +70,25 @@ EOD;
 
         $json = json_decode($str, true);
         $subscription = Subscription::getSchema()->parse($json, [$this->getClient()->getStoreBasedContext()]);
-        $this->assertEquals("11111111-1111-1111-1111-111111111111", $subscription->id);
-        $this->assertEquals("22222222-2222-2222-2222-222222222222", $subscription->storeId);
-        $this->assertEquals("33333333-3333-3333-3333-333333333333", $subscription->transactionTokenId);
+        $this->assertEquals('11111111-1111-1111-1111-111111111111', $subscription->id);
+        $this->assertEquals('22222222-2222-2222-2222-222222222222', $subscription->storeId);
+        $this->assertEquals('33333333-3333-3333-3333-333333333333', $subscription->transactionTokenId);
         $this->assertEquals(Money::JPY(1000), $subscription->amount);
         $this->assertEquals(1000, $subscription->amountFormatted);
         $this->assertEquals(new Currency('JPY'), $subscription->currency);
         $this->assertEquals(Period::MONTHLY(), $subscription->period);
         $this->assertEquals(Money::JPY(100), $subscription->initialAmount);
         $this->assertEquals(100, $subscription->initialAmountFormatted);
-        $this->assertEquals(date_create("2017-07-31"), $subscription->scheduleSettings->startOn);
-        $this->assertEquals(new DateTimeZone("Asia/Tokyo"), $subscription->scheduleSettings->zoneId);
+        $this->assertEquals(date_create('2017-07-31'), $subscription->scheduleSettings->startOn);
+        $this->assertEquals(new DateTimeZone('Asia/Tokyo'), $subscription->scheduleSettings->zoneId);
         $this->assertTrue($subscription->scheduleSettings->preserveEndOfMonth);
         $this->assertEquals(SubscriptionStatus::CANCELED(), $subscription->status);
         $this->assertEquals(AppTokenMode::TEST(), $subscription->mode);
         $this->assertInstanceOf(ScheduledPayment::class, $subscription->nextPayment);
-        $this->assertEquals(date_create("2017-07-04T06:06:05.580391Z"), $subscription->createdOn);
-        $this->assertEquals(date_create("2017-07-04T06:06:05.580391Z"), $subscription->updatedOn);
+        $this->assertEquals(date_create('2017-07-04T06:06:05.580391Z'), $subscription->createdOn);
+        $this->assertEquals(date_create('2017-07-04T06:06:05.580391Z'), $subscription->updatedOn);
         $this->assertEquals(InstallmentPlanType::FIXED_CYCLES(), $subscription->installmentPlan->planType);
-        $this->assertEquals("10", $subscription->installmentPlan->fixedCycles);
+        $this->assertEquals('10', $subscription->installmentPlan->fixedCycles);
         $this->assertEquals('9', $subscription->paymentsLeft);
         $this->assertEquals(Money::JPY(5000), $subscription->amountLeft);
         $this->assertEquals(5000, $subscription->amountLeftFormatted);
@@ -109,7 +109,7 @@ EOD;
     {
         $subscription = $this->createValidScheduleSubscription();
         $this->assertEquals(date_create('last day of this month midnight'), $subscription->scheduleSettings->startOn);
-        $this->assertEquals(new DateTimeZone("Asia/Tokyo"), $subscription->scheduleSettings->zoneId);
+        $this->assertEquals(new DateTimeZone('Asia/Tokyo'), $subscription->scheduleSettings->zoneId);
         $this->assertTrue($subscription->scheduleSettings->preserveEndOfMonth);
     }
 
@@ -117,7 +117,7 @@ EOD;
     {
         $subscription = $this->createValidInstallmentSubscription();
         $this->assertEquals(InstallmentPlanType::FIXED_CYCLES(), $subscription->installmentPlan->planType);
-        $this->assertEquals("10", $subscription->installmentPlan->fixedCycles);
+        $this->assertEquals('10', $subscription->installmentPlan->fixedCycles);
         $this->assertEquals('9', $subscription->paymentsLeft);
         $this->assertInstanceOf(Money::class, $subscription->amountLeft);
         $this->assertInstanceOf(ScheduledPayment::class, $subscription->nextPayment);

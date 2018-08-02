@@ -36,7 +36,7 @@ EOD;
         $json = json_decode($str, true);
         $payment = ScheduledPayment::getSchema()->parse($json, [$this->getClient()->getStoreBasedContext()]);
 
-        $this->assertEquals("11e8960f-dd31-28ca-a8a8-ab5fd4c72b70", $payment->id);
+        $this->assertEquals('11e8960f-dd31-28ca-a8a8-ab5fd4c72b70', $payment->id);
         $this->assertEquals(date_create('2019-05-02'), $payment->dueDate);
         $this->assertEquals(new DateTimeZone('Asia/Tokyo'), $payment->zoneId);
         $this->assertEquals(Money::JPY(560), $payment->amount);

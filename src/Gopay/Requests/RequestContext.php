@@ -31,16 +31,16 @@ class RequestContext
 
     public function withPath($path)
     {
-        $newPath = is_array($path) ? join("/", $path) : $path;
+        $newPath = is_array($path) ? join('/', $path) : $path;
         return new RequestContext($this->requester, $this->endpoint, $newPath, $this->appJWT);
     }
 
     public function appendPath($path)
     {
         if (is_array($path)) {
-            return $this->withPath($this->path . "/" . join("/", $path));
+            return $this->withPath($this->path . '/' . join('/', $path));
         } elseif (is_string($path)) {
-            return $this->withPath($this->path . "/" . $path);
+            return $this->withPath("{$this->path}/$path");
         } else {
             return $this;
         }
@@ -53,15 +53,13 @@ class RequestContext
         } else {
             $key = $this->appJWT->token;
             $secret = $this->appJWT->secret;
-            $secretText = $secret ? $secret . "." : "";
-            return ["Authorization" => "Bearer $secretText$key"];
+            $secretText = $secret ? $secret . '.' : '';
+            return ['Authorization' => "Bearer $secretText$key"];
         }
     }
 
     public function getFullURL()
     {
-        return (trim($this->endpoint, "/") .
-                "/" .
-                trim($this->path, "/"));
+        return trim($this->endpoint, '/') . '/' . trim($this->path, '/');
     }
 }

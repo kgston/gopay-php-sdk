@@ -18,7 +18,7 @@ class TransactionTokenTest extends TestCase
     public function testCreateToken()
     {
         $transactionToken = $this->createValidToken();
-        $this->assertEquals("test@test.com", $transactionToken->email);
+        $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(TokenType::ONE_TIME(), $transactionToken->type);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
     }
@@ -46,7 +46,7 @@ class TransactionTokenTest extends TestCase
             $maxRetries--;
             sleep(1); // It takes a bit of time for to index to get updated
             $tokenList = $this->getClient()->listTransactionTokens(
-                "test@test.com",
+                'test@test.com',
                 $localCustomerId,
                 TokenType::RECURRING(),
                 AppTokenMode::TEST(),
@@ -61,15 +61,15 @@ class TransactionTokenTest extends TestCase
     public function testPatchExistingToken()
     {
         $transactionToken = $this->createValidToken();
-        $this->assertEquals("test@test.com", $transactionToken->email);
+        $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         
         $patchRequest = new PaymentMethodPatch(
-            "test@changed.int",
+            'test@changed.int',
             ['customer_id' => 'PHP TESTER']
         );
         $patchedTxToken = $transactionToken->patch($patchRequest);
-        $this->assertEquals("test@changed.int", $patchedTxToken->email);
+        $this->assertEquals('test@changed.int', $patchedTxToken->email);
         $this->assertEquals('PHP TESTER', $patchedTxToken->metadata['customer_id']);
         $this->assertTrue($patchedTxToken->data !== null);
     }
@@ -77,16 +77,16 @@ class TransactionTokenTest extends TestCase
     public function testPatchExistingCardPayment()
     {
         $transactionToken = $this->createValidToken();
-        $this->assertEquals("test@test.com", $transactionToken->email);
+        $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         
         $patchRequest = new CardPaymentPatch(
             999,
-            "test@changed.int",
+            'test@changed.int',
             null
         );
         $patchedTxToken = $transactionToken->patch($patchRequest);
-        $this->assertEquals("test@changed.int", $patchedTxToken->email);
+        $this->assertEquals('test@changed.int', $patchedTxToken->email);
         $this->assertEquals('PHP TEST', $patchedTxToken->metadata['customer_id']);
     }
 
@@ -102,6 +102,6 @@ class TransactionTokenTest extends TestCase
     public function testInvalidCardNumber()
     {
         $this->expectException(GopayRequestError::class);
-        $this->getClient()->createToken($this->createCardPayment(TokenType::ONE_TIME(), "4242424242424243"));
+        $this->getClient()->createToken($this->createCardPayment(TokenType::ONE_TIME(), '4242424242424243'));
     }
 }

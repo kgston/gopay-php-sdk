@@ -22,9 +22,9 @@ class GopayRequestError extends GopayError
     {
         return new GopayRequestError(
             $url,
-            $json["status"],
-            $json["code"],
-            $json["errors"]
+            $json['status'],
+            $json['code'],
+            $json['errors']
         );
     }
 }

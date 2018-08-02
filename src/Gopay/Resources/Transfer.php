@@ -65,12 +65,12 @@ class Transfer extends Resource
 
     protected function getLedgerContext()
     {
-        return $this->getIdContext()->appendPath("ledgers");
+        return $this->getIdContext()->appendPath('ledgers');
     }
 
     protected function getStatusChangeContext()
     {
-        return $this->getIdContext()->appendPath("status_changes");
+        return $this->getIdContext()->appendPath('status_changes');
     }
 
     protected static function initSchema()

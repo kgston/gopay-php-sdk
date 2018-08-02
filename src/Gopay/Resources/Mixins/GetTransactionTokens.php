@@ -40,14 +40,14 @@ trait GetTransactionTokens
         $gopayCustomerId = isset($localCustomerId) ? $this->getCustomerId($localCustomerId) : null;
         $context = $this->getTransactionTokenContext();
         $query = FunctionalUtils::stripNulls([
-            "search" => $search,
-            "active" => isset($active) ? $active->getValue() : null,
-            "customer_id" => $gopayCustomerId,
-            "type" => isset($type) ? $type->getValue() : null,
-            "mode" => isset($mode) ? $mode->getValue() : null,
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
+            'search' => $search,
+            'active' => isset($active) ? $active->getValue() : null,
+            'customer_id' => $gopayCustomerId,
+            'type' => isset($type) ? $type->getValue() : null,
+            'mode' => isset($mode) ? $mode->getValue() : null,
+            'cursor' => $cursor,
+            'limit' => $limit,
+            'cursor_direction' => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ]);
         return RequesterUtils::executeGetPaginated(TransactionToken::class, $context, $query);
     }

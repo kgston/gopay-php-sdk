@@ -19,9 +19,9 @@ class JsonSchema
         $this->prefix = $prefix;
     }
 
-    public function with($path, $required = false, $formatter = "Gopay\Utility\FunctionalUtils::identity")
+    public function with($path, $required = false, $formatter = 'Gopay\Utility\FunctionalUtils::identity')
     {
-        array_push($this->components, new SchemaComponent($this->prefix . "/" .$path, $required, $formatter));
+        array_push($this->components, new SchemaComponent($this->prefix . '/' .$path, $required, $formatter));
         return $this;
     }
 
@@ -33,7 +33,7 @@ class JsonSchema
         return $this;
     }
 
-    public function upsert($path, $required = false, $formatter = "Gopay\Utility\FunctionalUtils::identity")
+    public function upsert($path, $required = false, $formatter = 'Gopay\Utility\FunctionalUtils::identity')
     {
         $index = FunctionalUtils::arrayFindIndex($this->components, function ($value) use ($path) {
             return $value->path === $path;
@@ -41,7 +41,7 @@ class JsonSchema
         if ($index !== null) {
             $this->components = array_replace(
                 $this->components,
-                [$index => new SchemaComponent($this->prefix . "/" .$path, $required, $formatter)]
+                [$index => new SchemaComponent($this->prefix . '/' .$path, $required, $formatter)]
             );
             return $this;
         } else {
@@ -52,7 +52,7 @@ class JsonSchema
     private function getValues($json, array $additionalArgs = [])
     {
         return array_map(function ($component) use ($json, $additionalArgs) {
-            $path_parts = explode("/", $component->path);
+            $path_parts = explode('/', $component->path);
             $value = JsonSchema::getField($json, $component->required, $path_parts);
             if ($value === null) {
                 if ($component->required) {
@@ -118,7 +118,7 @@ class JsonSchema
             try {
                 return JsonSchema::getField($nextJson, $required, array_slice($paths, 1));
             } catch (NoSuchPathException $except) {
-                throw new NoSuchPathException($nextKey . "/" . $except->path);
+                throw new NoSuchPathException($nextKey . '/' . $except->path);
             }
         }
     }

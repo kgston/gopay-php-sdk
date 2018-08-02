@@ -20,9 +20,9 @@ trait GetTransfers
         CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
+            'cursor' => $cursor,
+            'limit' => $limit,
+            'cursor_direction' => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
         ]);
         return RequesterUtils::executeGetPaginated(
             Transfer::class,

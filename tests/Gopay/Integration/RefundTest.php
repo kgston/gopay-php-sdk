@@ -18,7 +18,7 @@ class RefundTest extends TestCase
         $this->assertEquals(new Currency('JPY'), $refund->currency);
         $this->assertEquals(Money::JPY(1000), $refund->amount);
         $this->assertEquals(RefundReason::FRAUD(), $refund->reason);
-        $this->assertEquals("test", $refund->message);
+        $this->assertEquals('test', $refund->message);
         $this->assertEquals(['something' => 'value'], $refund->metadata);
     }
 
@@ -26,6 +26,6 @@ class RefundTest extends TestCase
     {
         $this->expectException(GopayRequestError::class);
         $charge = $this->createValidCharge(true);
-        $charge->createRefund(Money::JPY(2000), RefundReason::FRAUD(), "test", ["something" => "value"]);
+        $charge->createRefund(Money::JPY(2000), RefundReason::FRAUD(), 'test', ['something' => 'value']);
     }
 }

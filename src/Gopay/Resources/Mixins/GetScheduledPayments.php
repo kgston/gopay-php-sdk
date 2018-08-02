@@ -20,9 +20,9 @@ trait GetScheduledPayments
         CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
+            'cursor' => $cursor,
+            'limit' => $limit,
+            'cursor_direction' => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ]);
 
         return RequesterUtils::executeGetPaginated(

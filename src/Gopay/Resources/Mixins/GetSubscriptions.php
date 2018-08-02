@@ -25,12 +25,12 @@ trait GetSubscriptions
         CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
-            "search" => $search,
-            "status" => isset($status) ? $status->getValue() : null,
-            "mode" => isset($mode) ? $mode->getValue() : null,
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
+            'search' => $search,
+            'status' => isset($status) ? $status->getValue() : null,
+            'mode' => isset($mode) ? $mode->getValue() : null,
+            'cursor' => $cursor,
+            'limit' => $limit,
+            'cursor_direction' => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ]);
 
         return RequesterUtils::executeGetPaginated(

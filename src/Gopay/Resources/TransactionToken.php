@@ -3,9 +3,12 @@
 namespace Gopay\Resources;
 
 use DateTime;
+use DateTimeZone;
 use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\Field;
 use Gopay\Enums\PaymentType;
 use Gopay\Enums\Period;
+use Gopay\Enums\Reason;
 use Gopay\Enums\TokenType;
 use Gopay\Enums\UsageLimit;
 use Gopay\Errors\GopayLogicError;
@@ -103,7 +106,7 @@ class TransactionToken extends Resource
         array $metadata = null
     ) {
         if ($this->type === TokenType::SUBSCRIPTION()) {
-            throw new GopayLogicError(REASON::NON_SUBSCRIPTION_PAYMENT());
+            throw new GopayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
         }
         $payload = $money->jsonSerialize() + [
             'transaction_token_id' => $this->id,
@@ -119,35 +122,33 @@ class TransactionToken extends Resource
         Money $money,
         Period $period,
         Money $initialAmount = null,
-        DateTime $subsequentCyclesStart = null,
+        ScheduleSettings $scheduleSettings = null,
         InstallmentPlan $installmentPlan = null,
         array $metadata = null
     ) {
         if ($this->type !== TokenType::SUBSCRIPTION()) {
-            throw new GopayLogicError(REASON::NOT_SUBSCRIPTION_PAYMENT());
+            throw new GopayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
         }
         if (!$money->isPositive()) {
-            throw new GopayValidationError(Field::AMOUNT(), REASON::INVALID_AMOUNT());
+            throw new GopayValidationError(Field::AMOUNT(), Reason::INVALID_AMOUNT());
         }
         if (isset($initialAmount) && ($initialAmount->isNegative() || !$initialAmount->isSameCurrency($money))) {
-            throw new GopayValidationError(Field::INITIAL_AMOUNT(), REASON::INVALID_AMOUNT());
+            throw new GopayValidationError(Field::INITIAL_AMOUNT(), Reason::INVALID_AMOUNT());
+        }
+        if (isset($scheduleSettings) &&
+        $scheduleSettings->preserveEndOfMonth === true &&
+        Period::MONTHLY() !== $period) {
+            throw new GopayValidationError(Field::PRESERVE_END_OF_MONTH(), Reason::MUST_BE_MONTH_BASE_TO_SET());
         }
         
         $payload = $money->jsonSerialize() + [
             'transaction_token_id' => $this->id,
             'period' => $period->getValue(),
             'initial_amount' => isset($initialAmount) ? $initialAmount->getAmount() : null,
-            'subsequent_cycles_start' => isset($subsequentCyclesStart)
-                ? $subsequentCyclesStart->format(DateTime::ATOM)
-                : null,
+            'schedule_settings' => $scheduleSettings,
             'installment_plan' => $installmentPlan,
             'metadata' => $metadata
         ];
-        if (isset($subsequentCyclesStart)) {
-            if ($subsequentCyclesStart < date_create()) {
-                throw new GopayValidationError(Field::SUBSEQUENT_CYCLES_START(), REASON::INCOHERENT_DATE_RANGE());
-            }
-        }
 
         $context = $this->context->withPath("subscriptions");
         return RequesterUtils::executePost(Subscription::class, $context, FunctionalUtils::stripNulls($payload));

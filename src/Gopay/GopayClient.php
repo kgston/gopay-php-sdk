@@ -4,6 +4,7 @@ namespace Gopay;
 
 use Composer\DependencyResolver\Request;
 use DateTime;
+use DateTimeZone;
 use Exception;
 use Gopay\Enums\CursorDirection;
 use Gopay\Enums\Field;
@@ -30,7 +31,9 @@ use Gopay\Resources\Mixins\GetSubscriptions;
 use Gopay\Resources\Mixins\GetTransactions;
 use Gopay\Resources\Mixins\GetTransactionTokens;
 use Gopay\Resources\PaymentMethod\PaymentMethod;
+use Gopay\Resources\InstallmentPlan;
 use Gopay\Resources\Refund;
+use Gopay\Resources\ScheduleSettings;
 use Gopay\Resources\Store;
 use Gopay\Resources\Subscription;
 use Gopay\Resources\Transaction;
@@ -210,8 +213,8 @@ class GopayClient
         Money $money,
         Period $period,
         Money $initialAmount = null,
-        DateTime $subsequentCyclesStart = null,
-        $installmentPlan = null,
+        ScheduleSettings $scheduleSettings = null,
+        InstallmentPlan $installmentPlan = null,
         array $metadata = null
     ) {
         return $this
@@ -220,7 +223,7 @@ class GopayClient
                 $money,
                 $period,
                 $initialAmount,
-                $subsequentCyclesStart,
+                $scheduleSettings,
                 $installmentPlan,
                 $metadata
             );

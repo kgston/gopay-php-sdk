@@ -9,6 +9,7 @@ use Gopay\Enums\Reason;
 use Gopay\Enums\SubscriptionStatus;
 use Gopay\Errors\GopayLogicError;
 use Gopay\Resources\Mixins\GetCharges;
+use Gopay\Resources\Mixins\GetScheduledPayments;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
 use Gopay\Utility\Json\JsonSchema;
@@ -19,52 +20,67 @@ class Subscription extends Resource
 {
     use Jsonable;
     use Pollable;
-    use GetCharges;
+    use GetCharges, GetScheduledPayments {
+        GetCharges::validate insteadof GetScheduledPayments;
+    }
 
     public $storeId;
     public $transactionTokenId;
+    public $currency;
     public $amount;
     public $amountFormatted;
-    public $currency;
     public $period;
     public $initialAmount;
     public $initialAmountFormatted;
-    public $subsequentCyclesStart;
+    public $scheduleSettings;
+    public $paymentsLeft;
+    public $amountLeft;
+    public $amountLeftFormatted;
     public $status;
     public $metadata;
     public $mode;
     public $createdOn;
     public $updatedOn;
+    public $nextPayment;
+    public $installmentPlan;
 
     public function __construct(
         $id,
         $storeId,
         $transactionTokenId,
+        $currency,
         $amount,
         $amountFormatted,
-        $currency,
         $period,
         $initialAmount,
         $initialAmountFormatted,
-        $subsequentCyclesStart,
+        ScheduleSettings $scheduleSettings,
+        $paymentsLeft,
+        $amountLeft,
+        $amountLeftFormatted,
         $status,
         $metadata,
         $mode,
         $createdOn,
         $updatedOn,
-        $installmentPlan,
-        $context
+        ScheduledPayment $nextPayment = null,
+        InstallmentPlan $installmentPlan = null,
+        $context = null
     ) {
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
-        $this->amount = $amount;
-        $this->amountFormatted = $amountFormatted;
         $this->currency = new Currency($currency);
+        $this->amount = new Money($amount, $this->currency);
+        $this->amountFormatted = $amountFormatted;
         $this->period = Period::fromValue($period);
-        $this->initialAmount = $initialAmount;
+        $this->initialAmount = isset($initialAmount) ? new Money($initialAmount, $this->currency) : null;
         $this->initialAmountFormatted = $initialAmountFormatted;
-        $this->subsequentCyclesStart = date_create($subsequentCyclesStart);
+        $this->scheduleSettings = $scheduleSettings;
+        $this->nextPayment = $nextPayment;
+        $this->paymentsLeft = $paymentsLeft;
+        $this->amountLeft = isset($amountLeft) ? new Money($amountLeft, $this->currency) : null;
+        $this->amountLeftFormatted = $amountLeftFormatted;
         $this->status = SubscriptionStatus::fromValue($status);
         $this->metadata = $metadata;
         $this->mode = AppTokenMode::fromValue($mode);
@@ -146,9 +162,16 @@ class Subscription extends Resource
         return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id, 'charges']);
     }
 
+    protected function getScheduledPaymentContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id, 'payments']);
+    }
+
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
+            ->upsert('schedule_settings', true, ScheduleSettings::getSchema()->getParser())
+            ->upsert('next_payment', false, ScheduledPayment::getSchema()->getParser())
             ->upsert('installment_plan', false, InstallmentPlan::getSchema()->getParser());
     }
 }

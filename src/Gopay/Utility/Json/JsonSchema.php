@@ -49,9 +49,9 @@ class JsonSchema
         }
     }
 
-    private function getValues($json)
+    private function getValues($json, array $additionalArgs = [])
     {
-        return array_map(function ($component) use ($json) {
+        return array_map(function ($component) use ($json, $additionalArgs) {
             $path_parts = explode("/", $component->path);
             $value = JsonSchema::getField($json, $component->required, $path_parts);
             if ($value === null) {
@@ -61,20 +61,21 @@ class JsonSchema
                     return null;
                 }
             }
-            return call_user_func($component->formatter, $value, $json);
+            return call_user_func($component->formatter, $value, $json, $additionalArgs);
         }, $this->components);
     }
 
     public function parse($json, array $additionalArgs = [])
     {
         $targetClass = new ReflectionClass($this->targetClass);
-        $arguments = array_merge($this->getValues($json), $additionalArgs);
+        $arguments = array_merge($this->getValues($json, $additionalArgs), $additionalArgs);
         return $targetClass->newInstanceArgs($arguments);
     }
 
-    public function getParser(array $additionalArgs = [])
+    public function getParser(array $context = [])
     {
-        return function ($json) use ($additionalArgs) {
+        return function ($json, $root = null, array $additionalArgs = []) use ($context) {
+            $additionalArgs = empty($context) ? $additionalArgs : $context;
             return $this->parse($json, $additionalArgs);
         };
     }

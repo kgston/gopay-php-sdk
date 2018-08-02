@@ -16,7 +16,7 @@ class RefundTest extends TestCase
     {
         $refund = $this->createValidRefund();
         $this->assertEquals(new Currency('JPY'), $refund->currency);
-        $this->assertEquals(1000, $refund->amount);
+        $this->assertEquals(Money::JPY(1000), $refund->amount);
         $this->assertEquals(RefundReason::FRAUD(), $refund->reason);
         $this->assertEquals("test", $refund->message);
         $this->assertEquals(['something' => 'value'], $refund->metadata);

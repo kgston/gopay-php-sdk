@@ -41,7 +41,7 @@ trait GetSubscriptions
     }
 
     /**
-     * See listSubscriptions parameters for valid opts keys
+     * @param array $opts See listSubscriptions parameters for valid opts keys
      */
     public function listSubscriptionsByOptions(array $opts = [])
     {

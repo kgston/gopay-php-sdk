@@ -5,6 +5,7 @@ namespace Gopay\Resources;
 use Gopay\Enums\LedgerOrigin;
 use Gopay\Utility\Json\JsonSchema;
 use Money\Currency;
+use Money\Money;
 
 class Ledger
 {
@@ -12,12 +13,12 @@ class Ledger
 
     public $id;
     public $storeId;
-    public $amount;
     public $currency;
+    public $amount;
     public $amountFormatted;
     public $percentFee;
-    public $flatFeeAmount;
     public $flatFeeCurrency;
+    public $flatFeeAmount;
     public $flatFeeFormatted;
     public $exchangeRate;
     public $origin;
@@ -27,12 +28,12 @@ class Ledger
     public function __construct(
         $id,
         $storeId,
-        $amount,
         $currency,
+        $amount,
         $amountFormatted,
         $percentFee,
-        $flatFeeAmount,
         $flatFeeCurrency,
+        $flatFeeAmount,
         $flatFeeFormatted,
         $exchangeRate,
         $origin,
@@ -41,12 +42,12 @@ class Ledger
     ) {
         $this->id = $id;
         $this->storeId = $storeId;
-        $this->amount = $amount;
         $this->currency = new Currency($currency);
+        $this->amount = new Money($amount, $this->currency);
         $this->amountFormatted = $amountFormatted;
         $this->percentFee = $percentFee;
-        $this->flatFeeAmount = $flatFeeAmount;
         $this->flatFeeCurrency = new Currency($flatFeeCurrency);
+        $this->flatFeeAmount = new Money($flatFeeAmount, $this->flatFeeCurrency);
         $this->flatFeeFormatted = $flatFeeFormatted;
         $this->exchangeRate = $exchangeRate;
         $this->origin = LedgerOrigin::fromValue($origin);

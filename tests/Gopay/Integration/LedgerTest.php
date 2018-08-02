@@ -5,6 +5,7 @@ use DateTime;
 use Gopay\Enums\LedgerOrigin;
 use Gopay\Resources\Ledger;
 use Money\Currency;
+use Money\Money;
 use PHPUnit\Framework\TestCase;
 
 class LedgerTest extends TestCase
@@ -35,11 +36,11 @@ EOD;
         $ledger = Ledger::getSchema()->parse($json, [$this->getClient()->getStoreBasedContext()]);
         $this->assertEquals("11111111-1111-1111-1111-111111111111", $ledger->id);
         $this->assertEquals("22222222-2222-2222-2222-222222222222", $ledger->storeId);
-        $this->assertEquals(1200, $ledger->amount);
+        $this->assertEquals(Money::USD(1200), $ledger->amount);
         $this->assertEquals(new Currency('USD'), $ledger->currency);
         $this->assertEquals(12, $ledger->amountFormatted);
         $this->assertEquals(3.5, $ledger->percentFee);
-        $this->assertEquals(30, $ledger->flatFeeAmount);
+        $this->assertEquals(Money::USD(30), $ledger->flatFeeAmount);
         $this->assertEquals(new Currency('USD'), $ledger->flatFeeCurrency);
         $this->assertEquals(105, $ledger->exchangeRate);
         $this->assertEquals(LedgerOrigin::CHARGE(), $ledger->origin);

@@ -60,12 +60,11 @@ trait GetCharges
             "limit" => $limit,
             "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ]);
-
         return RequesterUtils::executeGetPaginated(Charge::class, $this->getChargeContext(), $query);
     }
 
     /**
-     * See listCharges parameters for valid opts keys
+     * @param array $opts See listCharges parameters for valid opts keys
      */
     public function listChargesByOptions(array $opts = [])
     {

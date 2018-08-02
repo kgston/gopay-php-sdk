@@ -2,6 +2,7 @@
 namespace GopayTest\Integration;
 
 use Gopay\Enums\WebhookEvent;
+use Money\Money;
 use PHPUnit\Framework\TestCase;
 
 class WebhookPayloadTest extends TestCase
@@ -38,7 +39,7 @@ EOD;
 
         $payload = $this->getClient()->parseWebhookData(json_decode($str, true));
         $this->assertEquals(WebhookEvent::CHARGE_FINISHED(), $payload->event);
-        $this->assertEquals(100, $payload->data->requestedAmount);
+        $this->assertEquals(Money::JPY(100), $payload->data->requestedAmount);
         $this->assertEquals(["orderId" => 123456, "someString" => "abcdefg"], $payload->data->metadata);
     }
 }

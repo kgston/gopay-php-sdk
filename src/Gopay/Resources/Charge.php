@@ -9,6 +9,8 @@ use Gopay\Enums\Reason;
 use Gopay\Enums\RefundReason;
 use Gopay\Enums\TokenType;
 use Gopay\Errors\GopayValidationError;
+use Gopay\Resources\Mixins\GetCancels;
+use Gopay\Resources\Mixins\GetRefunds;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
 use Gopay\Utility\Json\JsonSchema;
@@ -19,16 +21,19 @@ class Charge extends Resource
 {
     use Jsonable;
     use Pollable;
+    use GetCancels, GetRefunds {
+        GetCancels::validate insteadof GetRefunds;
+    }
 
     public $storeId;
     public $transactionTokenId;
     public $transactionTokenType;
     public $subscriptionId;
-    public $requestedAmount;
     public $requestedCurrency;
+    public $requestedAmount;
     public $requestedAmountFormatted;
-    public $chargedAmount;
     public $chargedCurrency;
+    public $chargedAmount;
     public $chargedAmountFormatted;
     public $captureAt;
     public $status;
@@ -44,11 +49,11 @@ class Charge extends Resource
         $transactionTokenId,
         $transactionTokenType,
         $subscriptionId,
-        $requestedAmount,
         $requestedCurrency,
+        $requestedAmount,
         $requestedAmountFormatted,
-        $chargedAmount,
         $chargedCurrency,
+        $chargedAmount,
         $chargedAmountFormatted,
         $captureAt,
         $status,
@@ -64,11 +69,11 @@ class Charge extends Resource
         $this->transactionTokenId = $transactionTokenId;
         $this->transactionTokenType = TokenType::fromValue($transactionTokenType);
         $this->subscriptionId = $subscriptionId;
-        $this->requestedAmount = $requestedAmount;
         $this->requestedCurrency = new Currency($requestedCurrency);
+        $this->requestedAmount = new Money($requestedAmount, $this->requestedCurrency);
         $this->requestedAmountFormatted = $requestedAmountFormatted;
-        $this->chargedAmount = $chargedAmount;
         $this->chargedCurrency = isset($chargedCurrency) ? new Currency($chargedCurrency) : null;
+        $this->chargedAmount = isset($chargedAmount) ? new Money($chargedAmount, $this->chargedCurrency) : null;
         $this->chargedAmountFormatted = $chargedAmountFormatted;
         $this->captureAt = date_create($captureAt);
         $this->status = ChargeStatus::fromValue($status);
@@ -115,23 +120,6 @@ class Charge extends Resource
         return RequesterUtils::executePost(Refund::class, $context, $payload);
     }
 
-    public function listRefunds(
-        $cursor = null,
-        $limit = null,
-        CursorDirection $cursorDirection = null
-    ) {
-        $query = FunctionalUtils::stripNulls([
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
-        ]);
-        return RequesterUtils::executeGetPaginated(
-            Refund::class,
-            $this->getIdContext()->appendPath("refunds"),
-            $query
-        );
-    }
-
     public function capture(Money $money = null)
     {
         $context = $this->getIdContext()->appendPath("capture");
@@ -147,20 +135,13 @@ class Charge extends Resource
         return RequesterUtils::executePost(Cancel::class, $context, $payload);
     }
 
-    public function listCancels(
-        $cursor = null,
-        $limit = null,
-        CursorDirection $cursorDirection = null
-    ) {
-        $query = FunctionalUtils::stripNulls([
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
-        ]);
-        return RequesterUtils::executeGetPaginated(
-            Cancel::class,
-            $this->getIdContext()->appendPath("cancels"),
-            $query
-        );
+    protected function getCancelContext()
+    {
+        return $this->context->withPath(["stores", $this->storeId, "charges", $this->id, 'cancels']);
+    }
+
+    protected function getRefundContext()
+    {
+        return $this->context->withPath(["stores", $this->storeId, "charges", $this->id, 'refunds']);
     }
 }

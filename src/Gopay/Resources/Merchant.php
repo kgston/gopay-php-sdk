@@ -52,7 +52,7 @@ class Merchant extends Resource
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(Merchant::class)
-                    ->upsert("configuration", true, Configuration::getSchema()->getParser());
+        return JsonSchema::fromClass(self::class)
+            ->upsert("configuration", true, Configuration::getSchema()->getParser());
     }
 }

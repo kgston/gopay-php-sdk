@@ -26,10 +26,13 @@ use Gopay\Resources\CardConfiguration;
 use Gopay\Resources\Charge;
 use Gopay\Resources\CheckoutInfo;
 use Gopay\Resources\Merchant;
+use Gopay\Resources\Mixins\GetBankAccounts;
 use Gopay\Resources\Mixins\GetCharges;
+use Gopay\Resources\Mixins\GetStores;
 use Gopay\Resources\Mixins\GetSubscriptions;
 use Gopay\Resources\Mixins\GetTransactions;
 use Gopay\Resources\Mixins\GetTransactionTokens;
+use Gopay\Resources\Mixins\GetTransfers;
 use Gopay\Resources\PaymentMethod\PaymentMethod;
 use Gopay\Resources\InstallmentPlan;
 use Gopay\Resources\Refund;
@@ -47,8 +50,13 @@ use Money\Money;
 
 class GopayClient
 {
-    use GetCharges, GetSubscriptions, GetTransactions, GetTransactionTokens {
-        GetCharges::validate insteadof GetSubscriptions, GetTransactions, GetTransactionTokens;
+    use GetBankAccounts, GetCharges, GetStores, GetSubscriptions, GetTransactions, GetTransactionTokens, GetTransfers {
+        GetCharges::validate insteadof GetBankAccounts,
+        GetStores,
+        GetSubscriptions,
+        GetTransactions,
+        GetTransactionTokens,
+        GetTransfers;
     }
 
     private $endpoint;
@@ -118,41 +126,10 @@ class GopayClient
         );
     }
 
-    public function listStores(
-        $cursor = null,
-        $limit = null,
-        CursorDirection $cursorDirection = null
-    ) {
-        $query = FunctionalUtils::stripNulls([
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
-        ]);
-        return RequesterUtils::executeGetPaginated(
-            Store::class,
-            $this->getStoreContext(),
-            $query
-        );
-    }
-
     public function getStore($id)
     {
         $context = $this->getStoreContext()->appendPath($id);
         return RequesterUtils::executeGet(Store::class, $context);
-    }
-
-    public function listBankAccounts(
-        $cursor = null,
-        $limit = null,
-        CursorDirection $cursorDirection = null
-    ) {
-        $query = FunctionalUtils::stripNulls([
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
-        ]);
-        $context = $this->getBankAccountContext();
-        return RequesterUtils::executeGetPaginated(BankAccount::class, $context, $query);
     }
 
     public function getBankAccount($id)
@@ -235,20 +212,6 @@ class GopayClient
         return RequesterUtils::executeGet(Subscription::class, $context);
     }
 
-    public function listTransfers(
-        $cursor = null,
-        $limit = null,
-        CursorDirection $cursorDirection = null
-    ) {
-        $query = FunctionalUtils::stripNulls([
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection->getValue() : null
-        ]);
-        $context = $this->getTransferContext();
-        return RequesterUtils::executeGetPaginated(Transfer::class, $context, $query);
-    }
-
     public function getTransfer($id)
     {
         $context = $this->getTransferContext()->appendPath($id);
@@ -296,9 +259,19 @@ class GopayClient
         }
     }
 
+    protected function getBankAccountContext($storeId = null)
+    {
+        return $this->getContext($storeId)->withPath("bank_accounts");
+    }
+
     protected function getCustomerId($localCustomerId)
     {
         return $this->getStore($this->storeAppJWT->storeId)->getCustomerId($localCustomerId);
+    }
+
+    protected function getChargeContext($storeId = null)
+    {
+        return $this->getContext($storeId)->withPath("charges");
     }
 
     protected function getStoreContext($storeId = null)
@@ -321,18 +294,8 @@ class GopayClient
         return $this->getContext($storeId)->withPath("transaction_history");
     }
 
-    protected function getChargeContext($storeId = null)
-    {
-        return $this->getContext($storeId)->withPath("charges");
-    }
-
     protected function getTransferContext($storeId = null)
     {
         return $this->getContext($storeId)->withPath("transfers");
-    }
-
-    protected function getBankAccountContext($storeId = null)
-    {
-        return $this->getContext($storeId)->withPath("bank_accounts");
     }
 }

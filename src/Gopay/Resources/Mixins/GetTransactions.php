@@ -47,7 +47,7 @@ trait GetTransactions
     }
 
     /**
-     * See listTransactions parameters for valid opts keys
+     * @param array $opts See listTransactions parameters for valid opts keys
      */
     public function listTransactionsByOptions(array $opts = [])
     {

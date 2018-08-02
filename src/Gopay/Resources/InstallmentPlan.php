@@ -5,6 +5,7 @@ namespace Gopay\Resources;
 use InvalidArgumentException;
 use JsonSerializable;
 use Gopay\Enums\InstallmentPlanType;
+use Gopay\Utility\FormatterUtils;
 use Gopay\Utility\Json\JsonSchema;
 
 class InstallmentPlan implements JsonSerializable
@@ -15,24 +16,30 @@ class InstallmentPlan implements JsonSerializable
     public $fixedCycles;
     public $fixedCycleAmount;
 
-    public function __construct($planType, $fixedCycles = null, $fixedCycleAmount = null)
+    public function __construct(InstallmentPlanType $planType, $fixedCycles = null, $fixedCycleAmount = null)
     {
-        if (!$planType instanceof InstallmentPlanType) {
-            $planType = InstallmentPlanType::fromValue($planType);
-        }
-        
-        if (($planType == InstallmentPlanType::NONE() || $planType == InstallmentPlanType::REVOLVING()) &&
-        ($fixedCycles != null || $fixedCycleAmount != null)) {
-            throw new InvalidArgumentException('None or revolving plans do not accept 
-                $fixedCycles or $fixedCycleAmount');
-        } elseif ($planType == InstallmentPlanType::FIXED_CYCLES() &&
-        ($fixedCycles == null || $fixedCycleAmount != null)) {
-            throw new InvalidArgumentException('Fixed cycle plans requires $fixedCycles and not $fixedCycleAmount');
-        } elseif ($planType == InstallmentPlanType::FIXED_CYCLE_AMOUNT() &&
-        ($fixedCycles != null || $fixedCycleAmount == null)) {
-            throw new InvalidArgumentException(
-                'Fixed cycle amount plans requires $fixedCycleAmount and not $fixedCycles'
-            );
+        switch ($planType) {
+            case InstallmentPlanType::NONE():
+            case InstallmentPlanType::REVOLVING():
+                if ($fixedCycles != null || $fixedCycleAmount != null) {
+                    throw new InvalidArgumentException(
+                        'None or revolving plans do not accept $fixedCycles or $fixedCycleAmount'
+                    );
+                }
+                break;
+            case InstallmentPlanType::FIXED_CYCLES():
+                if ($fixedCycles == null || $fixedCycleAmount != null) {
+                    throw new InvalidArgumentException(
+                        'Fixed cycle plans requires $fixedCycles and not $fixedCycleAmount'
+                    );
+                }
+                break;
+            case InstallmentPlanType::FIXED_CYCLE_AMOUNT():
+                if ($fixedCycles != null || $fixedCycleAmount == null) {
+                    throw new InvalidArgumentException(
+                        'Fixed cycle amount plans requires $fixedCycleAmount and not $fixedCycles'
+                    );
+                }
         }
 
         $this->planType = $planType;
@@ -56,6 +63,7 @@ class InstallmentPlan implements JsonSerializable
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(self::class);
+        return JsonSchema::fromClass(self::class)
+            ->upsert('plan_type', true, FormatterUtils::of('getInstallmentPlanType'));
     }
 }

@@ -53,7 +53,7 @@ trait GetTransactionTokens
     }
 
     /**
-     * See listTransactionTokens parameters for valid opts keys
+     * @param array $opts See listTransactionTokens parameters for valid opts keys
      */
     public function listTransactionTokensByOptions(array $opts = [])
     {

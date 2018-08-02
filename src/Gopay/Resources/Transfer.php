@@ -4,18 +4,24 @@ namespace Gopay\Resources;
 
 use Gopay\Enums\CursorDirection;
 use Gopay\Enums\TransferStatus;
+use Gopay\Resources\Mixins\GetLedgers;
+use Gopay\Resources\Mixins\GetStatusChanges;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\Json\JsonSchema;
 use Gopay\Utility\RequesterUtils;
 use Money\Currency;
+use Money\Money;
 
 class Transfer extends Resource
 {
     use Jsonable;
+    use GetLedgers, GetStatusChanges {
+        GetLedgers::validate insteadof GetStatusChanges;
+    }
     
     public $bankAccountId;
-    public $amount;
     public $currency;
+    public $amount;
     public $amountFormatted;
     public $status;
     public $errorCode;
@@ -29,8 +35,8 @@ class Transfer extends Resource
     public function __construct(
         $id,
         $bankAccountId,
-        $amount,
         $currency,
+        $amount,
         $amountFormatted,
         $status,
         $errorCode,
@@ -44,8 +50,8 @@ class Transfer extends Resource
     ) {
         parent::__construct($id, $context);
         $this->bankAccountId = $bankAccountId;
-        $this->amount = $amount;
         $this->currency = new Currency($currency);
+        $this->amount = new Money($amount, $this->currency);
         $this->amountFormatted = $amountFormatted;
         $this->status = TransferStatus::fromValue($status);
         $this->errorCode = $errorCode;
@@ -57,24 +63,14 @@ class Transfer extends Resource
         $this->createdOn = date_create($createdOn);
     }
 
-    public function listLedgers(
-        $cursor = null,
-        $limit = null,
-        CursorDirection $cursorDirection = null
-    ) {
-        $query = FunctionalUtils::stripNulls([
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection.getValue() : null
-        ]);
-        $context = $this->getIdContext()->appendPath("ledgers");
-        return RequesterUtils::executeGetPaginated(Ledger::class, $context, $query);
+    protected function getLedgerContext()
+    {
+        return $this->getIdContext()->appendPath("ledgers");
     }
 
-    public function listStatusChanges()
+    protected function getStatusChangeContext()
     {
-        $context = $this->getIdContext()->appendPath("status_changes");
-        return RequesterUtils::executeGetPaginated(TransferStatusChange::class, $context, $query);
+        return $this->getIdContext()->appendPath("status_changes");
     }
 
     protected static function initSchema()

@@ -38,7 +38,7 @@ class Store extends Resource
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(Store::class)
+        return JsonSchema::fromClass(self::class)
             ->upsert("configuration", false, Configuration::getSchema()->getParser()); // TODO: Set required to true
     }
 

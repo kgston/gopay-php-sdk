@@ -69,6 +69,6 @@ class BankAccount extends Resource
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(BankAccount::class);
+        return JsonSchema::fromClass(self::class);
     }
 }

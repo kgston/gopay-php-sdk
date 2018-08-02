@@ -33,7 +33,7 @@ class Cancel extends Resource
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(Cancel::class);
+        return JsonSchema::fromClass(self::class);
     }
     
     protected function getIdContext()

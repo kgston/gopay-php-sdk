@@ -17,7 +17,7 @@ class ChargeTest extends TestCase
     public function testCreateCharge()
     {
         $charge = $this->createValidCharge(true);
-        $this->assertEquals(1000, $charge->requestedAmount);
+        $this->assertEquals(Money::JPY(1000), $charge->requestedAmount);
         $this->assertEquals(new Currency('JPY'), $charge->requestedCurrency);
         $this->assertInstanceOf(DateTime::class, $charge->createdOn);
         $this->assertInstanceOf(DateTime::class, $charge->updatedOn);
@@ -26,7 +26,7 @@ class ChargeTest extends TestCase
     public function testCreateChargeOnToken()
     {
         $charge = $this->createValidToken()->createCharge(Money::JPY(1000));
-        $this->assertEquals(1000, $charge->requestedAmount);
+        $this->assertEquals(Money::JPY(1000), $charge->requestedAmount);
         $this->assertEquals(new Currency('JPY'), $charge->requestedCurrency);
     }
 

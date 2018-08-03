@@ -37,6 +37,7 @@ use Gopay\Resources\PaymentMethod\PaymentMethod;
 use Gopay\Resources\InstallmentPlan;
 use Gopay\Resources\Refund;
 use Gopay\Resources\ScheduleSettings;
+use Gopay\Resources\ScheduledPayment;
 use Gopay\Resources\Store;
 use Gopay\Resources\Subscription;
 use Gopay\Resources\Transaction;
@@ -211,6 +212,36 @@ class GopayClient
     {
         $context = $this->getContext()->withPath(['stores', $storeId, 'subscriptions', $subscriptionId]);
         return RequesterUtils::executeGet(Subscription::class, $context);
+    }
+
+    public function createSubscriptionSimulation(
+        PaymentType $paymentType,
+        Money $amount,
+        Period $period,
+        Money $initialAmount = null,
+        ScheduleSettings $scheduleSettings = null,
+        InstallmentPlan $installmentPlan = null
+    ) {
+        $payload = $amount->jsonSerialize() + [
+            'payment_type' => $paymentType->getValue(),
+            'period' => $period->getValue(),
+            'schedule_settings' => $scheduleSettings,
+            'installment_plan' => $installmentPlan,
+        ];
+        if (isset($initialAmount)) {
+            if ($initialAmount->isNegative()) {
+                throw new GopayValidationError(Field::INITIAL_AMOUNT(), Reason::INVALID_FORMAT());
+            } else {
+                $payload += $initialAmount->jsonSerialize();
+            }
+        }
+
+        $context = $this->getStoreBasedContext()->appendPath(['subscriptions', 'simulate_plan']);
+        return RequesterUtils::executePostSimpleList(
+            ScheduledPayment::class,
+            $context,
+            FunctionalUtils::stripNulls($payload)
+        );
     }
 
     public function getTransfer($id)

@@ -17,12 +17,17 @@ final class Reason extends TypedEnum
     public static function INVALID_PERMISSIONS() { return self::create(); }
     public static function INVALID_TOKEN_TYPE() { return self::create(); }
     public static function MUST_BE_FUTURE_TIME() { return self::create(); }
+    public static function FORBIDDEN_PARAMETER() { return self::create(); }
 
     // Subscriptions
     public static function NON_SUBSCRIPTION_PAYMENT() { return self::create(); }
     public static function NOT_SUBSCRIPTION_PAYMENT() { return self::create(); }
     public static function SUBSCRIPTION_ALREADY_ENDED() { return self::create(); }
     public static function SUBSCRIPTION_PROCESSING() { return self::create(); }
-    public static function INSTALLMENT_PLAN_NOT_FOUND() { return self::create(); }
+    public static function INSTALLMENT_ALREADY_SET() { return self::create(); }
     public static function MUST_BE_MONTH_BASE_TO_SET() { return self::create(); }
+    public static function CANNOT_CHANGE_CANCELED_SUBSCRIPTION() { return self::create(); }
+    public static function CANNOT_SET_AFTER_SUBSCRIPTION_STARTED() { return self::create(); }
+    public static function CANNOT_CHANGE_TOKEN() { return self::create(); }
+    public static function NEED_AT_LEAST_TWO_CYCLES() { return self::create(); }
 }

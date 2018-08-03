@@ -5,6 +5,7 @@ namespace Gopay\Utility;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
 use Gopay\Resources\Paginated;
+use Gopay\Resources\SimpleList;
 
 abstract class RequesterUtils
 {
@@ -48,6 +49,19 @@ abstract class RequesterUtils
         } else {
             return $parser::getSchema()->parse($response, [$requestContext]);
         }
+    }
+
+    public static function executePostSimpleList(
+        $parser,
+        RequestContext $requestContext,
+        $payload = []
+    ) {
+        $response = $requestContext->getRequester()->post(
+            $requestContext->getFullURL(),
+            $payload,
+            self::getHeaders($requestContext)
+        );
+        return SimpleList::fromResponse($response, $parser, $requestContext);
     }
 
     public static function executePatch(

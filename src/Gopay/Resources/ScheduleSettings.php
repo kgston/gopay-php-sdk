@@ -23,13 +23,13 @@ class ScheduleSettings implements JsonSerializable
         DateTimeZone $zoneId = null,
         $preserveEndOfMonth = false
     ) {
+        if (isset($startOn, $zoneId)) {
+            $startOn->setTimezone($zoneId);
+        }
+
         $this->startOn = $startOn;
         $this->zoneId = $zoneId;
         $this->preserveEndOfMonth = $preserveEndOfMonth;
-
-        if (isset($this->$startOn) && isset($zoneId)) {
-            $this->$startOn->setTimezone($zoneId);
-        }
     }
 
     public function jsonSerialize()

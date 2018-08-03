@@ -3,11 +3,13 @@
 namespace Gopay\Resources;
 
 use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\Field;
 use Gopay\Enums\InstallmentPlanType;
 use Gopay\Enums\Period;
 use Gopay\Enums\Reason;
 use Gopay\Enums\SubscriptionStatus;
 use Gopay\Errors\GopayLogicError;
+use Gopay\Errors\GopayValidationError;
 use Gopay\Resources\Mixins\GetCharges;
 use Gopay\Resources\Mixins\GetScheduledPayments;
 use Gopay\Utility\FunctionalUtils;
@@ -91,24 +93,40 @@ class Subscription extends Resource
 
     public function patch(
         $transactionTokenId = null,
-        Money $money = null,
         Money $initialAmount = null,
+        Period $period = null,
+        ScheduleSettings $scheduleSettings = null,
+        SubscriptionStatus $status = null,
         array $metadata = null,
         InstallmentPlan $installmentPlan = null
     ) {
-        if ($this->isTerminal()) {
-            throw new GopayLogicError(Reason::SUBSCRIPTION_ALREADY_ENDED());
+        if (SubscriptionStatus::CANCELED() == $this->status) {
+            throw new GopayLogicError(Reason::CANNOT_CHANGE_CANCELED_SUBSCRIPTION());
         }
-        if ($this->isProcessing()) {
-            throw new GopayLogicError(Reason::SUBSCRIPTION_PROCESSING());
+        if (isset($transactionTokenId) && !$this->isTokenPatchable()) {
+            throw new GopayLogicError(Reason::CANNOT_CHANGE_TOKEN());
         }
-        if (!isset($this->installmentPlan) && $installmentPlan->planType === InstallmentPlanType::NONE()) {
-            throw new GopayLogicError(Reason::INSTALLMENT_PLAN_NOT_FOUND());
+        if (isset($initialAmount) && !$this->isEditable() && $initialAmount->isNegative()) {
+            throw new GopayValidationError(Field::INITIAL_AMOUNT(), Reason::INVALID_FORMAT());
+        }
+        if (isset($period) && !$this->isEditable()) {
+            throw new GopayLogicError(Reason::CANNOT_SET_AFTER_SUBSCRIPTION_STARTED());
+        }
+        if (isset($status) &&
+        SubscriptionStatus::UNPAID() != $status &&
+        !SubscriptionStatus::SUSPENDED() != $this->status) {
+            throw new GopayValidationError(Field::STATUS(), Reason::FORBIDDEN_PARAMETER());
+        }
+        if (isset($installmentPlan) && !$this->isEditable()) {
+            throw new GopayLogicError(Reason::INSTALLMENT_ALREADY_SET());
         }
 
         $payload = [
             'transaction_token_id' => $transactionTokenId,
             'initial_amount' => isset($initialAmount) ? $initialAmount->getAmount() : null,
+            'period' => isset($period) ? $period->getValue() : null,
+            'schedule_settings' => $scheduleSettings,
+            'status' => isset($status) ? $status->getValue() : null,
             'metadata' => $metadata,
             'installment_plan' => $installmentPlan
         ];
@@ -128,21 +146,49 @@ class Subscription extends Resource
 
     public function isEditable()
     {
-        return $this->status === SubscriptionStatus::UNVERIFIED() ||
-            $this->status === SubscriptionStatus::UNCONFIRMED();
+        switch ($this->status) {
+            case SubscriptionStatus::UNVERIFIED():
+            case SubscriptionStatus::UNCONFIRMED():
+                return true;
+            default:
+                return false;
+        }
     }
     
     public function isProcessing()
     {
-        return $this->status === SubscriptionStatus::UNPAID() ||
-            $this->status === SubscriptionStatus::CURRENT() ||
-            $this->status === SubscriptionStatus::SUSPENDED();
+        switch ($this->status) {
+            case SubscriptionStatus::UNPAID():
+            case SubscriptionStatus::CURRENT():
+            case SubscriptionStatus::SUSPENDED():
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public function isTokenPatchable()
+    {
+        switch ($this->status) {
+            case SubscriptionStatus::UNCONFIRMED():
+            case SubscriptionStatus::UNPAID():
+            case SubscriptionStatus::CURRENT():
+            case SubscriptionStatus::SUSPENDED():
+                return true;
+            default:
+                return false;
+        }
     }
 
     public function isTerminal()
     {
-        return $this->status === SubscriptionStatus::CANCELED() ||
-            $this->status === SubscriptionStatus::COMPLETED();
+        switch ($this->status) {
+            case SubscriptionStatus::CANCELED():
+            case SubscriptionStatus::COMPLETED():
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static function isSubscribable(PaymentType $paymentType)

@@ -22,8 +22,10 @@ class FormatterUtils
         return new DateTimeZone($dateTimeZone);
     }
 
-    public static function getInstallmentPlanType($installmentPlanType)
+    public static function getTypedEnum($typedEnumClass)
     {
-        return InstallmentPlanType::fromValue($installmentPlanType);
+        return function ($value) use ($typedEnumClass) {
+            return call_user_func([$typedEnumClass, 'fromValue'], $value);
+        };
     }
 }

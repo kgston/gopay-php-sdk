@@ -6,7 +6,6 @@ use Gopay\Utility\RequesterUtils;
 
 abstract class Resource
 {
-
     public $id;
     protected $context;
 

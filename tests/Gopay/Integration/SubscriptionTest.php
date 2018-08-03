@@ -11,6 +11,7 @@ use Gopay\Enums\SubscriptionStatus;
 use Gopay\Enums\TokenType;
 use Gopay\Resources\InstallmentPlan;
 use Gopay\Resources\Paginated;
+use Gopay\Resources\SimpleList;
 use Gopay\Resources\ScheduledPayment;
 use Gopay\Resources\Subscription;
 use Gopay\Resources\ScheduleSettings;
@@ -56,8 +57,8 @@ class SubscriptionTest extends TestCase
             "payments_left": 9,
             "status": "canceled",
             "installment_plan": {
-                "plan_type": "fixed_cycles",
-                "fixed_cycles": 10
+                "plan_type": "fixed_cycle_amount",
+                "fixed_cycle_amount": 1000
             },
             "amount_left": 5000,
             "amount_left_formatted": 5000,
@@ -87,8 +88,8 @@ EOD;
         $this->assertInstanceOf(ScheduledPayment::class, $subscription->nextPayment);
         $this->assertEquals(date_create('2017-07-04T06:06:05.580391Z'), $subscription->createdOn);
         $this->assertEquals(date_create('2017-07-04T06:06:05.580391Z'), $subscription->updatedOn);
-        $this->assertEquals(InstallmentPlanType::FIXED_CYCLES(), $subscription->installmentPlan->planType);
-        $this->assertEquals('10', $subscription->installmentPlan->fixedCycles);
+        $this->assertEquals(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), $subscription->installmentPlan->planType);
+        $this->assertEquals(Money::JPY(1000), $subscription->installmentPlan->fixedCycleAmount);
         $this->assertEquals('9', $subscription->paymentsLeft);
         $this->assertEquals(Money::JPY(5000), $subscription->amountLeft);
         $this->assertEquals(5000, $subscription->amountLeftFormatted);
@@ -140,23 +141,32 @@ EOD;
         $subscription = $this->createUnconfirmedSubscription();
 
         $updatedToken = $this->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION());
+        $schedule = new ScheduleSettings(date_create('last day of this month'), new DateTimeZone('UTC'), true);
         
         $patchedSubscription = $subscription->patch(
             $updatedToken->id,
-            Money::JPY(99999),
             Money::JPY(2000),
+            Period::MONTHLY(),
+            $schedule,
             null,
-            new InstallmentPlan(InstallmentPlanType::FIXED_CYCLES(), 9)
+            ['reason' => 'PHP SDK TEST'],
+            new InstallmentPlan(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), null, Money::JPY(2000))
         )->awaitResult();
-        $this->assertEquals(Money::JPY(99999), $patchedSubscription->amount);
+        $this->assertEquals(Money::JPY(10000), $patchedSubscription->amount);
         $this->assertEquals(new Currency('JPY'), $patchedSubscription->currency);
-        $this->assertEquals(Period::BIWEEKLY(), $patchedSubscription->period);
+        $this->assertEquals(Period::MONTHLY(), $patchedSubscription->period);
         $this->assertEquals(Money::JPY(2000), $patchedSubscription->initialAmount);
         $this->assertEquals(
-            InstallmentPlanType::FIXED_CYCLES(),
+            date_create('last day of this month midnight'),
+            $patchedSubscription->scheduleSettings->startOn
+        );
+        $this->assertEquals(new DateTimeZone('Asia/Tokyo'), $patchedSubscription->scheduleSettings->zoneId);
+        $this->assertTrue($patchedSubscription->scheduleSettings->preserveEndOfMonth);
+        $this->assertEquals(
+            InstallmentPlanType::FIXED_CYCLE_AMOUNT(),
             $patchedSubscription->installmentPlan->planType
         );
-        $this->assertEquals(9, $patchedSubscription->installmentPlan->fixedCycles);
+        $this->assertEquals(Money::JPY(2000), $patchedSubscription->installmentPlan->fixedCycleAmount);
     }
     
     public function testCancelSubscription()
@@ -194,5 +204,23 @@ EOD;
         $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
         $charges = $getSubscription->listCharges();
         $this->assertInstanceOf(Paginated::class, $charges);
+    }
+
+    public function testCreateSubscriptionSimulation()
+    {
+        $schedule = new ScheduleSettings(date_create('last day of this month'), null, true);
+        $installmentPlan = new InstallmentPlan(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), null, Money::JPY(1000));
+        $simulatedPayments = $this->getClient()->createSubscriptionSimulation(
+            PaymentType::CARD(),
+            Money::JPY(10000),
+            Period::MONTHLY(),
+            Money::JPY(100),
+            $schedule,
+            $installmentPlan
+        );
+
+        $this->assertInstanceOf(SimpleList::class, $simulatedPayments);
+        $this->assertEquals(5, count($simulatedPayments->items));
+        $this->assertInstanceOf(ScheduledPayment::class, reset($simulatedPayments->items));
     }
 }

@@ -42,7 +42,6 @@ class Subscription extends Resource
     public $metadata;
     public $mode;
     public $createdOn;
-    public $updatedOn;
     public $nextPayment;
     public $installmentPlan;
 
@@ -64,7 +63,6 @@ class Subscription extends Resource
         $metadata,
         $mode,
         $createdOn,
-        $updatedOn,
         ScheduledPayment $nextPayment = null,
         InstallmentPlan $installmentPlan = null,
         $context = null
@@ -87,7 +85,6 @@ class Subscription extends Resource
         $this->metadata = $metadata;
         $this->mode = AppTokenMode::fromValue($mode);
         $this->createdOn = date_create($createdOn);
-        $this->updatedOn = date_create($updatedOn);
         $this->installmentPlan = $installmentPlan;
     }
 

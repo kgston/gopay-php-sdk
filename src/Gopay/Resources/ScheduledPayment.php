@@ -24,7 +24,6 @@ class ScheduledPayment extends Resource
     public $isPaid;
     public $isLastPayment;
     public $createdOn;
-    public $updatedOn;
 
     public function __construct(
         $id,
@@ -37,7 +36,6 @@ class ScheduledPayment extends Resource
         $isPaid,
         $isLastPayment,
         $createdOn,
-        $updatedOn,
         $context
     ) {
         parent::__construct($id, $context);
@@ -50,7 +48,6 @@ class ScheduledPayment extends Resource
         $this->isPaid = $isPaid;
         $this->isLastPayment = $isLastPayment;
         $this->createdOn = date_create($createdOn);
-        $this->updatedOn = date_create($updatedOn);
     }
 
     protected static function initSchema()

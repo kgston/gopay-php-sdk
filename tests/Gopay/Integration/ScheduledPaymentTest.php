@@ -29,8 +29,7 @@ class ScheduledPaymentTest extends TestCase
             "amount_formatted": 560,
             "is_paid": false,
             "is_last_payment": true,
-            "created_on": "2018-08-02T04:52:31.250338Z",
-            "updated_on": "2018-08-02T04:52:31.250338Z"
+            "created_on": "2018-08-02T04:52:31.250338Z"
         }
 EOD;
         $json = json_decode($str, true);
@@ -44,7 +43,6 @@ EOD;
         $this->assertFalse($payment->isPaid);
         $this->assertTrue($payment->isLastPayment);
         $this->assertEquals(date_create('2018-08-02T04:52:31.250338Z'), $payment->createdOn);
-        $this->assertEquals(date_create('2018-08-02T04:52:31.250338Z'), $payment->updatedOn);
     }
 
     public function testListChargesForScheduledPayment()

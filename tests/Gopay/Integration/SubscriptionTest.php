@@ -64,8 +64,7 @@ class SubscriptionTest extends TestCase
             "amount_left_formatted": 5000,
             "metadata": {},
             "mode": "test",
-            "created_on": "2017-07-04T06:06:05.580391Z",
-            "updated_on": "2017-07-04T06:06:05.580391Z"
+            "created_on": "2017-07-04T06:06:05.580391Z"
         }
 EOD;
 
@@ -87,7 +86,6 @@ EOD;
         $this->assertEquals(AppTokenMode::TEST(), $subscription->mode);
         $this->assertInstanceOf(ScheduledPayment::class, $subscription->nextPayment);
         $this->assertEquals(date_create('2017-07-04T06:06:05.580391Z'), $subscription->createdOn);
-        $this->assertEquals(date_create('2017-07-04T06:06:05.580391Z'), $subscription->updatedOn);
         $this->assertEquals(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), $subscription->installmentPlan->planType);
         $this->assertEquals(Money::JPY(1000), $subscription->installmentPlan->fixedCycleAmount);
         $this->assertEquals('9', $subscription->paymentsLeft);
@@ -103,7 +101,6 @@ EOD;
         $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
         $this->assertEquals(Money::JPY(1000), $subscription->initialAmount);
         $this->assertInstanceOf(DateTime::class, $subscription->createdOn);
-        $this->assertInstanceOf(DateTime::class, $subscription->updatedOn);
     }
 
     public function testCreateScheduleSubscription()

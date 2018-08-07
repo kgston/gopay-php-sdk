@@ -4,7 +4,6 @@ namespace Gopay\Resources;
 
 trait Jsonable
 {
-
     protected static $schema;
 
     // Required to be implemented but causes an exception to be thrown in strict mode on PHP >5.3 && <7
@@ -20,6 +19,6 @@ trait Jsonable
 
     public static function getContextParser($context)
     {
-        return self::getSchema()->getParser(array($context));
+        return self::getSchema()->getParser([$context]);
     }
 }

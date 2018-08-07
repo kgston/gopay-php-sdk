@@ -31,25 +31,25 @@ trait GetTransactions
         $limit = null,
         CursorDirection $cursorDirection = null
     ) {
-        $query = FunctionalUtils::stripNulls(array(
-            "from" => $from->getTimestamp() * 1000,
-            "to" => $to->getTimestamp() * 1000,
-            "status" => isset($status) ? $status->getValue() : null,
-            "type" => isset($type) ? $type->getValue() : null,
-            "search" => $search,
-            "mode" => isset($mode) ? $mode->getValue() : null,
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => isset($cursorDirection) ? $cursorDirection.getValue() : null
-        ));
+        $query = FunctionalUtils::stripNulls([
+            'from' => $from->getTimestamp() * 1000,
+            'to' => $to->getTimestamp() * 1000,
+            'status' => isset($status) ? $status->getValue() : null,
+            'type' => isset($type) ? $type->getValue() : null,
+            'search' => $search,
+            'mode' => isset($mode) ? $mode->getValue() : null,
+            'cursor' => $cursor,
+            'limit' => $limit,
+            'cursor_direction' => isset($cursorDirection) ? $cursorDirection.getValue() : null
+        ]);
         
         return RequesterUtils::executeGetPaginated(Transaction::class, $this->getTransactionContext(), $query);
     }
 
     /**
-     * See listTransactions parameters for valid opts keys
+     * @param array $opts See listTransactions parameters for valid opts keys
      */
-    public function listTransactionsByOptions(array $opts = array())
+    public function listTransactionsByOptions(array $opts = [])
     {
         $rules = [
             'from' => 'ValidationHelper::getAtomDate',

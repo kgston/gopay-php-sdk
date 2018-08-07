@@ -32,18 +32,18 @@ class BankAccountsTest extends TestCase
         }
 EOD;
         $json = json_decode($str, $assoc = true);
-        $bankAccount = BankAccount::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
-        $this->assertEquals("11111111-1111-1111-1111-111111111111", $bankAccount->id);
-        $this->assertEquals("Test holder", $bankAccount->holderName);
-        $this->assertEquals("Test bank", $bankAccount->bankName);
-        $this->assertEquals("Test branch", $bankAccount->branchName);
-        $this->assertEquals("JP", $bankAccount->country);
+        $bankAccount = BankAccount::getSchema()->parse($json, [$this->getClient()->getStoreBasedContext()]);
+        $this->assertEquals('11111111-1111-1111-1111-111111111111', $bankAccount->id);
+        $this->assertEquals('Test holder', $bankAccount->holderName);
+        $this->assertEquals('Test bank', $bankAccount->bankName);
+        $this->assertEquals('Test branch', $bankAccount->branchName);
+        $this->assertEquals('JP', $bankAccount->country);
         $this->assertEquals(new Currency('JPY'), $bankAccount->currency);
-        $this->assertEquals("XXXXXXX890", $bankAccount->accountNumber);
-        $this->assertEquals("7890", $bankAccount->lastFour);
+        $this->assertEquals('XXXXXXX890', $bankAccount->accountNumber);
+        $this->assertEquals('7890', $bankAccount->lastFour);
         $this->assertEquals(BankAccountStatus::NEW_ACCOUNT(), $bankAccount->status);
         $this->assertEquals(BankAccountType::CHECKING(), $bankAccount->accountType);
-        $this->assertEquals(date_create("2017-03-28T05:37:06.850707Z"), $bankAccount->createdOn);
+        $this->assertEquals(date_create('2017-03-28T05:37:06.850707Z'), $bankAccount->createdOn);
         $this->assertEquals(true, $bankAccount->primary);
     }
 
@@ -93,12 +93,12 @@ EOD;
         $json = json_decode($str, true);
         $bankAccounts = Paginated::fromResponse(
             $json,
-            array(),
+            [],
             BankAccount::class,
             $this->getClient()->getStoreBasedContext()
         );
         $this->assertEquals(false, $bankAccounts->hasMore);
         $this->assertEquals(2, count($bankAccounts->items));
-        $this->assertEquals("Holder 2", $bankAccounts->items[1]->holderName);
+        $this->assertEquals('Holder 2', $bankAccounts->items[1]->holderName);
     }
 }

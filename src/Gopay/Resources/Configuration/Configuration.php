@@ -70,47 +70,47 @@ class Configuration
     {
         return JsonSchema::fromClass(Configuration::class)
                 ->upsert(
-                    "transfer_schedule",
+                    'transfer_schedule',
                     false,
                     $formatter = TransferSchedule::getSchema()->getParser()
                 )
                 ->upsert(
-                    "user_transactions_configuration",
+                    'user_transactions_configuration',
                     true,
                     $formatter = UserTransactionsConfiguration::getSchema()->getParser()
                 )
                 ->upsert(
-                    "card_configuration",
+                    'card_configuration',
                     true,
                     $formatter = CardConfiguration::getSchema()->getParser()
                 )
                 ->upsert(
-                    "qr_scan_configuration",
+                    'qr_scan_configuration',
                     true,
                     $formatter = QRConfiguration::getSchema()->getParser()
                 )
                 ->upsert(
-                    "convenience_configuration",
+                    'convenience_configuration',
                     true,
                     $formatter = ConvenienceConfiguration::getSchema()->getParser()
                 )
                 ->upsert(
-                    "recurring_token_configuration",
+                    'recurring_token_configuration',
                     true,
                     $formatter = RecurringConfiguration::getSchema()->getParser()
                 )
                 ->upsert(
-                    "security_configuration",
+                    'security_configuration',
                     true,
                     $formatter = SecurityConfiguration::getSchema()->getParser()
                 )
                 ->upsert(
-                    "installments_configuration",
+                    'installments_configuration',
                     true,
                     $formatter = InstallmentsConfiguration::getSchema()->getParser()
                 )
                 ->upsert(
-                    "card_brand_percent_fees",
+                    'card_brand_percent_fees',
                     true,
                     $formatter = CardBrandPercentFees::getSchema()->getParser()
                 );

@@ -33,13 +33,13 @@ class Cancel extends Resource
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(Cancel::class);
+        return JsonSchema::fromClass(self::class);
     }
     
     protected function getIdContext()
     {
         return $this->context->withPath(
-            array("stores", $this->storeId, "charges", $this->chargeId, "cancels", $this->id)
+            ['stores', $this->storeId, 'charges', $this->chargeId, 'cancels', $this->id]
         );
     }
 }

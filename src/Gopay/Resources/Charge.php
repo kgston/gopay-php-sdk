@@ -9,6 +9,8 @@ use Gopay\Enums\Reason;
 use Gopay\Enums\RefundReason;
 use Gopay\Enums\TokenType;
 use Gopay\Errors\GopayValidationError;
+use Gopay\Resources\Mixins\GetCancels;
+use Gopay\Resources\Mixins\GetRefunds;
 use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
 use Gopay\Utility\Json\JsonSchema;
@@ -19,16 +21,19 @@ class Charge extends Resource
 {
     use Jsonable;
     use Pollable;
+    use GetCancels, GetRefunds {
+        GetCancels::validate insteadof GetRefunds;
+    }
 
     public $storeId;
     public $transactionTokenId;
     public $transactionTokenType;
     public $subscriptionId;
-    public $requestedAmount;
     public $requestedCurrency;
+    public $requestedAmount;
     public $requestedAmountFormatted;
-    public $chargedAmount;
     public $chargedCurrency;
+    public $chargedAmount;
     public $chargedAmountFormatted;
     public $captureAt;
     public $status;
@@ -43,11 +48,11 @@ class Charge extends Resource
         $transactionTokenId,
         $transactionTokenType,
         $subscriptionId,
-        $requestedAmount,
         $requestedCurrency,
+        $requestedAmount,
         $requestedAmountFormatted,
-        $chargedAmount,
         $chargedCurrency,
+        $chargedAmount,
         $chargedAmountFormatted,
         $captureAt,
         $status,
@@ -62,13 +67,13 @@ class Charge extends Resource
         $this->transactionTokenId = $transactionTokenId;
         $this->transactionTokenType = TokenType::fromValue($transactionTokenType);
         $this->subscriptionId = $subscriptionId;
-        $this->requestedAmount = $requestedAmount;
         $this->requestedCurrency = new Currency($requestedCurrency);
+        $this->requestedAmount = new Money($requestedAmount, $this->requestedCurrency);
         $this->requestedAmountFormatted = $requestedAmountFormatted;
-        $this->chargedAmount = $chargedAmount;
         $this->chargedCurrency = isset($chargedCurrency) ? new Currency($chargedCurrency) : null;
+        $this->chargedAmount = isset($chargedAmount) ? new Money($chargedAmount, $this->chargedCurrency) : null;
         $this->chargedAmountFormatted = $chargedAmountFormatted;
-        $this->captureAt = date_create($captureAt);
+        $this->captureAt = isset($captureAt) ? date_create($captureAt) : null;
         $this->status = ChargeStatus::fromValue($status);
         $this->error = $error;
         $this->metadata = $metadata;
@@ -83,12 +88,12 @@ class Charge extends Resource
 
     protected function getIdContext()
     {
-        return $this->context->withPath(array("stores", $this->storeId, "charges", $this->id));
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id]);
     }
 
     public function patch(array $metadata)
     {
-        return RequesterUtils::executePatch(self::class, $this->getIdContext(), array('metadata' => $metadata));
+        return RequesterUtils::executePatch(self::class, $this->getIdContext(), ['metadata' => $metadata]);
     }
 
     public function createRefund(
@@ -102,62 +107,38 @@ class Charge extends Resource
         }
         $payload = FunctionalUtils::stripNulls(
             $money->jsonSerialize() +
-            array(
-                "reason" => isset($reason) ? $reason->getValue() : null,
-                "message" => $message,
-                "metadata" => $metadata
-            )
+            [
+                'reason' => isset($reason) ? $reason->getValue() : null,
+                'message' => $message,
+                'metadata' => $metadata
+            ]
         );
-        $context = $this->getIdContext()->appendPath("refunds");
+        $context = $this->getIdContext()->appendPath('refunds');
         return RequesterUtils::executePost(Refund::class, $context, $payload);
     }
 
-    public function listRefunds(
-        $cursor = null,
-        $limit = null,
-        CursorDirection $cursorDirection = null
-    ) {
-        $query = FunctionalUtils::stripNulls(array(
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
-        ));
-        return RequesterUtils::executeGetPaginated(
-            Refund::class,
-            $this->getIdContext()->appendPath("refunds"),
-            $query
-        );
-    }
-
-    public function capture(Money $money)
+    public function capture(Money $money = null)
     {
-        $context = $this->getIdContext()->appendPath("capture");
+        $context = $this->getIdContext()->appendPath('capture');
         return RequesterUtils::executePost(null, $context, $money);
     }
 
     public function cancel(array $metadata = null)
     {
-        $payload = FunctionalUtils::stripNulls(array(
-            "metadata" => $metadata
-        ));
-        $context = $this->getIdContext()->appendPath("cancels");
+        $payload = FunctionalUtils::stripNulls([
+            'metadata' => $metadata
+        ]);
+        $context = $this->getIdContext()->appendPath('cancels');
         return RequesterUtils::executePost(Cancel::class, $context, $payload);
     }
 
-    public function listCancels(
-        $cursor = null,
-        $limit = null,
-        CursorDirection $cursorDirection = null
-    ) {
-        $query = FunctionalUtils::stripNulls(array(
-            "cursor" => $cursor,
-            "limit" => $limit,
-            "cursor_direction" => $cursorDirection == null ? $cursorDirection : $cursorDirection->getValue()
-        ));
-        return RequesterUtils::executeGetPaginated(
-            Cancel::class,
-            $this->getIdContext()->appendPath("cancels"),
-            $query
-        );
+    protected function getCancelContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'cancels']);
+    }
+
+    protected function getRefundContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'refunds']);
     }
 }

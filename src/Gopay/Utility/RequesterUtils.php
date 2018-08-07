@@ -5,11 +5,12 @@ namespace Gopay\Utility;
 use Gopay\Requests\RequestContext;
 use Gopay\Requests\Requester;
 use Gopay\Resources\Paginated;
+use Gopay\Resources\SimpleList;
 
 abstract class RequesterUtils
 {
 
-    public static function getHeaders(RequestContext $requestContext, array $headers = array())
+    public static function getHeaders(RequestContext $requestContext, array $headers = [])
     {
         return array_merge(
             HttpUtils::addJsonHeader($requestContext->getAuthorizationHeaders()),
@@ -17,17 +18,17 @@ abstract class RequesterUtils
         );
     }
 
-    public static function executeGet($parser, RequestContext $requestContext, $query = array())
+    public static function executeGet($parser, RequestContext $requestContext, $query = [])
     {
         $response = $requestContext->getRequester()->get(
             $requestContext->getFullURL(),
             $query,
             self::getHeaders($requestContext)
         );
-        return $parser::getSchema()->parse($response, array($requestContext));
+        return $parser::getSchema()->parse($response, [$requestContext]);
     }
 
-    public static function executeGetPaginated($parser, RequestContext $context, $query = array())
+    public static function executeGetPaginated($parser, RequestContext $context, $query = [])
     {
         $response = $context->getRequester()->get($context->getFullURL(), $query, self::getHeaders($context));
         return Paginated::fromResponse($response, $query, $parser, $context);
@@ -36,7 +37,7 @@ abstract class RequesterUtils
     public static function executePost(
         $parser,
         RequestContext $requestContext,
-        $payload = array()
+        $payload = []
     ) {
         $response = $requestContext->getRequester()->post(
             $requestContext->getFullURL(),
@@ -46,21 +47,34 @@ abstract class RequesterUtils
         if (is_null($parser)) {
             return $response;
         } else {
-            return $parser::getSchema()->parse($response, array($requestContext));
+            return $parser::getSchema()->parse($response, [$requestContext]);
         }
+    }
+
+    public static function executePostSimpleList(
+        $parser,
+        RequestContext $requestContext,
+        $payload = []
+    ) {
+        $response = $requestContext->getRequester()->post(
+            $requestContext->getFullURL(),
+            $payload,
+            self::getHeaders($requestContext)
+        );
+        return SimpleList::fromResponse($response, $parser, $requestContext);
     }
 
     public static function executePatch(
         $parser,
         RequestContext $requestContext,
-        $payload = array()
+        $payload = []
     ) {
         $response = $requestContext->getRequester()->patch(
             $requestContext->getFullURL(),
             $payload,
             self::getHeaders($requestContext)
         );
-        return $parser::getSchema()->parse($response, array($requestContext));
+        return $parser::getSchema()->parse($response, [$requestContext]);
     }
 
     public static function executeDelete(RequestContext $requestContext)

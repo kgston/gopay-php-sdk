@@ -52,14 +52,14 @@ abstract class TypedEnum
     protected static function create($value = null)
     {
         if (self::$instancedValues === null) {
-            self::$instancedValues = array();
+            self::$instancedValues = [];
         }
 
         $className = get_called_class();
         $value = isset($value) ? $value : self::getLastFunctionName();
 
         if (!isset(self::$instancedValues[$className])) {
-            self::$instancedValues[$className] = array();
+            self::$instancedValues[$className] = [];
         }
 
         if (!isset(self::$instancedValues[$className][$value])) {
@@ -78,7 +78,7 @@ abstract class TypedEnum
 
     public static function findValues()
     {
-        $values = array();
+        $values = [];
         $reflectionClass = new ReflectionClass(get_called_class());
         $methods = $reflectionClass->getMethods(ReflectionMethod::IS_STATIC | ReflectionMethod::IS_PUBLIC);
         $className = get_called_class();
@@ -109,5 +109,10 @@ abstract class TypedEnum
     public function getName()
     {
         return $this->name;
+    }
+
+    public function __toString()
+    {
+        return get_called_class() . "::{$this->name}";
     }
 }

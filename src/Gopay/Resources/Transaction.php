@@ -7,6 +7,7 @@ use Gopay\Enums\ChargeStatus;
 use Gopay\Enums\TransactionType;
 use Gopay\Utility\Json\JsonSchema;
 use Money\Currency;
+use Money\Money;
 
 class Transaction
 {
@@ -16,8 +17,8 @@ class Transaction
     public $storeId;
     public $resourceId;
     public $chargeId;
-    public $amount;
     public $currency;
+    public $amount;
     public $amountFormatted;
     public $type;
     public $status;
@@ -31,8 +32,8 @@ class Transaction
         $storeId,
         $resourceId,
         $chargeId,
-        $amount,
         $currency,
+        $amount,
         $amountFormatted,
         $type,
         $status,
@@ -45,8 +46,8 @@ class Transaction
         $this->storeId = $storeId;
         $this->resourceId = $resourceId;
         $this->chargeId = $chargeId;
-        $this->amount = $amount;
         $this->currency = new Currency($currency);
+        $this->amount = new Money($amount, $this->currency);
         $this->amountFormatted = $amountFormatted;
         $this->type = TransactionType::fromValue($type);
         $this->status = ChargeStatus::fromValue($status);

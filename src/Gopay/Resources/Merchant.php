@@ -39,20 +39,20 @@ class Merchant extends Resource
     public static function fromJson(array $json, RequestContext $requestContext)
     {
         return new Merchant(
-            $json["id"],
-            $json["verification_data_id"],
-            $json["name"],
-            $json["email"],
-            $json["verified"],
-            Configuration::fromJson(fp::getOrElse($json, "configuration", array())),
-            $json["created_on"],
+            $json['id'],
+            $json['verification_data_id'],
+            $json['name'],
+            $json['email'],
+            $json['verified'],
+            Configuration::fromJson(fp::getOrElse($json, 'configuration', [])),
+            $json['created_on'],
             $context = $requestContext
         );
     }
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(Merchant::class)
-                    ->upsert("configuration", true, Configuration::getSchema()->getParser());
+        return JsonSchema::fromClass(self::class)
+            ->upsert('configuration', true, Configuration::getSchema()->getParser());
     }
 }

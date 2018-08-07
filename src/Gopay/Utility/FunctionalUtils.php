@@ -21,7 +21,7 @@ abstract class FunctionalUtils
 
     public static function copy(array $array)
     {
-        return array_merge(array(), $array);
+        return array_merge([], $array);
     }
 
     public static function identity($a)
@@ -60,10 +60,10 @@ abstract class FunctionalUtils
     {
         return array_reduce(array_keys($array), function ($currentArray, $key) use ($array) {
             if ($array[$key] !== null) {
-                return array_merge(array($key => $array[$key]), $currentArray);
+                return array_merge([$key => $array[$key]], $currentArray);
             } else {
                 return $currentArray;
             }
-        }, array());
+        }, []);
     }
 }

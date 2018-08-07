@@ -24,7 +24,7 @@ class RecurringConfiguration
     {
         return JsonSchema::fromClass(RecurringConfiguration::class)
             ->upsert(
-                "card_charge_cvv_confirmation",
+                'card_charge_cvv_confirmation',
                 true,
                 $formatter = CardChargeCvvConfirmation::getSchema()->getParser()
             );

@@ -28,6 +28,7 @@ module.exports = function (grunt) {
             },
             options: {
                 bin: 'vendor/bin/phpunit',
+                // testSuffix: "ScheduledPaymentTest.php",
                 staticBackup: false,
                 colors: true,
                 noGlobalsBackup: false

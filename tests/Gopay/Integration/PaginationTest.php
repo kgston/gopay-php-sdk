@@ -30,7 +30,7 @@ class PaginationTest extends TestCase
         sleep(1); // Prevent interference from charges still being indexed
 
         $GLOBALS['testPagination:limit'] = 3;
-        $GLOBALS['testPagination:charges'] = array();
+        $GLOBALS['testPagination:charges'] = [];
         $GLOBALS['testPagination:from'] = date_create();
         foreach (range(1, 6) as $i) {
             $charge = $this->createValidCharge();

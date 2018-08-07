@@ -37,11 +37,11 @@ abstract class PaymentMethod implements JsonSerializable
 
     public function jsonSerialize()
     {
-        $data = array(
+        $data = [
             'email' => $this->email,
             'payment_type' => $this->paymentType->getValue(),
             'type' => $this->type->getValue()
-        );
+        ];
         if ($this->usageLimit !== null) {
             $data['usage_limit'] = $this->usageLimit->getValue();
         }

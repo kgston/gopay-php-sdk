@@ -1,6 +1,7 @@
 <?php
 namespace GopayTest\Integration;
 
+use DateTime;
 use Gopay\Enums\CancelStatus;
 use Gopay\Enums\ChargeStatus;
 use Gopay\Errors\GopayRequestError;
@@ -16,14 +17,15 @@ class ChargeTest extends TestCase
     public function testCreateCharge()
     {
         $charge = $this->createValidCharge(true);
-        $this->assertEquals(1000, $charge->requestedAmount);
+        $this->assertEquals(Money::JPY(1000), $charge->requestedAmount);
         $this->assertEquals(new Currency('JPY'), $charge->requestedCurrency);
+        $this->assertInstanceOf(DateTime::class, $charge->createdOn);
     }
 
     public function testCreateChargeOnToken()
     {
         $charge = $this->createValidToken()->createCharge(Money::JPY(1000));
-        $this->assertEquals(1000, $charge->requestedAmount);
+        $this->assertEquals(Money::JPY(1000), $charge->requestedAmount);
         $this->assertEquals(new Currency('JPY'), $charge->requestedCurrency);
     }
 
@@ -34,12 +36,26 @@ class ChargeTest extends TestCase
         $this->assertTrue($captured);
     }
 
+    public function testPartialAuthCaptureCharge()
+    {
+        $charge = $this->createValidCharge(false);
+        $captured = $charge->capture(Money::JPY(500));
+        $this->assertTrue($captured);
+    }
+
+    public function testDefaultAuthCaptureCharge()
+    {
+        $charge = $this->createValidCharge(false);
+        $captured = $charge->capture();
+        $this->assertTrue($captured);
+    }
+
     public function testPatchCharge()
     {
         $charge = $this->createValidCharge(true);
         $this->assertEquals(0, count($charge->metadata));
         
-        $charge = $charge->patch(array('testId' => 12345));
+        $charge = $charge->patch(['testId' => 12345]);
         $this->assertTrue($charge->metadata['testId'] === 12345);
     }
 
@@ -61,9 +77,7 @@ class ChargeTest extends TestCase
     {
         $charge = $this->createValidCharge(false);
         $this->assertEquals(ChargeStatus::AUTHORIZED(), $charge->status);
-        $cancel = $charge->cancel(array(
-            'something'=>'anything'
-        ))->awaitResult();
+        $cancel = $charge->cancel(['something'=>'anything'])->awaitResult();
         $this->assertEquals(CancelStatus::SUCCESSFUL(), $cancel->status);
         $this->assertEquals($cancel->metadata['something'], 'anything');
     }

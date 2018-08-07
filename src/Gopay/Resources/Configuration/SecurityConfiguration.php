@@ -25,7 +25,7 @@ class SecurityConfiguration
     {
         return JsonSchema::fromClass(SecurityConfiguration::class)
                 ->upsert(
-                    "limit_charge_by_card_configuration",
+                    'limit_charge_by_card_configuration',
                     false,
                     $formatter = LimitChargeByCardConfiguration::getSchema()->getParser()
                 );

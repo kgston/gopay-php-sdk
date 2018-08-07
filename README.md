@@ -1,6 +1,6 @@
 # Gyro-n Gopay PHP SDK
 
-This PHP SDK provides a convienent way to integrate your services with the Gopay payments gateway.
+This PHP SDK provides a convenient way to integrate your services with the Gopay payments gateway.
 
 ## Requirements
 
@@ -30,9 +30,11 @@ Both store and merchant type application tokens are supported by this SDK. Apart
 
 ### Money models
 This SDK uses the `moneyphp` library to model amounts and currency. Please refer to the [documentation](http://moneyphp.org/en/latest/index.html) for more details.
+All currencies and amounts will be automatically converted to `Currency` and `Money` objects. Only formatted amounts (denoted by the `.*Formatted` key) will be in string form.
 
 ```php
 use Gopay\PaymentMethod\CardPayment;
+use Money\Currency;
 use Money\Money;
 
 $paymentMethod = new CardPayment(...);
@@ -41,15 +43,19 @@ $charge = $client
     ->createCharge(Money::USD(1000));
 
 $charge->currency === new Currency('USD'); // true
+$charge->requestAmount === new Money(1000, $charge->currency); // true
 ```
 
 ### Enumerators
 
-As PHP has no native built in enumeration support, we use the class `TypedEnum` to provide type safety when working with enumerators. Each enumerator class is final and extends `TypedEnum` to provide static functions that operate similar to enumerators in other languages like Java. A enum classes can be found in the `Gopay\Enums` namespace.
+As PHP has no native built in enumeration support, we provide a class called `TypedEnum` to provide type safety when working with enumerators. Each enumerator class is final and extends `TypedEnum` to provide static functions that operate similarly to enumerators in other languages like Java. A enum classes can be found in the `Gopay\Enums` namespace.
+
+_By default, if the value is not specified during creation, it will be snake-cased from the name_
 
 ```php
 use Gopay\Enums\ChargeStatus;
 
+$values = ChargeStatus::findValues(); // Get a list of all names and values in the enumerator
 $chargeStatus = ChargeStatus::PENDING(); // Note the braces at the end
 $chargeStatus->getValue() === 'pending'; // true
 $chargeStatus === ChargeStatus::fromValue('pending'); // true
@@ -142,4 +148,4 @@ The following env vars are required when running the tests:
 ```shell
 grunt phpunit
 ```
-_Note: CircleCI only runs on branches that has a open PR_
+_Note: CircleCI only runs on branches that has an open PR_

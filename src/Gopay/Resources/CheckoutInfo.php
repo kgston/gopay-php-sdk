@@ -45,9 +45,9 @@ class CheckoutInfo
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert("card_configuration", true, CardConfiguration::getSchema()->getParser())
-            ->upsert("qr_scan_configuration", true, QRConfiguration::getSchema()->getParser())
-            ->upsert("convenience_configuration", true, ConvenienceConfiguration::getSchema()->getParser())
-            ->upsert("theme", true, ThemeConfiguration::getSchema()->getParser());
+            ->upsert('card_configuration', true, CardConfiguration::getSchema()->getParser())
+            ->upsert('qr_scan_configuration', true, QRConfiguration::getSchema()->getParser())
+            ->upsert('convenience_configuration', true, ConvenienceConfiguration::getSchema()->getParser())
+            ->upsert('theme', true, ThemeConfiguration::getSchema()->getParser());
     }
 }

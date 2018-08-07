@@ -10,10 +10,10 @@ use Gopay\Utility\RequesterUtils;
 
 function get_other_direction($direction)
 {
-    if ($direction === "asc") {
-        return "desc";
+    if ($direction === 'asc') {
+        return 'desc';
     } else {
-        return "asc";
+        return 'asc';
     }
 }
 
@@ -52,8 +52,8 @@ class Paginated
     ) {
         $parser = $jsonableClass::getContextParser($context);
         return new Paginated(
-            array_map($parser, $response["items"]),
-            $response["has_more"],
+            array_map($parser, $response['items']),
+            $response['has_more'],
             $query,
             $jsonableClass,
             $context
@@ -66,7 +66,7 @@ class Paginated
             throw new GopayNoMoreItemsError();
         }
         $last = end($this->items);
-        $newQuery = array("cursor" => $last->id) + $this->query;
+        $newQuery = ['cursor' => $last->id] + $this->query;
         return RequesterUtils::executeGetPaginated($this->jsonableClass, $this->context, $newQuery);
     }
 
@@ -85,8 +85,8 @@ class Paginated
 
     private function reverse()
     {
-        $currentDirection = fp::getOrElse($this->query, "cursor_direction", "desc");
-        $newQuery = array("cursor_direction" => get_other_direction($currentDirection)) + $this->query;
+        $currentDirection = fp::getOrElse($this->query, 'cursor_direction', 'desc');
+        $newQuery = ['cursor_direction' => get_other_direction($currentDirection)] + $this->query;
         return new Paginated(
             array_reverse($this->items),
             true,

@@ -25,9 +25,9 @@ abstract class HttpUtils
     public static function getQueryString(array $params)
     {
         if (is_array($params) && sizeof($params) > 0) {
-            return "?" . http_build_query($params);
+            return '?' . http_build_query($params);
         } else {
-            return "?";
+            return '?';
         }
     }
 
@@ -60,9 +60,9 @@ abstract class HttpUtils
 
     public static function addJsonHeader(array $headers)
     {
-        return array_merge(array(
-            "Accept" => "application/json",
-            "Content-Type" => "application/json"
-        ), $headers);
+        return array_merge([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ], $headers);
     }
 }

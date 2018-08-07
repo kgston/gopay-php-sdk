@@ -90,42 +90,42 @@ class StoreTest extends TestCase
         }
 EOD;
         $json = json_decode($str, true);
-        $store = Store::getSchema()->parse($json, array($this->getClient()->getStoreBasedContext()));
-        $this->assertEquals("11111111-1111-1111-1111-111111111111", $store->id);
-        $this->assertEquals("Store 1", $store->name);
-        $this->assertEquals(date_create("2017-03-21T01:32:13.702689Z"), $store->createdOn);
-        $this->assertEquals("https://example.com/logo.png", $store->configuration->logoUrl);
+        $store = Store::getSchema()->parse($json, [$this->getClient()->getStoreBasedContext()]);
+        $this->assertEquals('11111111-1111-1111-1111-111111111111', $store->id);
+        $this->assertEquals('Store 1', $store->name);
+        $this->assertEquals(date_create('2017-03-21T01:32:13.702689Z'), $store->createdOn);
+        $this->assertEquals('https://example.com/logo.png', $store->configuration->logoUrl);
         $this->assertEquals(15000, $store->configuration->minTransferPayout);
         $this->assertEquals(500000, $store->configuration->maximumChargeAmounts);
         $this->assertTrue($store->configuration->userTransactionsConfiguration->enabled);
         $this->assertTrue($store->configuration->userTransactionsConfiguration->notifyCustomer);
         $this->assertTrue($store->configuration->cardConfiguration->enabled);
         $this->assertEquals(
-            array("maestro", "unionpay"),
+            ['maestro', 'unionpay'],
             $store->configuration->cardConfiguration->forbiddenCardBrands
         );
         $this->assertTrue($store->configuration->qrScanConfiguration->enabled);
         $this->assertTrue($store->configuration->convenienceConfiguration->enabled);
-        $this->assertEquals("bounded", $store->configuration->recurringTokenConfiguration->recurringType);
+        $this->assertEquals('bounded', $store->configuration->recurringTokenConfiguration->recurringType);
         $this->assertTrue($store->configuration->recurringTokenConfiguration->cardChargeCvvConfirmation->enabled);
         $this->assertEquals(
             1500,
             $store->configuration->recurringTokenConfiguration->cardChargeCvvConfirmation->threshold
         );
-        $this->assertEquals("bounded", $store->configuration->recurringTokenConfiguration->recurringType);
-        $this->assertEquals("P7D", $store->configuration->securityConfiguration->inspectSuspiciousLoginAfter);
+        $this->assertEquals('bounded', $store->configuration->recurringTokenConfiguration->recurringType);
+        $this->assertEquals('P7D', $store->configuration->securityConfiguration->inspectSuspiciousLoginAfter);
         $this->assertEquals(80, $store->configuration->securityConfiguration->refundPercentLimit);
         $this->assertEquals(
             500,
             $store->configuration->securityConfiguration->limitChargeByCardConfiguration->quantityOfCharges
         );
         $this->assertEquals(
-            "P30D",
+            'P30D',
             $store->configuration->securityConfiguration->limitChargeByCardConfiguration->durationWindow
         );
         $this->assertTrue($store->configuration->installmentsConfiguration->enabled);
         $this->assertEquals(1000, $store->configuration->installmentsConfiguration->minChargeAmount);
-        $this->assertEquals("P50D", $store->configuration->installmentsConfiguration->maxPayoutPeriod);
+        $this->assertEquals('P50D', $store->configuration->installmentsConfiguration->maxPayoutPeriod);
         $this->assertEquals(3, $store->configuration->installmentsConfiguration->failedCyclesToCancel);
         $this->assertEquals(0.05, $store->configuration->cardBrandPercentFees->visa);
     }
@@ -154,9 +154,9 @@ EOD;
         }
 EOD;
         $json = json_decode($str, true);
-        $stores = Paginated::fromResponse($json, array(), Store::class, $this->getClient()->getStoreBasedContext());
+        $stores = Paginated::fromResponse($json, [], Store::class, $this->getClient()->getStoreBasedContext());
         $this->assertEquals(false, $stores->hasMore);
         $this->assertEquals(2, count($stores->items));
-        $this->assertEquals("Store 2", $stores->items[1]->name);
+        $this->assertEquals('Store 2', $stores->items[1]->name);
     }
 }

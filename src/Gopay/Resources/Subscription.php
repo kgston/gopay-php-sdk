@@ -3,11 +3,16 @@
 namespace Gopay\Resources;
 
 use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\Field;
 use Gopay\Enums\InstallmentPlanType;
 use Gopay\Enums\Period;
 use Gopay\Enums\Reason;
 use Gopay\Enums\SubscriptionStatus;
 use Gopay\Errors\GopayLogicError;
+use Gopay\Errors\GopayValidationError;
+use Gopay\Resources\Mixins\GetCharges;
+use Gopay\Resources\Mixins\GetScheduledPayments;
+use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
 use Gopay\Utility\Json\JsonSchema;
 use Money\Currency;
@@ -17,49 +22,65 @@ class Subscription extends Resource
 {
     use Jsonable;
     use Pollable;
+    use GetCharges, GetScheduledPayments {
+        GetCharges::validate insteadof GetScheduledPayments;
+    }
 
     public $storeId;
     public $transactionTokenId;
+    public $currency;
     public $amount;
     public $amountFormatted;
-    public $currency;
     public $period;
     public $initialAmount;
     public $initialAmountFormatted;
-    public $subsequentCyclesStart;
+    public $scheduleSettings;
+    public $paymentsLeft;
+    public $amountLeft;
+    public $amountLeftFormatted;
     public $status;
     public $metadata;
     public $mode;
     public $createdOn;
+    public $nextPayment;
+    public $installmentPlan;
 
     public function __construct(
         $id,
         $storeId,
         $transactionTokenId,
+        $currency,
         $amount,
         $amountFormatted,
-        $currency,
         $period,
         $initialAmount,
         $initialAmountFormatted,
-        $subsequentCyclesStart,
+        ScheduleSettings $scheduleSettings,
+        $paymentsLeft,
+        $amountLeft,
+        $amountLeftFormatted,
         $status,
         $metadata,
         $mode,
         $createdOn,
-        $installmentPlan,
-        $context
+        ScheduledPayment $nextPayment = null,
+        InstallmentPlan $installmentPlan = null,
+        $context = null
     ) {
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
-        $this->amount = $amount;
-        $this->amountFormatted = $amountFormatted;
         $this->currency = new Currency($currency);
+        $this->amount = new Money($amount, $this->currency);
+        $this->amountFormatted = $amountFormatted;
         $this->period = Period::fromValue($period);
-        $this->initialAmount = $initialAmount;
+        $this->initialAmount = isset($initialAmount) ? new Money($initialAmount, $this->currency) : null;
         $this->initialAmountFormatted = $initialAmountFormatted;
-        $this->subsequentCyclesStart = date_create($subsequentCyclesStart);
+        $this->scheduleSettings = $scheduleSettings;
+        $this->nextPayment = $nextPayment;
+        $this->paymentsLeft = $paymentsLeft;
+        $this->amountLeft = isset($amountLeft) ? new Money($amountLeft, $this->currency) : null;
+        $this->amountLeftFormatted = $amountLeftFormatted;
         $this->status = SubscriptionStatus::fromValue($status);
         $this->metadata = $metadata;
         $this->mode = AppTokenMode::fromValue($mode);
@@ -69,62 +90,102 @@ class Subscription extends Resource
 
     public function patch(
         $transactionTokenId = null,
-        Money $money = null,
         Money $initialAmount = null,
+        Period $period = null,
+        ScheduleSettings $scheduleSettings = null,
+        SubscriptionStatus $status = null,
         array $metadata = null,
         InstallmentPlan $installmentPlan = null
     ) {
-        if ($this->isTerminal()) {
-            throw new GopayLogicError(Reason::SUBSCRIPTION_ALREADY_ENDED());
+        if (SubscriptionStatus::CANCELED() == $this->status) {
+            throw new GopayLogicError(Reason::CANNOT_CHANGE_CANCELED_SUBSCRIPTION());
         }
-        if ($this->isProcessing()) {
-            throw new GopayLogicError(Reason::SUBSCRIPTION_PROCESSING());
+        if (isset($transactionTokenId) && !$this->isTokenPatchable()) {
+            throw new GopayLogicError(Reason::CANNOT_CHANGE_TOKEN());
         }
-        if (!isset($this->installmentPlan) && $installmentPlan->planType === InstallmentPlanType::NONE()) {
-            throw new GopayLogicError(Reason::INSTALLMENT_PLAN_NOT_FOUND());
+        if (isset($initialAmount) && !$this->isEditable() && $initialAmount->isNegative()) {
+            throw new GopayValidationError(Field::INITIAL_AMOUNT(), Reason::INVALID_FORMAT());
+        }
+        if (isset($period) && !$this->isEditable()) {
+            throw new GopayLogicError(Reason::CANNOT_SET_AFTER_SUBSCRIPTION_STARTED());
+        }
+        if (isset($status) &&
+        SubscriptionStatus::UNPAID() != $status &&
+        !SubscriptionStatus::SUSPENDED() != $this->status) {
+            throw new GopayValidationError(Field::STATUS(), Reason::FORBIDDEN_PARAMETER());
+        }
+        if (isset($installmentPlan) && !$this->isEditable()) {
+            throw new GopayLogicError(Reason::INSTALLMENT_ALREADY_SET());
         }
 
-        $payload = array();
-        if (isset($transactionTokenId)) {
-            $payload['transaction_token_id'] = $transactionTokenId;
-        }
+        $payload = [
+            'transaction_token_id' => $transactionTokenId,
+            'initial_amount' => isset($initialAmount) ? $initialAmount->getAmount() : null,
+            'period' => isset($period) ? $period->getValue() : null,
+            'schedule_settings' => $scheduleSettings,
+            'status' => isset($status) ? $status->getValue() : null,
+            'metadata' => $metadata,
+            'installment_plan' => $installmentPlan
+        ];
         if (isset($money)) {
             $payload += $money->jsonSerialize();
         }
-        if (isset($initialAmount)) {
-            $payload['initial_amount'] = $initialAmount->getAmount();
-        }
-        if (isset($metadata)) {
-            $payload['metadata'] = $metadata;
-        }
-        if (isset($installmentPlan)) {
-            $payload['installment_plan'] = $installmentPlan;
-        }
-        return $this->update($payload);
+        return $this->update(FunctionalUtils::stripNulls($payload));
     }
 
     public function cancel()
     {
+        if ($this->isTerminal()) {
+            throw new GopayLogicError(Reason::SUBSCRIPTION_ALREADY_ENDED());
+        }
         return RequesterUtils::executeDelete($this->getIdContext());
     }
 
     public function isEditable()
     {
-        return $this->status === SubscriptionStatus::UNVERIFIED() ||
-            $this->status === SubscriptionStatus::UNCONFIRMED();
+        switch ($this->status) {
+            case SubscriptionStatus::UNVERIFIED():
+            case SubscriptionStatus::UNCONFIRMED():
+                return true;
+            default:
+                return false;
+        }
     }
     
     public function isProcessing()
     {
-        return $this->status === SubscriptionStatus::UNPAID() ||
-            $this->status === SubscriptionStatus::CURRENT() ||
-            $this->status === SubscriptionStatus::SUSPENDED();
+        switch ($this->status) {
+            case SubscriptionStatus::UNPAID():
+            case SubscriptionStatus::CURRENT():
+            case SubscriptionStatus::SUSPENDED():
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public function isTokenPatchable()
+    {
+        switch ($this->status) {
+            case SubscriptionStatus::UNCONFIRMED():
+            case SubscriptionStatus::UNPAID():
+            case SubscriptionStatus::CURRENT():
+            case SubscriptionStatus::SUSPENDED():
+                return true;
+            default:
+                return false;
+        }
     }
 
     public function isTerminal()
     {
-        return $this->status === SubscriptionStatus::CANCELED() ||
-            $this->status === SubscriptionStatus::COMPLETED();
+        switch ($this->status) {
+            case SubscriptionStatus::CANCELED():
+            case SubscriptionStatus::COMPLETED():
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static function isSubscribable(PaymentType $paymentType)
@@ -136,12 +197,24 @@ class Subscription extends Resource
 
     protected function getIdContext()
     {
-        return $this->context->withPath(array("stores", $this->storeId, "subscriptions", $this->id));
+        return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id]);
+    }
+
+    protected function getChargeContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id, 'charges']);
+    }
+
+    protected function getScheduledPaymentContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id, 'payments']);
     }
 
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert("installment_plan", false, InstallmentPlan::getSchema()->getParser());
+            ->upsert('schedule_settings', true, ScheduleSettings::getSchema()->getParser())
+            ->upsert('next_payment', false, ScheduledPayment::getSchema()->getParser())
+            ->upsert('installment_plan', false, InstallmentPlan::getSchema()->getParser());
     }
 }

@@ -17,7 +17,7 @@ trait OptionsValidator
                 return false;
         });
         
-        $validated = array();
+        $validated = [];
         foreach ($opts as $key => $value) {
             if (array_key_exists($key, $rules)) {
                 $transformFn = __NAMESPACE__ . '\\' .$rules[$key];

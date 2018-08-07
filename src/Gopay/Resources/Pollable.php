@@ -11,6 +11,6 @@ trait Pollable
     public function awaitResult()
     {
         $idContext = $this->getIdContext();
-        return RequesterUtils::executeGet(self::class, $idContext, array('polling' => 'true'));
+        return RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
     }
 }

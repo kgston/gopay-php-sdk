@@ -3,9 +3,12 @@
 namespace Gopay\Resources;
 
 use DateTime;
+use DateTimeZone;
 use Gopay\Enums\AppTokenMode;
+use Gopay\Enums\Field;
 use Gopay\Enums\PaymentType;
 use Gopay\Enums\Period;
+use Gopay\Enums\Reason;
 use Gopay\Enums\TokenType;
 use Gopay\Enums\UsageLimit;
 use Gopay\Errors\GopayLogicError;
@@ -14,8 +17,9 @@ use Gopay\Errors\GopayValidationError;
 use Gopay\Resources\Mixins\GetTransactionTokens;
 use Gopay\Resources\PaymentData\CardData;
 use Gopay\Resources\PaymentMethod\PaymentMethodPatch;
-use Gopay\Utility\Json\JsonSchema;
+use Gopay\Utility\FunctionalUtils;
 use Gopay\Utility\RequesterUtils;
+use Gopay\Utility\Json\JsonSchema;
 use Money\Money;
 
 class TransactionToken extends Resource
@@ -59,7 +63,7 @@ class TransactionToken extends Resource
         $this->usageLimit = UsageLimit::fromValue($usageLimit);
         $this->metadata = $metadata;
         $this->createdOn = date_create($createdOn);
-        $this->lastUsedOn = date_create($lastUsedOn);
+        $this->lastUsedOn = isset($lastUsedOn) ? date_create($lastUsedOn) : null;
         // The payment data may not be available when retrieving from a list. Triggering a ->fetch() will fix this
         $this->data = $data;
     }
@@ -67,7 +71,7 @@ class TransactionToken extends Resource
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert("data", false, function ($value, $json) {
+            ->upsert('data', false, function ($value, $json) {
                 $paymentType = PaymentType::fromValue($json['payment_type']);
                 switch ($paymentType) {
                     case PaymentType::CARD():
@@ -82,7 +86,7 @@ class TransactionToken extends Resource
 
     protected function getIdContext()
     {
-        return $this->context->withPath(array("stores", $this->storeId, "tokens", $this->id));
+        return $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id]);
     }
 
     public function patch(PaymentMethodPatch $paymentPatch)
@@ -102,62 +106,51 @@ class TransactionToken extends Resource
         array $metadata = null
     ) {
         if ($this->type === TokenType::SUBSCRIPTION()) {
-            throw new GopayLogicError(REASON::NON_SUBSCRIPTION_PAYMENT());
+            throw new GopayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
         }
-        $payload = $money->jsonSerialize() + array(
-            'transaction_token_id' => $this->id
-        );
+        $payload = $money->jsonSerialize() + [
+            'transaction_token_id' => $this->id,
+            'capture' => $capture ? null : false,
+            'metadata' => $metadata
+        ];
 
-        if (isset($metadata)) {
-            $payload['metadata'] = $metadata;
-        }
-        if (!$capture) {
-            $payload['capture'] = $capture;
-        }
-
-        $context = $this->context->withPath("charges");
-        return RequesterUtils::executePost(Charge::class, $context, $payload);
+        $context = $this->context->withPath('charges');
+        return RequesterUtils::executePost(Charge::class, $context, FunctionalUtils::stripNulls($payload));
     }
 
     public function createSubscription(
         Money $money,
         Period $period,
         Money $initialAmount = null,
-        DateTime $subsequentCyclesStart = null,
+        ScheduleSettings $scheduleSettings = null,
         InstallmentPlan $installmentPlan = null,
         array $metadata = null
     ) {
         if ($this->type !== TokenType::SUBSCRIPTION()) {
-            throw new GopayLogicError(REASON::NOT_SUBSCRIPTION_PAYMENT());
+            throw new GopayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
         }
         if (!$money->isPositive()) {
-            throw new GopayValidationError(Field::AMOUNT(), REASON::INVALID_AMOUNT());
+            throw new GopayValidationError(Field::AMOUNT(), Reason::INVALID_AMOUNT());
         }
         if (isset($initialAmount) && ($initialAmount->isNegative() || !$initialAmount->isSameCurrency($money))) {
-            throw new GopayValidationError(Field::INITIAL_AMOUNT(), REASON::INVALID_AMOUNT());
+            throw new GopayValidationError(Field::INITIAL_AMOUNT(), Reason::INVALID_AMOUNT());
+        }
+        if (isset($scheduleSettings) &&
+        $scheduleSettings->preserveEndOfMonth === true &&
+        Period::MONTHLY() !== $period) {
+            throw new GopayValidationError(Field::PRESERVE_END_OF_MONTH(), Reason::MUST_BE_MONTH_BASE_TO_SET());
         }
         
-        $payload = $money->jsonSerialize() + array(
+        $payload = $money->jsonSerialize() + [
             'transaction_token_id' => $this->id,
-            'period' => $period->getValue()
-        );
-        if ($metadata != null) {
-            $payload += array("metadata" => $metadata);
-        }
-        if ($initialAmount != null) {
-            $payload += array("initial_amount" => $initialAmount->getAmount());
-        }
-        if ($subsequentCyclesStart != null) {
-            if ($subsequentCyclesStart < date_create()) {
-                throw new GopayValidationError(Field::SUBSEQUENT_CYCLES_START(), REASON::INCOHERENT_DATE_RANGE());
-            }
-            $payload += array("subsequent_cycles_start" => $subsequentCyclesStart->format(DateTime::ATOM));
-        }
-        if ($installmentPlan != null) {
-            $payload += array("installment_plan" => $installmentPlan);
-        }
+            'period' => $period->getValue(),
+            'initial_amount' => isset($initialAmount) ? $initialAmount->getAmount() : null,
+            'schedule_settings' => $scheduleSettings,
+            'installment_plan' => $installmentPlan,
+            'metadata' => $metadata
+        ];
 
-        $context = $this->context->withPath("subscriptions");
-        return RequesterUtils::executePost(Subscription::class, $context, $payload);
+        $context = $this->context->withPath('subscriptions');
+        return RequesterUtils::executePost(Subscription::class, $context, FunctionalUtils::stripNulls($payload));
     }
 }

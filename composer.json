@@ -1,9 +1,8 @@
 {
     "name": "gopay-japan/gopay-sdk",
     "description": "PHP SDK for Gyro-n Gopay payments",
-    "version": "1.0.1",
     "type": "library",
-    "keywords": [],
+    "keywords": ["gyro-n", "gopay", "payment", "credit card" , "japan"],
     "homepage": "https://github.com/gyro-n/gopay-php-sdk",
     "license": "MIT",
     "require": {
